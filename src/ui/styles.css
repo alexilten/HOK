@@ -511,3 +511,10 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 .season-table td { vertical-align: middle; }
 .season-table tr.off td { color: var(--ink-3); }
 .num-input { width: 52px; font: inherit; font-variant-numeric: tabular-nums; padding: 2px 4px; border-radius: 6px; border: 0.5px solid var(--line-2); background: var(--card); color: var(--ink); text-align: right; }
+/* 1.1.0 polish: an opaque header and footer over the scrolling rows, and fewer columns on laptop screens */
+.manifest-table thead th, .manifest-table tfoot td { background: var(--sheet); }
+@media (max-width: 1599px) {
+  .manifest-table th:nth-child(2), .manifest-table td:nth-child(2), .manifest-table .note-col, .manifest-table .dflt { display: none; }
+  .manifest-table td, .manifest-table th .sort { padding-left: 6px; padding-right: 6px; }
+}
+.manifest-table td.foot-label { white-space: nowrap; overflow: visible; }

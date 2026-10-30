@@ -4,13 +4,15 @@
  * core/venue.ts.
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { SEATING_PRODUCTS } from '../core/schema';
+import { SEATING_PRODUCTS, type SeatingProduct } from '../core/schema';
 import { EVENT_LABEL, isPremium, PRODUCT_LABEL, revenuePerSeat, venueModel, type SectionInventory } from '../core/venue';
 import { Segmented } from './controls';
 import { PRODUCT_TONES } from '../viewport/palette';
 import { useStore } from './store';
 import { money } from './VenuePanel';
 
+/** short category names for the table */
+const SHORT: Record<SeatingProduct, string> = { general: 'General', club: 'Club', loge: 'Loge', suite: 'Suite', vip: 'VIP', standing: 'Standing', unavailable: 'Unavailable' };
 const n = (v: number) => v.toLocaleString('en-US', { maximumFractionDigits: 0 });
 
 type Col = 'label' | 'tier' | 'product' | 'seats' | 'sellable' | 'price' | 'revenue';
@@ -75,7 +77,7 @@ export function Manifest() {
               <tr key={x.key} data-key={x.key} className={`${x.key === key ? 'sel' : ''} ${heldBack(x) ? 'held' : ''}`} onClick={() => select(x.key === key ? null : x.key)}>
                 <td><b>{x.label}</b></td>
                 <td>{x.tierName}</td>
-                <td><i style={{ background: PRODUCT_TONES[SEATING_PRODUCTS.indexOf(x.obstructed ? 'unavailable' : x.product)] }} />{x.obstructed ? 'Behind stage' : PRODUCT_LABEL[x.product].replace(' / obstructed', '')}{x.assigned ? '' : <span className="muted"> · default</span>}</td>
+                <td><i style={{ background: PRODUCT_TONES[SEATING_PRODUCTS.indexOf(x.obstructed ? 'unavailable' : x.product)] }} />{x.obstructed ? 'Behind stage' : SHORT[x.product]}{x.assigned ? '' : <span className="muted dflt"> · default</span>}</td>
                 <td className="num">{n(x.seats)}</td>
                 <td className="num">{n(x.sellable)}{x.suites ? <span className="muted"> · {x.suites} st</span> : null}</td>
                 <td className="num">{x.sellable ? money(x.price, c) : '–'}</td>
@@ -84,7 +86,7 @@ export function Manifest() {
               </tr>
             ))}
           </tbody>
-          <tfoot><tr><td colSpan={3}>{rows.length} sections{filter !== 'all' ? ' shown' : ''}</td><td className="num">{n(tot.seats)}</td><td className="num">{n(tot.sellable)}</td><td /><td className="num">{money(tot.revenue, c)}</td><td className="note-col muted">{filter === 'all' && (v.metrics.floor.places || v.metrics.suites.fromLevels) ? 'bowl sections only: floor standing and suite levels are in the totals above' : ''}</td></tr></tfoot>
+          <tfoot><tr><td className="foot-label">{rows.length} sections{filter !== 'all' ? ' shown' : ''}</td><td /><td /><td className="num">{n(tot.seats)}</td><td className="num">{n(tot.sellable)}</td><td /><td className="num">{money(tot.revenue, c)}</td><td className="note-col muted">{filter === 'all' && (v.metrics.floor.places || v.metrics.suites.fromLevels) ? 'bowl sections only: floor standing and suite levels are in the totals above' : ''}</td></tr></tfoot>
         </table>
       </div>
     </section>

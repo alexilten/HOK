@@ -1,6 +1,6 @@
 {
   "name": "hok",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "description": "HOK — generative stadium design engine: parametric seating bowl, live capacity and sightlines, native Rhino export",

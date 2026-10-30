@@ -7,25 +7,29 @@ as `saved.by`. Earlier rounds are numbered here after the fact; they were not ta
 The project file has its own version (`hok.project` v1 to v7). A newer HOK opens every older
 file; an older HOK refuses a newer file instead of half-reading it.
 
-## Unreleased · Venue intelligence (Round 09, selling by event and the season)
+## 1.1.0 · Round 09, venue intelligence: preview for HOK (2026-10-30)
+
+A work-in-progress build for the HOK team to try. The release check covered all 29 presets (every event, export and file round trip), 174 automated tests, and a browser smoke test.
+
+### Selling by event and the season
 
 - **Selling by event.** A section can be sold differently at one event only (`eventMix`). Each event has a price index for its per-event prices.
 - **Season blend.** Set events a year by kind, and the annual figure adds each event at its own layout, mix and prices. Suite licences are counted once a year.
 - **One revenue model.** The Design studies revenue tab is now a view of the venue model, so it follows the mix, events and season. Its figures change slightly: accessible club positions now sell at the club price.
 - Project files stay at v7; older files open with no event mix, season or price indices.
 
-## Unreleased · Venue intelligence (Round 09, phase 3)
+### Exports
 
 - **Venue exports.** Seating manifest `.csv` (adds up to the dashboard, suite levels and concert floor included), financial assumptions `.json` with import, and the scenario A/B comparison `.json`. Also in the Export menu. Model exports are unchanged.
 
-## Unreleased · Venue intelligence (Round 09, phase 2)
+### Events, seating manifest and hover cards
 
 - **Events.** Run an arena for basketball, hockey, or an end- or centre-stage concert, and a stadium for football, soccer or an end-stage concert, without moving a seat. An event that doesn't fit the bowl is shown as unsupported, with the reason. End stages hold back the sections behind them; concert floors sell standing at an editable density. Saved in the project as `event` (still v7; older files open on the design event).
 - **Seating manifest.** Every section in a sortable table, filtered to premium or held-back sections, selected together with the 3D view.
 - **Hover cards** over sections in the category and revenue views, and **changed sections** between scenarios A and B washed amber in 3D.
 - **Opens on the generic soccer bowl.** New visitors start on Generic soccer; the library still leads with HOK's portfolio.
 
-## Unreleased · Venue intelligence (Round 09, phase 1)
+### Arena presets, seating mix and venue model
 
 - **Arena floors.** Two new field types: an NBA basketball court and an NHL hockey rink, drawn with their markings and exported like the other fields.
 - **Nine new presets**, each a reference-inspired concept, not as-built geometry: Roig Arena (HOK with ERRE), Etihad Arena, Little Caesars Arena and Rogers Place (HOK); the Mortgage Matchup Center, Avicii Arena and State Farm Arena renovations (HOK renovations of buildings by Ellerbe Becket, Berg Arkitektkontor and HOK Sport, now Populous); Rocket Arena (SHoP with ROSSETTI, Gensler architect of record: not an HOK design); and Energizer Park (HOK with Snow Kreilich). Mercedes-Benz Stadium and the EverBank Stadium of the Future were already in the library and gain published capacities by event. Every precedent can now carry HOK's actual role and its reference capacities with sources, kept apart from the model's own seat count.
@@ -33,7 +37,7 @@ file; an older HOK refuses a newer file instead of half-reading it.
 - **Venue intelligence.** A collapsible panel over the model with capacity, sellable and premium inventory, average ticket, gross ticket revenue per event and per year, editable assumptions, a category view and a revenue heatmap (price per seat, revenue per seat or per section), and scenario A/B with signed deltas. Illustrative gross ticket revenue only.
 - **Project file v7.** Adds the seating mix and the new revenue assumptions. v6 and older files open with no mix and the default prices, and keep their capacity.
 
-## Unreleased · HOK portfolio presets
+### HOK portfolio presets
 
 - **HOK's portfolio leads the preset library.** The library opens on a **Featured** group, then **HOK portfolio**, **Generic** and **Other precedent-informed studies**, and each precedent card names the studio credited. New visitors open on Mercedes-Benz Stadium.
 - **Mercedes-Benz Stadium (HOK, 2017).** The most researched preset (confidence *medium*): 71,000 seats on the 100, 200 and 300 levels, the mezzanine and upper bowl left out at the east end zone for the window to the city, 533 mm (21 in) seats, two suite levels, the eight-petal aperture roof half open and a 17.7 m (58 ft) halo board. Facts are sourced from HOK, AISC Modern Steel Construction, BuroHappold, Architectural Record, The Architect's Newspaper and others.
@@ -43,7 +47,7 @@ file; an older HOK refuses a newer file instead of half-reading it.
 - **Halo board.** A new board type: a continuous LED ring hung under the roof at the edge of the opening, needing a roof that rings the bowl.
 - The precedent library lists HOK first, then ROSSETTI and Populous, and says that HOK Sport work belongs to Populous, not the contemporary HOK.
 
-## Unreleased · Sphere-inspired preset
+### Sphere-inspired preset
 
 - **New preset: Spherical immersive venue (Sphere-inspired).** A 17,600-seat horseshoe of four steep tiers (100–400 levels) and two suite levels facing an end stage, under a spherical envelope. Published facts and HOK's assumptions are listed with the preset; the envelope keeps Sphere's proportions but is sized to clear this bowl, so it comes out larger than the built venue.
 - **Stage event floor.** A third field type, *Stage*: a flat event floor with a 16 m stage deck at one end, and sightlines taken to the floor's edge.
