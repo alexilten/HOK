@@ -7,8 +7,8 @@
 import { useMemo, useState } from 'react';
 import { defaultStudies, SEATING_PRODUCTS, type ConvertibleProduct, type SeatingProduct } from '../core/schema';
 import { CONCEPT_LABEL, getPreset, precedentOf } from '../core/presets';
-import { changedSections, compareFigures, EVENT_LABEL, isPremium, PRODUCT_LABEL, STANDING_EVENTS, venueModel, type ScenarioDelta, type VenueModel } from '../core/venue';
-import { resolveStadium } from '../core/engine/stadium';
+import { changedSections, compareFigures, EVENT_LABEL, isPremium, PRODUCT_LABEL, projectModel, STANDING_EVENTS, venueModel, type ScenarioDelta, type VenueModel } from '../core/venue';
+import { designEvent, eventFloor, eventsFor, type EventId } from '../core/events';
 import { NumberControl, Segmented } from './controls';
 import { PRODUCT_TONES } from '../viewport/palette';
 import { useStore, type Slot } from './store';
@@ -40,11 +40,12 @@ export function VenuePanel() {
     <aside className="venue glass" aria-label="Venue intelligence">
       <div className="venue-head">
         <span className="section-title">Venue intelligence</span><span className="round-badge">R09</span>
-        <span className="venue-event" title="The event the bowl is configured for (the sport in Field)">{EVENT_LABEL[m.event]}</span>
+        <span className="venue-event" title="The event the venue model runs for">{EVENT_LABEL[m.event]}</span>
         <button className="icon-btn close" onClick={() => setOpen(false)} title="Collapse">–</button>
       </div>
       <div className="venue-body">
         <Figures v={v} />
+        <EventSwitch v={v} />
         <ViewSwitch />
         <Mix v={v} />
         <SectionCard v={v} />
@@ -62,8 +63,8 @@ function Figures({ v }: { v: VenueModel }) {
   const m = v.metrics, c = useStore((s) => s.project.studies.revenue.currency), events = useStore((s) => s.project.studies.revenue.events);
   return (
     <div className="venue-figures">
-      <Fig label="Capacity" value={n(m.capacity)} sub="seats in the model" />
-      <Fig label="Sellable" value={n(m.sellable)} sub={m.sellable !== m.capacity ? `${m.sellable > m.capacity ? '+' : '−'}${n(Math.abs(m.sellable - m.capacity))} vs seats` : 'every seat sold'} />
+      <Fig label="Capacity" value={n(m.capacity)} sub={m.floor.places || m.obstructed.seats ? [m.floor.places ? `incl. ${n(m.floor.places)} on the floor` : '', m.obstructed.seats ? `${n(m.obstructed.seats)} seats held back` : ''].filter(Boolean).join(' · ') : 'seats in the model'} />
+      <Fig label="Sellable" value={n(m.sellable)} sub={m.sellable !== m.capacity ? `${m.sellable > m.capacity ? '+' : '−'}${n(Math.abs(m.sellable - m.capacity))} vs seats` : 'all of capacity on sale'} />
       <Fig label="Premium" value={n(m.premium)} sub={`${pct(m.premiumShare)} of sellable · ${m.suites.units} suites`} />
       <Fig label="Avg ticket" value={money(m.avgTicket, c)} sub="per place sold" />
       <Fig label="Gross / event" value={money(m.perEvent, c)} sub="ticket revenue" strong />
@@ -78,6 +79,29 @@ function Fig({ label, value, sub, strong }: { label: string; value: string; sub?
       <div className="fig-label">{label}</div>
       <div className="fig-value">{value}</div>
       {sub && <div className="fig-sub">{sub}</div>}
+    </div>
+  );
+}
+
+/** the operating event: the bowl stays as designed, the floor and what is sold change */
+function EventSwitch({ v }: { v: VenueModel }) {
+  const st = useStore((s) => s.stadium), edit = useStore((s) => s.edit);
+  const manifest = useStore((s) => s.manifestOpen), setManifest = useStore((s) => s.setManifestOpen);
+  const p = st.project, design = designEvent(p.sport);
+  const options = eventsFor(p).map((e) => ({ e, f: eventFloor(st, e) }));
+  const pick = (e: EventId) => edit((q) => { q.event = e === design ? null : e; }, 'event');
+  return (
+    <div className="venue-events">
+      <div className="sub-label">Event <span className="muted">· the bowl stays as designed</span></div>
+      <div className="event-chips">
+        {options.map(({ e, f }) => (
+          <button key={e} className={`product-chip ${v.metrics.event === e ? 'on' : ''} ${f.supported ? '' : 'off'}`} disabled={!f.supported} onClick={() => pick(e)}
+            title={f.supported ? (e === design ? 'The event this bowl is designed for' : 'Lays this event\'s floor inside the bowl') : `Unsupported: ${f.reason}`}>
+            {EVENT_LABEL[e]}{e === design ? ' · design' : ''}{f.supported ? '' : ' · unsupported'}
+          </button>
+        ))}
+      </div>
+      <button className="btn-sm" onClick={() => setManifest(!manifest)} title="Every section with its category, seats, price and revenue (M)">{manifest ? 'Hide' : 'Open'} seating manifest</button>
     </div>
   );
 }
@@ -105,7 +129,7 @@ function ViewSwitch() {
 function Mix({ v }: { v: VenueModel }) {
   const m = v.metrics, c = useStore((s) => s.project.studies.revenue.currency);
   const total = Math.max(1, SEATING_PRODUCTS.reduce((a, x) => a + m.byProduct[x].seats, 0));
-  const used = SEATING_PRODUCTS.filter((x) => m.byProduct[x].seats > 0 || m.byProduct[x].sections > 0);
+  const used = SEATING_PRODUCTS.filter((x) => m.byProduct[x].seats > 0 || m.byProduct[x].sections > 0 || m.byProduct[x].sellable > 0);
   return (
     <div className="venue-mix">
       <div className="sub-label">Seating mix</div>
@@ -118,7 +142,7 @@ function Mix({ v }: { v: VenueModel }) {
           {used.map((x) => (
             <tr key={x}>
               <td><i style={{ background: PRODUCT_TONES[SEATING_PRODUCTS.indexOf(x)] }} />{PRODUCT_LABEL[x]}</td>
-              <td>{n(m.byProduct[x].seats)}</td><td>{n(m.byProduct[x].sellable)}</td><td>{money(m.byProduct[x].revenue, c)}</td>
+              <td>{n(m.byProduct[x].seats)}{x === 'standing' && m.floor.places ? <span className="muted"> + floor</span> : null}</td><td>{n(m.byProduct[x].sellable)}</td><td>{money(m.byProduct[x].revenue, c)}</td>
             </tr>
           ))}
         </tbody>
@@ -151,7 +175,7 @@ function SectionCard({ v }: { v: VenueModel }) {
   }
   const kind = (seg: string) => (seg.length === 2 ? 'corners' : seg === 'N' || seg === 'S' ? 'sidelines' : 'ends');
   const sameTier = v.sections.filter((s) => s.tier === x.tier && kind(s.segment) === kind(x.segment)).map((s) => s.key);
-  const standingOff = x.product === 'standing' && !STANDING_EVENTS.includes(p.sport);
+  const standingOff = x.obstructed || (x.product === 'standing' && !STANDING_EVENTS.includes(v.metrics.event));
   return (
     <div className="venue-section">
       <div className="venue-section-head">
@@ -196,7 +220,8 @@ function Scenarios() {
   const c = useStore((s) => s.project.studies.revenue.currency);
   const both = ab.A && ab.B;
   const deltas = both ? compareFigures(ab.A!.figures, ab.B!.figures) : [];
-  const changed = useMemo(() => (both ? changedSections(venueModel(resolveStadium(ab.A!.project)), venueModel(resolveStadium(ab.B!.project))).length : 0), [both, ab.A, ab.B]);
+  const changed = useMemo(() => (both ? changedSections(projectModel(ab.A!.project), projectModel(ab.B!.project)).length : 0), [both, ab.A, ab.B]);
+  const diff = useStore((s) => s.abDiff), setDiff = useStore((s) => s.setAbDiff);
   const fmt = (r: typeof ROWS[number], v: number) => (r.money ? money(v, c) : r.share ? pct(v) : n(v));
   const sign = (r: typeof ROWS[number], d: number) => (Math.abs(d) < (r.share ? 1e-6 : 0.5) ? '±0' : `${d > 0 ? '+' : '−'}${r.money ? money(Math.abs(d), c) : r.share ? `${n(Math.abs(d) * 100, 1)} pts` : n(Math.abs(d))}`);
   const slot = (k: Slot) => (
@@ -224,6 +249,7 @@ function Scenarios() {
             </tbody>
           </table>
           <p className="small muted">{changed} sections sold differently. Each scenario keeps the assumptions it was saved with.</p>
+          {changed > 0 && <button className={`btn-sm ${diff ? 'on' : ''}`} onClick={() => setDiff(!diff)} title="Wash the sections sold differently in A and B amber in the 3D view">{diff ? 'Hide' : 'Show'} changed sections in 3D</button>}
         </>
       )}
       {!both && <p className="small muted">Save the current design as A, change the seating mix, the event, the assumptions or the geometry, then save it as B.</p>}
@@ -252,6 +278,7 @@ function Assumptions() {
           <NumberControl label="Sell-through" value={Math.round(R.occupancy * 100)} min={10} max={100} step={1} suffix=" %" onChange={(v) => set((r) => { r.occupancy = v / 100; }, 'occupancy')} />
           {PRICES.map((x) => <NumberControl key={x.key} label={`${x.label}, per event`} value={R[x.key]} min={0} max={x.max} step={x.step} format={(v) => `${R.currency} ${n(v)}`} onChange={(v) => set((r) => { r[x.key] = v; }, x.key)} />)}
           <NumberControl label="Suite licence, per year" value={R.suite} min={0} max={1_000_000} step={5000} format={(v) => money(v, R.currency)} onChange={(v) => set((r) => { r.suite = v; }, 'suite')} hint="Suites are sold whole: revenue per event is the licence ÷ events, never seats × a price" />
+ <NumberControl label="Concert floor standing" value={R.floorDensity} min={0.5} max={4} step={0.1} suffix=" / m²" onChange={(v) => set((r) => { r.floorDensity = v; }, 'floorDensity')} hint="Standing places per m² of open floor at concerts, gross of barriers and the mix position; sold at the standing price" />
           <NumberControl label="Seats per converted suite" value={R.suiteSeats} min={4} max={40} step={1} onChange={(v) => set((r) => { r.suiteSeats = v; }, 'suiteSeats')} />
           <div className="sub-label">Physical conversion ratios</div>
           <p className="small muted">Sellable places per bowl seat when a section is sold as that product. 100% only re-prices the seats; less models a real conversion (wider seats, loge tables, suite fronts). Accessible positions are never converted.</p>

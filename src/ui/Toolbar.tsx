@@ -57,6 +57,8 @@ export function Toolbar() {
       const views: Record<string, CameraView> = { '1': 'perspective', '2': 'plan', '3': 'elevation', '4': 'section', '5': 'iso', '6': 'fieldLevel', '7': 'exterior' };
       if (views[e.key]) st.setView(views[e.key]);
       if (e.key === 'o') st.setCompareOpen(!st.compareOpen);
+      if (e.key === 'v') st.setVenueOpen(!st.venueOpen);
+      if (e.key === 'm') st.setManifestOpen(!st.manifestOpen);
       if (e.key === '?') st.setDialog(st.dialog === 'keys' ? null : 'keys');
       if (e.key === 'Escape' && st.dialog) return;
       if (e.key === 'Escape' && st.compareOpen) { st.setCompareOpen(false); return; }

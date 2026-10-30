@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { annotations } from '../core/engine/annotations';
 import type { Stadium } from '../core/engine/stadium';
 import { formatLength } from '../core/units';
+import { activeEvent, eventFloor } from '../core/events';
 import { useStore, type CameraView } from '../ui/store';
 import { Seats, Terraces, Vomitories, WheelchairPads } from './Bowl';
 import { BackOfHouse, Facade, Grid, Plaza, Roof, Structure } from './Architecture';
@@ -35,6 +36,8 @@ export function Viewport() {
   const sphere = stadium.architecture.sphere;
   const b = stadium.bounds;
   const span = Math.max(b.max[0] - b.min[0], b.max[1] - b.min[1]) * MM;
+  // Round 09 phase 2: the operating event lays its own floor in the bowl (the design field when it doesn't fit)
+  const floor = useMemo(() => eventFloor(stadium, activeEvent(project)).field ?? stadium.field, [stadium, project]);
 
   const clip = useMemo(() => {
     if (!cut.enabled) return [];
@@ -67,7 +70,7 @@ export function Viewport() {
       </Environment>
 
       <group rotation={WORLD_ROTATION} scale={MM}>
-        {layers.field && <Field field={stadium.field} />}
+        {layers.field && <Field field={floor} />}
         {layers.field && mode === 'analysis' && metric === 'sun' && <PitchSunMap stadium={stadium} />}
         {layers.terraces && <Terraces ring={stadium.ring} profiles={stadium.profiles} regions={stadium.layout.rows} clip={clip} />}
         {layers.terraces && <Vomitories ring={stadium.ring} voms={stadium.seats.vomitories} clip={clip} />}

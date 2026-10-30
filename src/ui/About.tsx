@@ -13,6 +13,8 @@ const KEYS: [string, string][] = [
   ['E · T · A', 'Explore, Technical and Analysis modes'],
   ['1 – 7', 'Perspective, plan, elevation, section, iso, field level, exterior'],
   ['O', 'Compare options and optimise'],
+  ['V', 'Venue intelligence'],
+  ['M', 'Seating manifest'],
   ['⌘Z · ⇧⌘Z', 'Undo and redo (a slider drag is one step)'],
   ['⌘S', 'Save the project file'],
   ['Esc', 'Leave seat view, clear the selection, close a sheet'],

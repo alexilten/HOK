@@ -10,7 +10,7 @@ import { sweepTier } from '../core/engine/sweep';
 import { vomTriangles } from '../core/engine/vomGeometry';
 import type { Project } from '../core/schema';
 import { STUDY_METRICS, useStore, VENUE_METRICS, type AnalysisMetric, type Mode, type RevenueMetric } from '../ui/store';
-import { revenuePerSeat, venueModel, type SectionInventory } from '../core/venue';
+import { changedSections, projectModel, revenuePerSeat, venueModel, type SectionInventory } from '../core/venue';
 import { SEATING_PRODUCTS } from '../core/schema';
 import { sectionLabel } from '../core/engine/seats';
 import type { Stadium } from '../core/engine/stadium';
@@ -74,6 +74,7 @@ function box(dx: number, dy: number, dz: number, cx: number, cy: number, cz: num
 const _m = new THREE.Matrix4(), _q = new THREE.Quaternion(), _p = new THREE.Vector3(), _s = new THREE.Vector3(1, 1, 1), _zero = new THREE.Vector3(1e-6, 1e-6, 1e-6), _z = new THREE.Vector3(0, 0, 1), _c = new THREE.Color();
 const WHEELCHAIR = 2;
 const ACCENT = new THREE.Color('#0a84ff');
+const CHANGED = new THREE.Color('#ff9f0a');
 
 /** one value per seat from its section: product index, or the heatmap value scaled 0–1 (NaN where nothing is sold) */
 function sectionValues(s: Stadium, metric: AnalysisMetric, rm: RevenueMetric): Float32Array {
@@ -86,7 +87,8 @@ function sectionValues(s: Stadium, metric: AnalysisMetric, rm: RevenueMetric): F
   for (let i = 0; i < t.count; i++) {
     const x = bySection.get(`${t.tier[i]}:${t.section[i]}`);
     if (!x) { out[i] = NaN; continue; }
-    if (metric === 'product') out[i] = SEATING_PRODUCTS.indexOf(x.product);
+    // a section held back by the event (behind an end stage) reads as unavailable
+    if (metric === 'product') out[i] = SEATING_PRODUCTS.indexOf(x.obstructed ? 'unavailable' : x.product);
     else out[i] = x.sellable > 0 ? (hi > lo ? (raw(x) - lo) / (hi - lo) : 1) : NaN;
   }
   return out;
@@ -138,26 +140,46 @@ export function Seats({ seats, project, clip }: { seats: SeatTable; project: Pro
     return ti >= 0 && no != null ? { ti, no } : null;
   }, [section, project.tiers, stadium.seats.sections]);
 
+  // Round 09 phase 2: sections sold differently in scenarios A and B, washed amber when asked
+  const ab = useStore((s) => s.ab), abDiff = useStore((s) => s.abDiff);
+  const changed = useMemo(() => {
+    if (!abDiff || !ab.A || !ab.B) return null;
+    const keys = new Set(changedSections(projectModel(ab.A.project), projectModel(ab.B.project)));
+    const out = new Set<string>();
+    for (const x of venueModel(stadium).sections) if (keys.has(x.key)) out.add(`${x.tier}:${x.section}`);
+    return out;
+  }, [abDiff, ab.A, ab.B, stadium]);
+
   useLayoutEffect(() => {
     const im = ref.current;
     if (!im) return;
     for (let i = 0; i < n; i++) {
       seatColor(seats, i, project, mode, metric, _c, values);
+      if (changed?.has(`${seats.tier[i]}:${seats.section[i]}`)) _c.lerp(CHANGED, 0.6);
       // the selected section reads as a soft accent wash over whatever colouring is on
       if (highlight && seats.tier[i] === highlight.ti && seats.section[i] === highlight.no) _c.lerp(ACCENT, 0.55);
       im.setColorAt(i, _c);
     }
     if (selected != null && selected < n) im.setColorAt(selected, _c.set('#0a84ff'));
     if (im.instanceColor) im.instanceColor.needsUpdate = true;
-  }, [seats, n, mode, metric, selected, project, values, highlight]);
+  }, [seats, n, mode, metric, selected, project, values, highlight, changed]);
 
   const onClick = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
     if (e.instanceId != null && (seats.status[e.instanceId] === 0 || showExcluded)) selectSeat(e.instanceId);
   };
+  // hover card: in the category and revenue views, the section under the pointer
+  const setHover = useStore((s) => s.setHover);
+  const onMove = (e: ThreeEvent<PointerEvent>) => {
+    if (!venue || e.instanceId == null || seats.status[e.instanceId] !== 0) return;
+    e.stopPropagation();
+    const i = e.instanceId, ti = seats.tier[i];
+    setHover({ key: `${project.tiers[ti].id}:${sectionLabel(ti, seats.section[i])}`, x: e.nativeEvent.clientX, y: e.nativeEvent.clientY });
+  };
+  useEffect(() => { if (!venue) setHover(null); }, [venue, setHover]);
   // key on count: InstancedMesh capacity is fixed at creation
   return (
-    <instancedMesh key={n} ref={ref} args={[geo, undefined, Math.max(1, n)]} onClick={onClick} castShadow={n < 60000} receiveShadow>
+    <instancedMesh key={n} ref={ref} args={[geo, undefined, Math.max(1, n)]} onClick={onClick} onPointerMove={venue ? onMove : undefined} onPointerOut={venue ? () => setHover(null) : undefined} castShadow={n < 60000} receiveShadow>
       <meshStandardMaterial roughness={0.6} metalness={0.05} clippingPlanes={clip} />
     </instancedMesh>
   );

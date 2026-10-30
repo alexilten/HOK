@@ -33,9 +33,26 @@ Section keys come from the engine's section labels, so the mix travels with the 
 - Average ticket = gross per event ÷ places sold per event (sellable × sell-through, with suite seats counted as sold).
 - A section held back as unavailable withholds its accessible positions, and the panel warns when the remaining wheelchair positions fall below the ADA table.
 
+## Events
+
+The model runs for one operating event (`project.event`; empty means the design event). Arenas offer basketball, hockey, an end-stage concert and a centre-stage concert; stadiums offer football, soccer and an end-stage concert; concert halls offer the two concerts. An event never moves a seat and never re-solves the bowl: sightlines and C-values stay those of the design event, and only the floor and what is sold change ([`core/events.ts`](../src/core/events.ts), rule `hok.event.floor`).
+
+- **Sports** lay their rule-size field, with run-off, centred inside the first-row line less a 1.5 m clearance zone. If it doesn't fit, the event is listed as unsupported with the dimensions, and the model stays on the design event. For example, a hockey rink doesn't fit a bowl built tight round a basketball court, because retractable seating is not modelled.
+- **End stage**: 16 m deep and up to 40 m wide at the east end of the floor. Bowl sections whose centre lies past the stage front, within the width of the floor, are held back for the event. Their seats leave the event capacity, and their accessible positions count as withheld in the checks.
+- **Centre stage**: 15 m square, holding nothing back.
+- **Concert floor**: the open floor (less the stage) sells standing places at an editable density, 1.5 per m² by default, at the standing price. They are added to capacity, sellable places and the standing product.
+
+    event capacity = seats in use + suite seats − seats behind an end stage + floor standing
+
+Not modelled: retractable seating, partial obstruction beside a stage, a seated floor, a separate seating mix or prices for each event, and an annual mix of events. The annual figure assumes every event is the one shown.
+
+## Manifest and hover
+
+The seating manifest (`M`, or *Open seating manifest*) lists every bowl section with its tier, category, seats, sellable places, average price and gross per event. You can sort it by any column and filter it to premium or held-back sections. Clicking a row selects the section in 3D, and a section picked in 3D scrolls its row into view. In the *Categories* and *Revenue map* views, hovering over a seat shows a card for its section.
+
 ## Scenarios
 
-Scenario A and B each store the whole project (geometry, mix, event and assumptions) and the figures worked out when they were saved, in `localStorage` under `hok.venue-ab.v1`. Changing the current assumptions never rewrites a saved scenario. Opening a scenario loads it as the current design; *update* saves it back to its slot.
+Scenario A and B each store the whole project (geometry, mix, event and assumptions) and the figures worked out when they were saved, in `localStorage` under `hok.venue-ab.v1`. Changing the current assumptions never rewrites a saved scenario. Opening a scenario loads it as the current design; *update* saves it back to its slot. *Show changed sections in 3D* washes amber every section sold differently in A and B, including sections held back by an event.
 
 ## Presets
 
@@ -45,8 +62,7 @@ Arena bowls start their first riser row 6 m from the court or rink (7 m at the e
 
 ## Not yet built
 
-- Hover cards over sections, a seating manifest table synced with the model, and highlighting the sections that differ between A and B.
-- Event switching that keeps a separate mix per event and an annual mix of events.
+- A separate seating mix and prices for each event, and an annual mix of events.
 - Manifest CSV, assumptions JSON and scenario JSON exports.
 - The Round 07 revenue study in **Design studies** still uses its own simpler formula (it ignores the mix and prices accessible positions in club tiers as general admission); folding it into this model would change its existing figures.
 
@@ -55,3 +71,7 @@ Arena bowls start their first riser row 6 m from the court or rink (7 m at the e
 ![Seating categories on Roig Arena, one section sold as VIP](screenshots/42-venue-categories.png)
 
 ![Revenue map (revenue per seat) on Rogers Place](screenshots/43-venue-revenue-map.png)
+
+![Little Caesars Arena set for an end-stage concert: sections behind the stage held back, the floor sold as standing, the manifest and a hover card](screenshots/44-venue-events-manifest.png)
+
+![Scenario A (hockey) against B (end-stage concert with club sections), changed sections washed amber](screenshots/45-venue-ab-changes.png)
