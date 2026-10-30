@@ -71,7 +71,7 @@ export function quantities(s: Stadium, model: BimModel = buildModel(s)): QtyRow[
   const AM = s.architecture.metrics, SM = s.systems.metrics, lp = s.project.systems.lighting;
   rows.push({ section: 'Building', item: 'Gross floor area (GFA)', count: 1, quantity: AM.grossArea, unit: 'm²', area: AM.grossArea, method: 'Concourse and premium plates, cores and back of house (HOK building metrics)', status: 'Computed' });
   if (AM.roofPlan) rows.push({ section: 'Roof', item: 'Roof plan area', count: 1, quantity: AM.roofPlan, unit: 'm²', area: AM.roofPlan, method: 'Plan area of the roof skin from leading edge to eave (excludes the cap); canopies: covered stands only', status: STATUS_LABEL.mass });
-  if (AM.roofSurface) rows.push({ section: 'Roof', item: 'Roof surface area', count: 1, quantity: AM.roofSurface, unit: 'm²', area: AM.roofSurface, method: 'Skin area along its slope, plus the cap (parabolic dome approximation) and any retractable panels', status: STATUS_LABEL.mass });
+  if (AM.roofSurface) rows.push({ section: 'Roof', item: 'Roof surface area', count: 1, quantity: AM.roofSurface, unit: 'm²', area: AM.roofSurface, method: 'Skin area along its slope, plus the cap (parabolic dome approximation) and any retractable panels or aperture petals', status: STATUS_LABEL.mass });
   if (s.systems.fixtures.length) {
     const n = s.systems.fixtures.length;
     rows.push({ section: 'Systems', item: 'Floodlights (generic)', count: n, quantity: n, unit: 'fixtures', method: 'Lumen method count (HOK estimate)', status: STATUS_LABEL.placeholder });

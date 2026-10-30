@@ -26,7 +26,7 @@
  *   • the full project JSON in the document strings, so HOK can reopen the file parametrically
  */
 import { annotations } from '../core/engine/annotations';
-import { BOH_KINDS, BOH_LABEL, capSolid, roofSkin, stationsAt, type Member, type Piece } from '../core/engine/architecture';
+import { BOH_KINDS, BOH_LABEL, capSolid, petalSolid, roofSkin, stationsAt, type Member, type Piece } from '../core/engine/architecture';
 import { bandSolid, PROGRAM_KINDS, PROGRAM_LABEL, SLAB, type BoxMesh, type Span } from '../core/engine/building';
 import { arcSweep, loopArea, mergeMeshes, pieceLoop, ringLoop, shapeMesh, sphereElements, type Loop } from './model';
 import { isCorner, pointAt, SECTORS, SECTOR_LABEL, SEGMENTS, type SegmentId } from '../core/engine/plan';
@@ -268,6 +268,7 @@ export function exportRhino(rh: RhinoModule, s: Stadium, opts: RhinoExportOption
     sk.deck.forEach((m, i) => add(meshOf(m), attrs('09_ROOF::DECK', `ROOF.DECK${sk.deck.length > 1 ? `.${i + 1}` : ''}`, { type: r.type, material: p.architecture.roof.material })));
     if (r.cap) add(meshOf(capSolid(ring, r.dIn, r.cap.z, r.cap.rise)), attrs('09_ROOF::CAP', 'ROOF.CAP', { type: r.type, rise_mm: Math.round(r.cap.rise) }));
     for (const b of r.boxes) add(rh.Extrusion.createBoxExtrusion(new rh.Box(new rh.BoundingBox(b.min, b.max)), true), attrs(b.kind === 'truss' ? '09_ROOF::TRUSSES' : '09_ROOF::PANELS', b.id, { depth_mm: Math.round(b.max[2] - b.min[2]) }));
+    for (const q of r.petals) add(meshOf(petalSolid(q)), attrs('09_ROOF::PANELS', `ROOF.${q.id}`, { kind: 'aperture petal', depth_mm: Math.round(q.z1 - q.z0) }));
     for (const e of sphereElements(s)) add(meshOf(mergeMeshes(e.shapes.map(shapeMesh))), attrs(e.layer, e.id, Object.fromEntries(Object.entries(e.props).map(([k, v]) => [k, String(v)]))));
     for (const q of AR.facade.pieces) add(pieceExtrusion(rh, ring, q), attrs('10_FACADE::SKIN', q.id, { type: p.architecture.facade.type, material: p.architecture.facade.material, height_mm: Math.round(q.z1 - q.z0) }));
     for (const q of AR.facade.bands) add(pieceExtrusion(rh, ring, q), attrs('10_FACADE::BANDS', q.id));

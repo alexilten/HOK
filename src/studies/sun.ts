@@ -11,13 +11,13 @@
  *     to the top row of that region;
  *   • the facade: a wall at the facade line up to the facade top;
  *   • the roof: the deck between its leading edge and eave over the stands it covers, the cap over the
- *     field (enclosed types) and retractable panels.
+ *     field (enclosed types), retractable panels and aperture petals.
  * Roof coverings let some light through: metal 0, PTFE 0.10, ETFE 0.85 (HOK assumptions, recall of
  * typical membrane transmittance: standard hok.sun). Trusses, frames, columns, boards and the
  * catwalk are ignored. Results are geometric sun and shade only: no diffuse sky, reflected light,
  * grass growth model or thermal comfort.
  */
-import { ENCLOSED, FACADE_SKIN, insideSphere, roofTopAt, roofUnderAt } from '../core/engine/architecture';
+import { ENCLOSED, FACADE_SKIN, inTriangle, insideSphere, roofTopAt, roofUnderAt } from '../core/engine/architecture';
 import { SEGMENTS, type SegmentId } from '../core/engine/plan';
 import type { Stadium } from '../core/engine/stadium';
 import type { RoofMaterial } from '../core/schema';
@@ -120,6 +120,12 @@ export function shadeModel(s: Stadium) {
         t0 = Math.max(t0, a); t1 = Math.min(t1, c);
       }
       if (t1 >= t0 && t1 > 0) light *= tau;
+    }
+    // aperture petals: where the ray crosses each petal's plane
+    for (const q of roof.petals) {
+      if (z >= q.z1) continue;
+      const h = (q.z1 - z) / v[2];
+      if (inTriangle(q.pts, x + v[0] * h, y + v[1] * h)) light *= tau;
     }
     const tanA = v[2] / Math.hypot(v[0], v[1]), hx = v[0] / Math.hypot(v[0], v[1]), hy = v[1] / Math.hypot(v[0], v[1]);
     const hEnd = (zMax - z) / Math.max(1e-6, tanA);

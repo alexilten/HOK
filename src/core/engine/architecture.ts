@@ -11,7 +11,9 @@
  *   • the roof bears on the outer column line. Its underside clears the highest tread by the set
  *     clearance at the back of the bowl and rises (or falls) toward the field at the set pitch; the
  *     primary frames taper to the leading edge. Enclosed types add a cap over the field, long-span
- *     trusses or retractable panels;
+ *     trusses or retractable panels. An aperture roof (the Mercedes-Benz Stadium type, HOK 2017)
+ *     rings the bowl with a fixed roof, frames the opening with four primary trusses and closes it
+ *     with triangular petals that slide out along their own edges like a camera iris;
  *   • the facade wraps the building at a set offset beyond the cores and rises to the roof (or a
  *     parapet), with portals at the stand and corner centres;
  *   • back-of-house rooms line a service corridor at event level under and behind the lower tier,
@@ -39,10 +41,28 @@ export const COLUMN_SETBACK = 1500;
 
 export const ROOF_LABEL: Record<RoofType, string> = {
   open: 'Open air', canopy: 'Partial canopy', perimeter: 'Perimeter canopy', enclosed: 'Fixed enclosed',
-  etfe: 'Translucent ETFE', truss: 'Long-span truss', retractable: 'Retractable', sphere: 'Sphere (dome + LED Exosphere)',
+  etfe: 'Translucent ETFE', truss: 'Long-span truss', retractable: 'Retractable', aperture: 'Aperture (iris petals)', sphere: 'Sphere (dome + LED Exosphere)',
 };
 /** roof types with a cap or panels over the field */
-export const ENCLOSED: RoofType[] = ['enclosed', 'etfe', 'truss', 'retractable', 'sphere'];
+export const ENCLOSED: RoofType[] = ['enclosed', 'etfe', 'truss', 'retractable', 'aperture', 'sphere'];
+/** roof types whose panels open: open-air behaviour (high-ball view, sun) above half open */
+export const OPERABLE: RoofType[] = ['retractable', 'aperture'];
+
+/**
+ * Aperture roof proportions from the published figures of Mercedes-Benz Stadium (HOK, 2017): four
+ * primary trusses spanning 723 ft at a typical depth of 70 ft (AISC Modern Steel Construction,
+ * Mar 2017). Standards: hok.roof.
+ */
+export const APERTURE = {
+  /** primary truss span / depth */
+  spanDepth: 723 / 70,
+  /** petals lap onto the fixed roof past the opening edge */
+  lap: 4000,
+  /** petal thickness (steel frame and ETFE cushions) and its clearance above the truss top chord */
+  petal: 2500, rail: 1500,
+  /** fully open, each petal's apex slides this share of the way to the opening edge */
+  travel: 0.9,
+};
 
 /**
  * The spherical envelope's proportions, from the published figures of the Sphere in Las Vegas
@@ -128,6 +148,8 @@ export interface Member {
 }
 /** An axis-aligned box in world coordinates (trusses, retractable panels). */
 export interface WorldBox { id: string; kind: 'truss' | 'panel'; min: [number, number, number]; max: [number, number, number] }
+/** A flat triangular petal of an aperture roof, in world plan coordinates, from z0 to z1. */
+export interface Petal { id: string; pts: [number, number][]; z0: Mm; z1: Mm }
 export interface Piece { id: string; seg: SegmentId; u0: number; u1: number; d0: Mm; d1: Mm; z0: Mm; z1: Mm }
 export interface BohZone extends Piece { kind: BohKind; area: number }
 
@@ -146,6 +168,7 @@ export interface Roof {
   /** cap over the field (enclosed types): edge level at dIn, rise at the centre */
   cap: { z: Mm; rise: Mm } | null;
   boxes: WorldBox[];
+  petals: Petal[];
 }
 
 export interface ArchMetrics {
@@ -358,7 +381,7 @@ export function buildArchitecture(
   const enclosed = ENCLOSED.includes(type);
   const halfX = ring.hx + dIn, halfY = ring.hy + dIn;
   const rise = type === 'enclosed' || type === 'etfe' ? 0.08 * Math.min(halfX, halfY) : 0;
-  const cap = enclosed && type !== 'retractable' && !isSphere ? { z: top(dIn), rise } : null;
+  const cap = enclosed && !OPERABLE.includes(type) && !isSphere ? { z: top(dIn), rise } : null;
   const boxes: WorldBox[] = [];
   let trussDepth = 0;
   const spacing = Math.max(15000, S.bay * Math.max(1, R.frameEvery) * 1.5);
@@ -382,7 +405,34 @@ export function buildArchitecture(
     boxes.push({ id: 'PANEL.W', kind: 'panel', min: [ring.cx - len - o * halfX, ring.cy - halfY - 1500, zp], max: [ring.cx - o * halfX, ring.cy + halfY + 1500, zp + 1500] });
     boxes.push({ id: 'PANEL.E', kind: 'panel', min: [ring.cx + o * halfX, ring.cy - halfY - 1500, zp], max: [ring.cx + len + o * halfX, ring.cy + halfY + 1500, zp + 1500] });
   }
-  const roof: Roof = { type, spans, dIn, dOut, zTop0, slope, exposed, depth: R.depth, cap, boxes };
+  const petals: Petal[] = [];
+  if (type === 'aperture') {
+    // four primary trusses frame the opening inside the fixed roof (hung from its top, like the Mercedes-Benz
+    // Stadium's); the petals ride on rails above them
+    const ox = halfX + APERTURE.lap, oy = halfY + APERTURE.lap;
+    trussDepth = Math.max(R.depth, (2 * Math.max(ox, oy)) / APERTURE.spanDepth);
+    const z1 = top(dIn), z0 = z1 - trussDepth;
+    for (const sg of [-1, 1]) {
+      boxes.push({ id: `TRUSS.PRIMARY_${sg < 0 ? 'S' : 'N'}`, kind: 'truss', min: [ring.cx - ox - 1500, ring.cy + sg * oy - 1500, z0], max: [ring.cx + ox + 1500, ring.cy + sg * oy + 1500, z1] });
+      boxes.push({ id: `TRUSS.PRIMARY_${sg < 0 ? 'W' : 'E'}`, kind: 'truss', min: [ring.cx + sg * ox - 1500, ring.cy - oy + 1500, z0], max: [ring.cx + sg * ox + 1500, ring.cy + oy - 1500, z1] });
+    }
+    // the petals: triangles from the centre to the lapped opening edge, each sliding out along its first edge
+    const n = Math.max(3, Math.min(16, Math.round(R.petals)));
+    const corner = alongLoop(stationsAt(ring, dIn + APERTURE.lap), n);
+    const o = Math.min(1, Math.max(0, R.open));
+    const zp = z1 + APERTURE.rail;
+    for (let k = 0; k < n; k++) {
+      const a = corner[k], b = corner[(k + 1) % n];
+      const ax = a[0] - ring.cx, ay = a[1] - ring.cy, L = Math.hypot(ax, ay) || 1;
+      const t = o * APERTURE.travel * (L - APERTURE.lap);
+      const mx = (ax / L) * t, my = (ay / L) * t;
+      const pts: [number, number][] = [[ring.cx + mx, ring.cy + my], [a[0] + mx, a[1] + my], [b[0] + mx, b[1] + my]];
+      // counter-clockwise in plan
+      if ((pts[1][0] - pts[0][0]) * (pts[2][1] - pts[0][1]) - (pts[2][0] - pts[0][0]) * (pts[1][1] - pts[0][1]) < 0) pts.reverse();
+      petals.push({ id: `PETAL.${String(k + 1).padStart(2, '0')}`, pts, z0: zp, z1: zp + APERTURE.petal });
+    }
+  }
+  const roof: Roof = { type, spans, dIn, dOut, zTop0, slope, exposed, depth: R.depth, cap, boxes, petals };
 
   // ── facade: skin pieces (split at the portals), mullions or fins, slab-edge bands
   const pieces: Piece[] = [], bands: Piece[] = [], canopies: Piece[] = [];
@@ -483,6 +533,7 @@ export function buildArchitecture(
   const capSpan = 2 * Math.min(halfX, halfY);
   let roofSurface = sphere ? sphere.domeArea : roofPlan / Math.cos(Math.atan(slope)) + capPlan * (1 + (8 / 3) * (rise / Math.max(1, capSpan)) ** 2);
   for (const b of boxes) if (b.kind === 'panel') roofSurface += ((b.max[0] - b.min[0]) * (b.max[1] - b.min[1])) / 1e6;
+  for (const q of petals) roofSurface += planTriArea(q.pts) / 1e6;
   const panels = boxes.filter((b) => b.kind === 'panel');
   const st = ctx.seats;
   let covered = 0;
@@ -493,11 +544,11 @@ export function buildArchitecture(
     const seg = (['N', 'S', 'E', 'W'] as SegmentId[])[sec];
     if (type === 'canopy' && (sec > 3 || !stands.has(seg as StandId))) continue;
     const x = st.x[i], y = st.y[i];
-    if (planOffset(ring, x, y) >= dIn || panels.some((b) => x >= b.min[0] && x <= b.max[0] && y >= b.min[1] && y <= b.max[1])) covered++;
+    if (planOffset(ring, x, y) >= dIn || panels.some((b) => x >= b.min[0] && x <= b.max[0] && y >= b.min[1] && y <= b.max[1]) || petals.some((q) => inTriangle(q.pts, x, y))) covered++;
   }
   // view: open roofs, the worst covered stand's back-row sightline under the leading edge, at the centre spot
   let viewClear = Infinity;
-  if (roofed && (type === 'canopy' || type === 'perimeter' || (type === 'retractable' && R.open > 0.5))) {
+  if (roofed && (type === 'canopy' || type === 'perimeter' || (OPERABLE.includes(type) && R.open > 0.5))) {
     for (const g of STANDS) {
       if (!covers(g)) continue;
       const tiers = profiles.filter((t) => layout.rows[g][t.index] > 0);
@@ -512,9 +563,10 @@ export function buildArchitecture(
   } else if (sphere) viewClear = sphere.apex;
   else if (cap) viewClear = cap.z + cap.rise - ROOF_SKIN - trussDepth;
   else if (type === 'retractable') viewClear = Math.max(top(dIn), top(dOut)) + R.depth + 1500 - trussDepth;
+  else if (type === 'aperture') viewClear = top(dIn) + APERTURE.rail;
   if (!Number.isFinite(viewClear)) viewClear = 0;
 
-  const roofTop = !roofed ? 0 : sphere ? sphere.top : Math.max(top(dIn) + (exposed ? depthAt(dIn) : 0), top(dOut) + (exposed ? R.depth : 0), cap ? cap.z + cap.rise : 0, ...boxes.map((b) => b.max[2]));
+  const roofTop = !roofed ? 0 : sphere ? sphere.top : Math.max(top(dIn) + (exposed ? depthAt(dIn) : 0), top(dOut) + (exposed ? R.depth : 0), cap ? cap.z + cap.rise : 0, ...boxes.map((b) => b.max[2]), ...petals.map((q) => q.z1));
   return {
     frames, rings, members, roof,
     facade: { d: dF, pieces, bands, canopies, top: ftop },
@@ -642,6 +694,20 @@ function screenAreaOf(s: SphereEnvelope, rows = 40, cols = 96): number {
     A += (triArea(p0, p1, p2) + triArea(p0, p2, p3));
   }
   return A / 1e6;
+}
+/** n points at equal arc length around a closed polyline. */
+function alongLoop(pts: [number, number][], n: number): [number, number][] {
+  const cum = [0];
+  for (let i = 0; i < pts.length; i++) { const p = pts[i], q = pts[(i + 1) % pts.length]; cum.push(cum[i] + Math.hypot(q[0] - p[0], q[1] - p[1])); }
+  const out: [number, number][] = [];
+  let i = 0;
+  for (let k = 0; k < n; k++) {
+    const s = (cum[pts.length] * k) / n;
+    while (cum[i + 1] < s) i++;
+    const p = pts[i], q = pts[(i + 1) % pts.length], t = (s - cum[i]) / Math.max(1e-9, cum[i + 1] - cum[i]);
+    out.push([p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t]);
+  }
+  return out;
 }
 const triArea = (a: number[], b: number[], c: number[]) => Math.hypot(...cross3([b[0] - a[0], b[1] - a[1], b[2] - a[2]], [c[0] - a[0], c[1] - a[1], c[2] - a[2]])) / 2;
 
@@ -802,10 +868,26 @@ export function roofSkin(ring: PlanRing, r: Roof, band = 0): { deck: BoxMesh[]; 
 /** Top of the roof skin at plan offset d. */
 export const roofTopAt = (r: Roof, d: Mm) => r.zTop0 + (r.dOut - EAVE - COLUMN_SETBACK - d) * r.slope;
 /** Underside of the roof at plan offset d: under the skin on open roofs, under the hanging frames on enclosed ones. */
+const planTriArea = (t: [number, number][]) => Math.abs((t[1][0] - t[0][0]) * (t[2][1] - t[0][1]) - (t[2][0] - t[0][0]) * (t[1][1] - t[0][1])) / 2;
+/** is (x, y) inside a plan triangle? */
+export function inTriangle(t: [number, number][], x: number, y: number) {
+  const s = (a: [number, number], b: [number, number]) => (b[0] - a[0]) * (y - a[1]) - (b[1] - a[1]) * (x - a[0]);
+  const d1 = s(t[0], t[1]), d2 = s(t[1], t[2]), d3 = s(t[2], t[0]);
+  return !((d1 < 0 || d2 < 0 || d3 < 0) && (d1 > 0 || d2 > 0 || d3 > 0));
+}
+
 export function roofUnderAt(r: Roof, d: Mm) {
   const dCol = r.dOut - EAVE - COLUMN_SETBACK;
   const depth = d >= dCol ? r.depth : r.depth * (0.25 + (0.75 * Math.max(0, d - r.dIn)) / Math.max(1, dCol - r.dIn));
   return roofTopAt(r, d) - ROOF_SKIN - (r.exposed ? 0 : depth);
+}
+
+/** An aperture roof petal: its plan triangle extruded from z0 to z1, faces winding outward. */
+export function petalSolid(q: Petal): BoxMesh {
+  const pos: number[] = [];
+  for (const z of [q.z0, q.z1]) for (const [x, y] of q.pts) pos.push(x, y, z);
+  const idx = [0, 2, 1, 3, 4, 5, 0, 1, 4, 0, 4, 3, 1, 2, 5, 1, 5, 4, 2, 0, 3, 2, 3, 5];
+  return orient({ positions: new Float32Array(pos), index: new Uint32Array(idx) });
 }
 
 export const pieceSolid = (ring: PlanRing, q: Piece) => bandSolid(ring, { seg: q.seg, u0: q.u0, u1: q.u1 }, q.d0, q.d1, q.z0, q.z1);

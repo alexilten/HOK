@@ -7,6 +7,16 @@ as `saved.by`. Earlier rounds are numbered here after the fact; they were not ta
 The project file has its own version (`hok.project` v1 to v6). A newer HOK opens every older
 file; an older HOK refuses a newer file instead of half-reading it.
 
+## Unreleased · HOK portfolio presets
+
+- **HOK's portfolio leads the preset library.** The library opens on a **Featured** group, then **HOK portfolio**, **Generic** and **Other precedent-informed studies**, and each precedent card names the studio credited. New visitors open on Mercedes-Benz Stadium.
+- **Mercedes-Benz Stadium (HOK, 2017).** The most researched preset (confidence *medium*): 71,000 seats on the 100, 200 and 300 levels, the mezzanine and upper bowl left out at the east end zone for the window to the city, 533 mm (21 in) seats, two suite levels, the eight-petal aperture roof half open and a 17.7 m (58 ft) halo board. Facts are sourced from HOK, AISC Modern Steel Construction, BuroHappold, Architectural Record, The Architect's Newspaper and others.
+- **New Highmark Stadium (Populous, 2026)** beside it: 60,108 seats, a steep stacked bowl, suites stacked on one sideline and a canopy over about two-thirds of the seats. It is credited to Populous, not HOK.
+- **More HOK stadiums:** Etihad Park (NYCFC, 2027), the EverBank Stadium of the Future (2028), the Hard Rock Stadium modernization (2016; the original 1987 bowl is HOK Sport's, now Populous), Lynn Family Stadium (2020) and Ford Field (ROSSETTI, 2002).
+- **Aperture roof.** A new roof type: a fixed roof ring, four primary trusses framing the opening (no shallower than the published 723 ft span / 70 ft depth) and 3–16 triangular petals that slide out along their own edges from the centre spot. It counts as enclosed until more than half open. The petals export to Rhino, IFC, glTF and DXF on `09_ROOF::PANELS`, shade the sun study, and count in roof area and coverage.
+- **Halo board.** A new board type: a continuous LED ring hung under the roof at the edge of the opening, needing a roof that rings the bowl.
+- The precedent library lists HOK first, then ROSSETTI and Populous, and says that HOK Sport work belongs to Populous, not the contemporary HOK.
+
 ## Unreleased · Sphere-inspired preset
 
 - **New preset: Spherical immersive venue (Sphere-inspired).** A 17,600-seat horseshoe of four steep tiers (100–400 levels) and two suite levels facing an end stage, under a spherical envelope. Published facts and HOK's assumptions are listed with the preset; the envelope keeps Sphere's proportions but is sized to clear this bowl, so it comes out larger than the built venue.

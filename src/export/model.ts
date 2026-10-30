@@ -377,7 +377,7 @@ export function buildModel(s: Stadium): BimModel {
   const memberLayer = { raker: '08_STRUCTURE::RAKERS', column: '08_STRUCTURE::COLUMNS', roofFrame: '09_ROOF::PRIMARY_FRAMES', mullion: '10_FACADE::MULLIONS' } as const;
   const memberCat = { raker: 'Structure: rakers', column: 'Structure: columns', roofFrame: 'Roof: primary frames', mullion: 'Facade: mullions / fins' } as const;
   const r = AR.roof;
-  const hasRoof = r.spans.length > 0 || !!r.cap || r.boxes.length > 0 || !!AR.sphere;
+  const hasRoof = r.spans.length > 0 || !!r.cap || r.boxes.length > 0 || r.petals.length > 0 || !!AR.sphere;
   if (hasRoof) aggregates.push({ id: 'ROOF', name: `Roof (${ROOF_LABEL[r.type]})`, ifc: { cls: 'IfcRoof', type: 'USERDEFINED', objectType: ROOF_LABEL[r.type] }, layer: '09_ROOF', status: 'mass', base: Math.round(r.zTop0), props: { RoofType: r.type, Material: p.architecture.roof.material, Coverage: +AR.metrics.coverage.toFixed(3) } });
   const hasFacade = AR.facade.pieces.length > 0 || !!AR.sphere;
   if (hasFacade) aggregates.push(AR.sphere
@@ -396,6 +396,8 @@ export function buildModel(s: Stadium): BimModel {
     for (const b of r.boxes) add({ id: b.id, name: b.kind === 'truss' ? 'Roof truss' : 'Roof panel', layer: b.kind === 'truss' ? '09_ROOF::TRUSSES' : '09_ROOF::PANELS', category: b.kind === 'truss' ? 'Roof: trusses' : 'Roof: panels',
       ifc: b.kind === 'truss' ? { cls: 'IfcMember', type: 'CHORD', objectType: 'Long-span truss (envelope)' } : { cls: 'IfcPlate', type: 'USERDEFINED', objectType: 'Retractable roof panel' }, parent: 'ROOF', status: 'mass', base: b.min[2], shapes: [{ kind: 'box', min: b.min, max: b.max }], props: { Depth: Math.round(b.max[2] - b.min[2]) } });
   }
+  for (const q of r.petals) add({ id: `ROOF.${q.id}`, name: 'Aperture roof petal', layer: '09_ROOF::PANELS', category: 'Roof: panels', ifc: { cls: 'IfcPlate', type: 'USERDEFINED', objectType: 'Aperture roof petal (sliding)' }, parent: 'ROOF', status: 'mass', base: q.z0,
+    shapes: [{ kind: 'plan', outer: { pts: q.pts.map(([x, y]) => [x, y] as V2), mids: q.pts.map(() => null) }, holes: [], z0: q.z0, z1: q.z1 }], props: { Depth: Math.round(q.z1 - q.z0) } });
   for (const e of sphereElements(s)) add(e);
   for (const q of AR.facade.pieces) add({ id: q.id, name: 'Facade skin', layer: '10_FACADE::SKIN', category: 'Facade: skin', ifc: { cls: 'IfcPlate', type: 'CURTAIN_PANEL' }, parent: 'FACADE', status: 'mass', base: q.z0, shapes: [pieceShape(ring, q)], mesh: () => pieceSolid(ring, q), props: { Height: Math.round(q.z1 - q.z0) } });
   for (const q of AR.facade.bands) add({ id: q.id, name: 'Facade band', layer: '10_FACADE::BANDS', category: 'Facade: bands', ifc: { cls: 'IfcMember', type: 'USERDEFINED', objectType: 'Facade band' }, parent: 'FACADE', status: 'mass', base: q.z0, shapes: [pieceShape(ring, q)], mesh: () => pieceSolid(ring, q), props: {} });

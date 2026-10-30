@@ -11,6 +11,10 @@ runs along the field.
 
 Open the **Preset** menu in the toolbar.
 
+- **Featured** presets come first: Mercedes-Benz Stadium (HOK), with its aperture roof and halo
+  board, and the new Highmark Stadium (Populous). A new visitor opens on Mercedes-Benz Stadium.
+- **HOK portfolio** holds HOK's other stadiums, including Ford Field by ROSSETTI, now part of HOK.
+  Each card names the credited studio.
 - **Generic** presets are clean starting points for soccer and NFL.
 - **Precedent-informed studies** take a stadium's published facts (capacity, sport, tiers, roof)
   and fit a HOK bowl to them. They are not the real buildings: row counts are fitted to the
