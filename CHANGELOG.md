@@ -7,6 +7,10 @@ as `saved.by`. Earlier rounds are numbered here after the fact; they were not ta
 The project file has its own version (`hok.project` v1 to v7). A newer HOK opens every older
 file; an older HOK refuses a newer file instead of half-reading it.
 
+## Unreleased · Venue intelligence (Round 09, phase 3)
+
+- **Venue exports.** Seating manifest `.csv` (adds up to the dashboard, suite levels and concert floor included), financial assumptions `.json` with import, and the scenario A/B comparison `.json`. Also in the Export menu. Model exports are unchanged.
+
 ## Unreleased · Venue intelligence (Round 09, phase 2)
 
 - **Events.** Run an arena for basketball, hockey, or an end- or centre-stage concert, and a stadium for football, soccer or an end-stage concert, without moving a seat. An event that doesn't fit the bowl is shown as unsupported, with the reason. End stages hold back the sections behind them; concert floors sell standing at an editable density. Saved in the project as `event` (still v7; older files open on the design event).

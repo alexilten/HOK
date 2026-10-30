@@ -50,6 +50,16 @@ Not modelled: retractable seating, partial obstruction beside a stage, a seated 
 
 The seating manifest (`M`, or *Open seating manifest*) lists every bowl section with its tier, category, seats, sellable places, average price and gross per event. You can sort it by any column and filter it to premium or held-back sections. Clicking a row selects the section in 3D, and a section picked in 3D scrolls its row into view. In the *Categories* and *Revenue map* views, hovering over a seat shows a card for its section.
 
+## Exports
+
+From the panel's **Export** group, or the toolbar's Export menu under *Venue intelligence*:
+
+- **Seating manifest `.csv`**: one row per bowl section for the event shown, with these columns: key, section, tier, region, category, premium, held back, seats, accessible, sellable, suites, average price, gross per event and note. A row for the suite levels and one for the concert floor follow, when the design has them, so the gross and sellable columns add up to the dashboard.
+- **Financial assumptions `.json`** (`hok.venue-assumptions` v1): the revenue assumptions, plus the seating mix and event for reference. *Import assumptions…* applies a file's assumptions to the open design and never changes its mix. A damaged value keeps its default and is reported.
+- **Scenario comparison `.json`** (`hok.venue-scenarios` v1): A and B, each with its own figures, assumptions and mix, the signed deltas B − A and the sections sold differently.
+
+Every file carries the illustrative-revenue disclaimer. The Rhino, IFC, glTF and DXF exports are unchanged.
+
 ## Scenarios
 
 Scenario A and B each store the whole project (geometry, mix, event and assumptions) and the figures worked out when they were saved, in `localStorage` under `hok.venue-ab.v1`. Changing the current assumptions never rewrites a saved scenario. Opening a scenario loads it as the current design; *update* saves it back to its slot. *Show changed sections in 3D* washes amber every section sold differently in A and B, including sections held back by an event.
@@ -63,7 +73,6 @@ Arena bowls start their first riser row 6 m from the court or rink (7 m at the e
 ## Not yet built
 
 - A separate seating mix and prices for each event, and an annual mix of events.
-- Manifest CSV, assumptions JSON and scenario JSON exports.
 - The Round 07 revenue study in **Design studies** still uses its own simpler formula (it ignores the mix and prices accessible positions in club tiers as general admission); folding it into this model would change its existing figures.
 
 ## Screenshots
