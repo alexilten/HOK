@@ -9,7 +9,11 @@ import type { SeatTable, Vomitory } from '../core/engine/seats';
 import { sweepTier } from '../core/engine/sweep';
 import { vomTriangles } from '../core/engine/vomGeometry';
 import type { Project } from '../core/schema';
-import { STUDY_METRICS, useStore, type AnalysisMetric, type Mode } from '../ui/store';
+import { STUDY_METRICS, useStore, VENUE_METRICS, type AnalysisMetric, type Mode, type RevenueMetric } from '../ui/store';
+import { revenuePerSeat, venueModel, type SectionInventory } from '../core/venue';
+import { SEATING_PRODUCTS } from '../core/schema';
+import { sectionLabel } from '../core/engine/seats';
+import type { Stadium } from '../core/engine/stadium';
 import { egress } from '../studies/egress';
 import { viewQuality } from '../studies/quality';
 import { seatSun } from '../studies/sun';
@@ -69,6 +73,24 @@ function box(dx: number, dy: number, dz: number, cx: number, cy: number, cz: num
 
 const _m = new THREE.Matrix4(), _q = new THREE.Quaternion(), _p = new THREE.Vector3(), _s = new THREE.Vector3(1, 1, 1), _zero = new THREE.Vector3(1e-6, 1e-6, 1e-6), _z = new THREE.Vector3(0, 0, 1), _c = new THREE.Color();
 const WHEELCHAIR = 2;
+const ACCENT = new THREE.Color('#0a84ff');
+
+/** one value per seat from its section: product index, or the heatmap value scaled 0–1 (NaN where nothing is sold) */
+function sectionValues(s: Stadium, metric: AnalysisMetric, rm: RevenueMetric): Float32Array {
+  const v = venueModel(s), t = s.seats.seats;
+  const bySection = new Map(v.sections.map((x) => [`${x.tier}:${x.section}`, x]));
+  const raw = (x: SectionInventory) => (rm === 'price' ? x.price : rm === 'seat' ? revenuePerSeat(x) : x.revenue);
+  const sold = v.sections.filter((x) => x.sellable > 0).map(raw);
+  const lo = sold.length ? Math.min(...sold) : 0, hi = sold.length ? Math.max(...sold) : 1;
+  const out = new Float32Array(t.count);
+  for (let i = 0; i < t.count; i++) {
+    const x = bySection.get(`${t.tier[i]}:${t.section[i]}`);
+    if (!x) { out[i] = NaN; continue; }
+    if (metric === 'product') out[i] = SEATING_PRODUCTS.indexOf(x.product);
+    else out[i] = x.sellable > 0 ? (hi > lo ? (raw(x) - lo) / (hi - lo) : 1) : NaN;
+  }
+  return out;
+}
 
 /** Every seat as one instance of one InstancedMesh — tens of thousands of seats in a single draw call. */
 export function Seats({ seats, project, clip }: { seats: SeatTable; project: Project; clip: THREE.Plane[] }) {
@@ -101,15 +123,33 @@ export function Seats({ seats, project, clip }: { seats: SeatTable; project: Pro
   // Round 07 study metrics colour seats from a per-seat result (each study is cached per design)
   // Round 08: computed once the design settles, so a slider drag runs at engine speed (sun takes ~1 s at 100k seats)
   const study = mode === 'analysis' && STUDY_METRICS.includes(metric) && stadium.seats.seats === seats;
-  const values = useStudy((s) => (metric === 'quality' ? viewQuality(s).score : metric === 'egress' ? egress(s).travel : seatSun(s).sun), study ? stadium : null, 200, metric) ?? undefined;
+  const studyValues = useStudy((s) => (metric === 'quality' ? viewQuality(s).score : metric === 'egress' ? egress(s).travel : seatSun(s).sun), study ? stadium : null, 200, metric) ?? undefined;
+  // Round 09: seating categories and the revenue heatmap colour each seat from its section in the venue model
+  const revenueMetric = useStore((s) => s.revenueMetric);
+  const venue = mode === 'analysis' && VENUE_METRICS.includes(metric) && stadium.seats.seats === seats;
+  const venueValues = useMemo(() => (venue ? sectionValues(stadium, metric, revenueMetric) : undefined), [venue, stadium, metric, revenueMetric]);
+  const values = venueValues ?? studyValues;
+  const section = useStore((s) => s.section);
+  const highlight = useMemo(() => {
+    if (!section) return null;
+    const [tierId, label] = section.split(':');
+    const ti = project.tiers.findIndex((t) => t.id === tierId);
+    const no = stadium.seats.sections.find((x) => x.tier === ti && sectionLabel(ti, x.section) === label)?.section;
+    return ti >= 0 && no != null ? { ti, no } : null;
+  }, [section, project.tiers, stadium.seats.sections]);
 
   useLayoutEffect(() => {
     const im = ref.current;
     if (!im) return;
-    for (let i = 0; i < n; i++) im.setColorAt(i, seatColor(seats, i, project, mode, metric, _c, values));
+    for (let i = 0; i < n; i++) {
+      seatColor(seats, i, project, mode, metric, _c, values);
+      // the selected section reads as a soft accent wash over whatever colouring is on
+      if (highlight && seats.tier[i] === highlight.ti && seats.section[i] === highlight.no) _c.lerp(ACCENT, 0.55);
+      im.setColorAt(i, _c);
+    }
     if (selected != null && selected < n) im.setColorAt(selected, _c.set('#0a84ff'));
     if (im.instanceColor) im.instanceColor.needsUpdate = true;
-  }, [seats, n, mode, metric, selected, project, values]);
+  }, [seats, n, mode, metric, selected, project, values, highlight]);
 
   const onClick = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();

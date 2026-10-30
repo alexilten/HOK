@@ -14,7 +14,9 @@ Proposals and competition entries are labelled as such and are never presented a
 - **Status:** completed _(checked)_ · Groundbreaking 19 May 2014; opened 26 Aug 2017; roof finished July 2018
 - **Year:** 2017 _(checked)_
 - **Credits:** HOK architect (design principal and principal in charge Bill Johnson, who founded 360 Architecture, acquired by HOK in Jan 2015; Wikipedia lists the architect as "360 Architecture (HOK subsidiary)"). Design collaborators tvsdesign, Goode Van Slyke Architecture and Stanley Beaman & Sears. BuroHappold structural engineer (with HOK structural engineers), WSP MEP and fire, Sykes Consulting foundations, Uni-Systems roof mechanisms, Darden & Company project manager, Holder–Hunt–Russell–Moody JV contractor. Owner Georgia World Congress Center Authority. _(checked)_
+- **HOK's role:** HOK design
 - **Capacity:** 71,000 _(checked)_ · Expandable to 75,000 for major football and soccer events and about 83,000 for concerts; soccer 42,500 in its reduced configuration
+- **Reference capacities by event:** Football (NFL) 71,000 [source](https://en.wikipedia.org/wiki/Mercedes-Benz_Stadium) · Football, expanded 75,000 [source](https://en.wikipedia.org/wiki/Mercedes-Benz_Stadium) · Concert 83,000 (about 83,000) [source](https://en.wikipedia.org/wiki/Mercedes-Benz_Stadium) · Soccer, reduced configuration 42,500 [source](https://en.wikipedia.org/wiki/Mercedes-Benz_Stadium)
 - **Roof:** Retractable "oculus" of eight triangular steel-framed petals clad in ETFE (> 143,500 ft² in the petals), sliding in unison along 16 straight rails, each petal about 200 ft long and travelling 185–230 ft; opens or closes in about 8–12 minutes like a camera aperture. Four primary trusses span 723 ft at a typical depth of 70 ft; roof about 14.5 acres. Inspired by the Pantheon's oculus _(checked)_
 - **Bowl:** Three levels: 100 lower, 200 mezzanine (with the midfield club) and 300 upper; middle concourse and upper bowl removed at the east end zone for the 16-storey "window to the city" (22,664 ft²). Retractable lower-bowl seats widen the field for soccer. 190 suites (Wikipedia; another source says 180); about 7,500 club seats; 21 in seats _(checked)_
 - Halo video board ringing the oculus: 58 ft tall, about 1,075–1,100 ft round, 62,350–63,800 ft² (sources differ)
@@ -30,6 +32,7 @@ Proposals and competition entries are labelled as such and are never presented a
 - **Status:** under-construction _(checked)_ · Broke ground 4 Dec 2024; topped out 25 Mar 2026; opening planned for the 2027 MLS season
 - **Year:** 2027 (planned) _(checked)_
 - **Credits:** HOK architect; Turner Construction general contractor. Privately financed by NYCFC ($780 million). _(checked)_
+- **HOK's role:** HOK design
 - **Capacity:** 25,000 _(checked)_ · Includes more than 3,400 safe-standing positions in the supporters' section
 - **Roof:** Transparent roof over the stands that lets daylight into the concourse and keeps crowd noise in the bowl; roof-mounted solar array _(checked)_
 - **Bowl:** Intimate bowl close to the pitch on a narrow, jagged site (the south-east corner is cut off by Willets Point Boulevard); suites, pitchside lounges and a Tunnel Club _(checked)_
@@ -44,7 +47,9 @@ Proposals and competition entries are labelled as such and are never presented a
 - **Status:** under-construction _(checked)_ · HOK selected early 2023; work began Feb 2025; reduced capacity in 2026, Jaguars in Orlando for 2027; completion before the 2028 season
 - **Year:** 2028 (planned) _(checked)_
 - **Credits:** HOK architect (renovation of the existing stadium); AECOM Hunt–Barton Malow contractor. _(checked)_
+- **HOK's role:** HOK renovation of another studio's building
 - **Capacity:** 63,000 _(checked)_ · Just over 63,000 after the renovation, down from just under 68,000; provision to expand to 70,000
+- **Reference capacities by event:** Football (NFL), after the renovation 63,000 (just over 63,000, from just under 68,000) [source](https://stadiumdb.com/designs/usa/stadium_of_the_future)
 - **Roof:** A full roof over the seats and the field, largely translucent ETFE, meeting a facade of mirrored panels whose undulating lower edge leaves openings on the north and south sides for natural ventilation _(checked)_
 - **Bowl:** Existing bowl kept, including the large end-zone video boards; about two-thirds of seats stay general admission _(checked)_
 - **Sources:** [1](https://stadiumdb.com/designs/usa/stadium_of_the_future)
@@ -55,6 +60,7 @@ Proposals and competition entries are labelled as such and are never presented a
 - **Status:** renovation-completed _(checked)_ · $500 million modernization, January 2015 to the 2016 season
 - **Year:** 2015–2016 _(checked)_
 - **Credits:** HOK architect of the modernization; Thornton Tomasetti structural engineer. The original 1987 stadium is credited to HOK Sport (now Populous), not to the contemporary HOK. _(checked)_
+- **HOK's role:** HOK renovation of another studio's building
 - **Capacity:** 64,767 _(checked)_ · From 75,000 before the modernization (Wikipedia infobox)
 - **Roof:** A 14-acre steel shade canopy over the seats with the field left open: four 350 ft corner masts on transfer trusses between eight concrete super columns, 450 ft sideline and 350 ft end-zone trusses, 64 locked-coil cables; four canopy-hung video boards _(checked)_
 - **Bowl:** Existing bowl reworked with additional suites and premium seating _(checked)_
@@ -66,10 +72,109 @@ Proposals and competition entries are labelled as such and are never presented a
 - **Status:** completed _(checked)_ · Groundbreaking 28 Jun 2018; opened 12 Jul 2020
 - **Year:** 2020 _(checked)_
 - **Credits:** HOK architect (hired Jan 2017); Messer–Harmon JV contractor. _(checked)_
+- **HOK's role:** HOK design
 - **Capacity:** 11,700 _(checked)_ · 15,304 with standing room; expandable to 20,000
 - **Roof:** Roof over the stands with a facade read as a "bourbon barrel"; roof-mounted floodlights _(checked)_
 - **Bowl:** Stands on three sides; the open west end looks to the Ohio River bridges, with a 40 × 72.5 ft video board. 18 suites and a 250-seat Premier Club _(checked)_
 - **Sources:** [1](https://en.wikipedia.org/wiki/Lynn_Family_Stadium)
+
+### Roig Arena
+
+- **Location:** Valencia, Spain · **Type:** arena · **Sport:** Basketball (Valencia Basket), concerts, events
+- **Status:** completed _(checked)_ · Opened 6 Sep 2025 (checked 30 Oct 2026)
+- **Year:** 2025 _(checked)_
+- **Credits:** HOK with ERRE arquitectura (Wikipedia credits "ERRE and HOK"); HOK news covers the design and the eight roof trusses. _(checked)_
+- **HOK's role:** HOK with a co-designing studio
+- **Capacity:** 15,600 _(checked)_ · Basketball; 18,600 for 180° concerts and 20,000 for 360° shows
+- **Reference capacities by event:** Basketball 15,600 [source](https://en.wikipedia.org/wiki/Roig_Arena) · Concert, 180° end stage 18,600 [source](https://en.wikipedia.org/wiki/Roig_Arena) · Show, 360° centre stage 20,000 (including the floor) [source](https://en.wikipedia.org/wiki/Roig_Arena)
+- **Bowl:** Not described in the sources read: tiers, suites and hospitality are not published there _(checked)_
+- **Sources:** [1](https://en.wikipedia.org/wiki/Roig_Arena) · [2](https://www.hok.com/projects/view/roig-arena/) · [3](https://www.hok.com/news/2023-10/valencias-roig-arena-achieves-construction-milestone-with-installation-of-eight-monumental-trusses/)
+
+### Etihad Arena
+
+- **Location:** Yas Island, Abu Dhabi, UAE · **Type:** arena · **Sport:** Concerts, UFC, boxing, NBA preseason, events
+- **Status:** completed _(checked)_ · Opened January 2021 after a COVID-19 delay (checked 30 Oct 2026)
+- **Year:** 2021 _(checked)_
+- **Credits:** HOK (design unveiled as Yas Arena, June 2017). _(checked)_
+- **HOK's role:** HOK design
+- **Capacity:** 18,000 _(checked)_ · Up to 18,000; no breakdown by configuration in the sources read
+- **Reference capacities by event:** Maximum, any configuration 18,000 (per-event capacities not published in the sources read) [source](https://en.wikipedia.org/wiki/Etihad_Arena)
+- 2018 MENA Green Building Award, Sustainable Building Design of the Year
+- Temporary 25 m pool for the 2021 FINA World Swimming Championships
+- **Sources:** [1](https://en.wikipedia.org/wiki/Etihad_Arena) · [2](https://www.hok.com/news/2017-06/hok-unveils-design-for-yas-arena-in-abu-dhabi/) · [3](https://www.hok.com/projects/view/etihad-arena)
+
+### Mortgage Matchup Center (formerly Footprint Center) modernization
+
+- **Location:** Phoenix, Arizona, USA · **Type:** arena · **Sport:** NBA (Phoenix Suns), WNBA (Phoenix Mercury), concerts
+- **Status:** renovation-completed _(checked)_ · Two phases; finished for the 2021–22 season (checked 30 Oct 2026)
+- **Year:** 2021 _(checked)_
+- **Credits:** HOK designed the renovation and expansion. The original 1992 arena (America West Arena) is by Ellerbe Becket, not HOK. _(checked)_
+- **HOK's role:** HOK renovation of another studio's building
+- **Capacity:** 16,200 _(checked)_ · About 16,200 for basketball per HOK; Wikipedia lists 17,071 basketball and 16,210 ice hockey
+- **Reference capacities by event:** Basketball 16,200 (about 16,200 (HOK)) [source](https://hok.com/projects/view/phoenix-suns-arena-modernization) · Basketball 17,071 (Wikipedia figure; differs from HOK) [source](https://en.wikipedia.org/wiki/Mortgage_Matchup_Center) · Ice hockey 16,210 [source](https://en.wikipedia.org/wiki/Mortgage_Matchup_Center) · Concert, centre stage 17,716 [source](https://en.wikipedia.org/wiki/Mortgage_Matchup_Center) · Concert, end stage 12,565 [source](https://en.wikipedia.org/wiki/Mortgage_Matchup_Center)
+- **Bowl:** Existing suites converted to mini suites, theater boxes and party boxes opening onto private lounges; about 10,000 ft² of back-of-house along the east and west sidelines turned into premium clubs _(checked)_
+- **Sources:** [1](https://hok.com/projects/view/phoenix-suns-arena-modernization) · [2](https://hok.com/news/2021-01/hok-designs-modernization-of-phoenix-suns-arena) · [3](https://en.wikipedia.org/wiki/Mortgage_Matchup_Center)
+
+### Little Caesars Arena
+
+- **Location:** Detroit, Michigan, USA · **Type:** arena · **Sport:** NHL (Red Wings), NBA (Pistons), concerts
+- **Status:** completed _(checked)_ · Opened 5 Sep 2017 (checked 30 Oct 2026)
+- **Year:** 2017 _(checked)_
+- **Credits:** HOK; Magnusson Klemencic Associates structural engineer; Smith Seckman Reid services engineer. _(checked)_
+- **HOK's role:** HOK design
+- **Capacity:** 19,515 _(checked)_ · Ice hockey; 20,332 basketball; 15,000–22,000 concerts
+- **Reference capacities by event:** Ice hockey 19,515 [source](https://en.wikipedia.org/wiki/Little_Caesars_Arena) · Basketball 20,332 [source](https://en.wikipedia.org/wiki/Little_Caesars_Arena) · Concert, upper bound 22,000 (15,000–22,000 by configuration) [source](https://en.wikipedia.org/wiki/Little_Caesars_Arena)
+- **Bowl:** Steep bowl with a "gondola" seating level suspended above the stands; 62 executive suites; floor about 40 ft below street level _(checked)_
+- **Sources:** [1](https://en.wikipedia.org/wiki/Little_Caesars_Arena)
+
+### Avicii Arena (Globen) renovation and modernisation
+
+- **Location:** Stockholm, Sweden · **Type:** arena · **Sport:** Ice hockey, concerts, events
+- **Status:** renovation-completed _(checked)_ · Construction Jan 2024 – Jan 2025; reopened 1 Feb 2025 (checked 30 Oct 2026)
+- **Year:** 2025 _(checked)_
+- **Credits:** HOK led the design team for the modernisation with C.F. Møller Architects; schlaich bergermann partner structural engineers; NCC contractor. The original 1989 Stockholm Globe Arena is by Berg Arkitektkontor (Svante Berg and Lars Vretblad), not HOK. _(checked)_
+- **HOK's role:** HOK renovation of another studio's building
+- **Capacity:** 16,000 _(checked)_ · Concerts and shows; ice hockey 13,950 (infobox) or 13,850 (article text)
+- **Reference capacities by event:** Ice hockey 13,950 (the article text says 13,850) [source](https://en.wikipedia.org/wiki/Avicii_Arena) · Concert 16,000 [source](https://en.wikipedia.org/wiki/Avicii_Arena)
+- **Bowl:** New gondola seating, lounges and tiers; retractable acoustic ceiling and rigging grid hung on a cable net inside the dome; 110 m diameter, 65 m inner height _(checked)_
+- **Sources:** [1](https://www.hok.com/news/2025-02/avicii-arena-reopens-following-extensive-renovation-and-modernisation/) · [2](https://en.wikipedia.org/wiki/Avicii_Arena)
+
+### State Farm Arena transformation
+
+- **Location:** Atlanta, Georgia, USA · **Type:** arena · **Sport:** NBA (Atlanta Hawks), concerts
+- **Status:** renovation-completed _(checked)_ · Completed October 2018 (checked 30 Oct 2026)
+- **Year:** 2018 _(checked)_
+- **Credits:** HOK designed the $192.5 million transformation. The original 1999 Philips Arena is by HOK Sport (now Populous) with Arquitectonica, not the contemporary HOK. _(checked)_
+- **HOK's role:** HOK renovation of another studio's building
+- **Capacity:** 17,608 _(checked)_ · Basketball (Wikipedia, "17,608+"); HOK says about 17,000; up to 21,000 for concerts
+- **Reference capacities by event:** Basketball 17,608 [source](https://en.wikipedia.org/wiki/State_Farm_Arena) · Basketball 17,000 (HOK figure) [source](https://hok.com/news/2018-10/atlanta-hawks-celebrate-completion-of-hok-designed-state-farm-arena-transformation) · Concert, upper bound 21,000 [source](https://en.wikipedia.org/wiki/State_Farm_Arena)
+- **Bowl:** A four-level wall of suites on the west side replaced by Veranda and Loft suites, Topgolf Swing Suites, the Atlanta Social suite experience and viewing terraces; suites cut from 90 to 40; a courtside club and the NBA's first courtside bar; social seating "neighborhoods" _(checked)_
+- **Sources:** [1](https://hok.com/news/2018-10/atlanta-hawks-celebrate-completion-of-hok-designed-state-farm-arena-transformation) · [2](https://en.wikipedia.org/wiki/State_Farm_Arena)
+
+### Rogers Place
+
+- **Location:** Edmonton, Alberta, Canada · **Type:** arena · **Sport:** NHL (Edmonton Oilers), concerts
+- **Status:** completed _(checked)_ · Opened 8 Sep 2016 (checked 30 Oct 2026)
+- **Year:** 2016 _(checked)_
+- **Credits:** HOK; PCL Construction on the design team. Shugarman Architecture + Design, WAM Development and Hariri Pontarini Architects helped develop the ICE District. _(checked)_
+- **HOK's role:** HOK design
+- **Capacity:** 18,347 _(checked)_ · Ice hockey; 20,147 concerts
+- **Reference capacities by event:** Ice hockey 18,347 [source](https://www.hok.com/news/2016-11/hok-designed-rogers-place-arena-in-edmonton-shatters-attendance-records/) · Concert 20,147 [source](https://www.hok.com/news/2016-11/hok-designed-rogers-place-arena-in-edmonton-shatters-attendance-records/)
+- **Bowl:** 3,100 club seats, 900 loge seats, 500 drink-rail seats, 300 Ozone club seats, 57 executive suites and 24 theater boxes; three clubs and two club lounges _(checked)_
+- **Sources:** [1](https://www.hok.com/news/2016-11/hok-designed-rogers-place-arena-in-edmonton-shatters-attendance-records/)
+
+### Energizer Park (formerly CityPark)
+
+- **Location:** St. Louis, Missouri, USA · **Type:** stadium · **Sport:** MLS soccer (St. Louis City SC)
+- **Status:** completed _(checked)_ · Opened 16 Nov 2022; first MLS match 4 Mar 2023 (checked 30 Oct 2026)
+- **Year:** 2022 _(checked)_
+- **Credits:** HOK with Snow Kreilich Architects. _(checked)_
+- **HOK's role:** HOK with a co-designing studio
+- **Capacity:** 22,423 _(checked)_ · Plus about 2,500 more; HOK material rounds to 22,500
+- **Reference capacities by event:** Soccer 22,423 [source](https://en.wikipedia.org/wiki/Energizer_Park)
+- **Roof:** Clear canopy over the two seating tiers that keeps out weather and holds in crowd noise without shading the pitch _(checked)_
+- **Bowl:** Two tiers; every seat within 120 ft (37 m) of the pitch, the closest in MLS; pitch 40 ft (12 m) below street level _(checked)_
+- **Sources:** [1](https://en.wikipedia.org/wiki/Energizer_Park) · [2](https://www.hok.com/projects/view/mls-st-louis-city-sc-citypark/)
 
 ## ROSSETTI (part of HOK since April 2026)
 
@@ -79,6 +184,7 @@ Proposals and competition entries are labelled as such and are never presented a
 - **Status:** completed _(checked)_ · Groundbreaking 16 Nov 1999; opened 24 Aug 2002; $100 million renovation 2017
 - **Year:** 2002 _(checked)_
 - **Credits:** ROSSETTI (now part of HOK) with Hamilton Anderson Associates and Kaplan McLaughlin Diaz; Thornton Tomasetti structural engineer; SmithGroup services engineer. _(checked)_
+- **HOK's role:** ROSSETTI legacy (before joining HOK)
 - **Capacity:** 65,000 _(checked)_ · About 65,000; expandable to about 70,000 for football
 - **Roof:** Fixed dome with large skylights and glazed open corners; frosted ceiling windows _(checked)_
 - **Bowl:** A 1920s Hudson's warehouse along the south sideline holds most suites and the club lounges; one suite level in the north upper deck; gaps in the upper bowl at the south-west and south-east corners; field 45 ft below street level _(checked)_
@@ -140,6 +246,7 @@ Proposals and competition entries are labelled as such and are never presented a
 - **Status:** completed _(checked)_ · Groundbreaking 5 Jun 2023; ribbon-cutting 23 Jun 2026
 - **Year:** 2026 _(checked)_
 - **Credits:** Populous architect (design led by Scott Radecic); Walter P Moore structural engineer. Not an HOK project. _(checked)_
+- **HOK's role:** Independent reference
 - **Capacity:** 60,108 _(checked)_ · Smallest in the NFL; about 63,000 with standing room; up to 66,000 by event
 - **Roof:** 360° canopy following the bowl over roughly two-thirds of the seats (about 65% in promotional material), field open; the opening is deliberately off-centre to cover more sideline seats and light the grass; largest stadium snow-melt system in the world _(checked)_
 - **Bowl:** Relatively steep, stacked lower bowl and upper deck; the upper deck closer to the field than at any other NFL stadium; suites stacked on the west sideline, main club on the east; open concourses; "window to the world" opening in the north end-zone upper level _(checked)_
@@ -332,6 +439,18 @@ Proposals and competition entries are labelled as such and are never presented a
 - **Capacity:** 52,888 _(checked)_
 - **Bowl:** Single-tier South Stand at 33.89° maximum rake, "as steep as regulations allow" _(checked)_
 - **Sources:** [1](https://www.ribaj.com/buildings/bramley-moore-dock-everton-meis-architects-bdp-pattern-liverpool-stadium/)
+
+### Rocket Arena (Rocket Mortgage FieldHouse) transformation
+
+- **Location:** Cleveland, Ohio, USA · **Type:** arena · **Sport:** NBA (Cavaliers), AHL hockey, concerts
+- **Status:** renovation-completed _(checked)_ · Announced Dec 2016; finished Sep 2019 (checked 30 Oct 2026)
+- **Year:** 2019 _(checked)_
+- **Credits:** SHoP Architects with ROSSETTI, engaged together by the Cavaliers (SHoP the creative lead), and Gensler architect of record. ROSSETTI joined HOK in 2026, after this project. The original 1994 arena is by Ellerbe Becket. Not an HOK design. _(checked)_
+- **HOK's role:** ROSSETTI collaboration (before joining HOK)
+- **Capacity:** 19,432 _(checked)_ · Basketball; 18,926 ice hockey and arena football
+- **Reference capacities by event:** Basketball 19,432 [source](https://en.wikipedia.org/wiki/Rocket_Arena) · Ice hockey 18,926 [source](https://en.wikipedia.org/wiki/Rocket_Arena)
+- **Bowl:** About 2,000 club seats and 88 suites (32 lower, 60 upper, 5 event-level platinum, as listed); three upper-level sections removed in 2018 _(checked)_
+- **Sources:** [1](https://www.shoparc.com/projects/the-q/) · [2](https://GENSLER.COM/projects/rocket-mortgage-fieldhouse) · [3](https://en.wikipedia.org/wiki/Rocket_Arena)
 
 ## Tools in the landscape
 

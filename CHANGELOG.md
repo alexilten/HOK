@@ -4,8 +4,16 @@ HOK follows the Master Brief roadmap one round at a time. From Round 08 the app 
 version number (shown under **About**, opened from the logo) and writes it into every saved project
 as `saved.by`. Earlier rounds are numbered here after the fact; they were not tagged at the time.
 
-The project file has its own version (`hok.project` v1 to v6). A newer HOK opens every older
+The project file has its own version (`hok.project` v1 to v7). A newer HOK opens every older
 file; an older HOK refuses a newer file instead of half-reading it.
+
+## Unreleased · Venue intelligence (Round 09, phase 1)
+
+- **Arena floors.** Two new field types: an NBA basketball court and an NHL hockey rink, drawn with their markings and exported like the other fields.
+- **Nine new presets**, each a reference-inspired concept, not as-built geometry: Roig Arena (HOK with ERRE), Etihad Arena, Little Caesars Arena and Rogers Place (HOK); the Mortgage Matchup Center, Avicii Arena and State Farm Arena renovations (HOK renovations of buildings by Ellerbe Becket, Berg Arkitektkontor and HOK Sport, now Populous); Rocket Arena (SHoP with ROSSETTI, Gensler architect of record: not an HOK design); and Energizer Park (HOK with Snow Kreilich). Mercedes-Benz Stadium and the EverBank Stadium of the Future were already in the library and gain published capacities by event. Every precedent can now carry HOK's actual role and its reference capacities with sources, kept apart from the model's own seat count.
+- **Seating mix.** Click a seat to select its section and sell it as general admission, premium club, loge, luxury suite, VIP, standing room or unavailable. The geometry never changes; a conversion ratio models a physical conversion explicitly, and accessible positions are never converted.
+- **Venue intelligence.** A collapsible panel over the model with capacity, sellable and premium inventory, average ticket, gross ticket revenue per event and per year, editable assumptions, a category view and a revenue heatmap (price per seat, revenue per seat or per section), and scenario A/B with signed deltas. Illustrative gross ticket revenue only.
+- **Project file v7.** Adds the seating mix and the new revenue assumptions. v6 and older files open with no mix and the default prices, and keep their capacity.
 
 ## Unreleased · HOK portfolio presets
 

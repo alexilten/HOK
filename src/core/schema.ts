@@ -11,7 +11,7 @@ import { SPORTS, type SportId } from './sports';
 import type { DisplayUnits, Mm } from './units';
 
 export const SCHEMA_ID = 'hok.project';
-export const SCHEMA_VERSION = 6;
+export const SCHEMA_VERSION = 7;
 
 export type SightlineMode = 'cvalue' | 'riser';
 export type TierKind = 'general' | 'club';
@@ -133,11 +133,30 @@ export interface StudiesParams {
   };
   revenue: {
     currency: string;
+    /** events a year, and the share of sellable inventory sold at each (sell-through) */
     events: number; occupancy: number;
     /** average ticket for a general seat and a club seat, per event; suite licence per suite per year */
     ticket: number; club: number; suite: number;
+    /** Round 09: average ticket per event for loge, VIP and standing places */
+    loge: number; vip: number; standing: number;
+    /**
+     * Round 09: sellable places per physical seat when a bowl section is sold as that product. 1 means
+     * the section is only re-priced and keeps every seat; below 1 models a physical conversion (wider
+     * seats, loge tables, suite fronts) explicitly, and is shown as such. Never applied to accessible positions.
+     */
+    conversion: Record<ConvertibleProduct, number>;
+    /** seats per suite when a bowl section is converted to suites (each suite is sold whole, by licence) */
+    suiteSeats: number;
   };
 }
+
+/**
+ * Round 09 seating products: how a bowl section is sold. A product is a business category on top of the
+ * geometry; it never moves a seat. Suites on premium levels are always 'suite'.
+ */
+export type SeatingProduct = 'general' | 'club' | 'loge' | 'suite' | 'vip' | 'standing' | 'unavailable';
+export const SEATING_PRODUCTS: SeatingProduct[] = ['general', 'club', 'loge', 'suite', 'vip', 'standing', 'unavailable'];
+export type ConvertibleProduct = 'club' | 'loge' | 'suite' | 'vip' | 'standing';
 
 export interface SystemsParams {
   lighting: {
@@ -315,6 +334,11 @@ export interface Project {
   architecture: ArchitectureParams;
   systems: SystemsParams;
   studies: StudiesParams;
+  /**
+   * Round 09 seating mix: the product each bowl section is sold as, keyed `tierId:section` (e.g. `T1:104`).
+   * Sections left out follow their tier (a club tier sells as club, any other tier as general admission).
+   */
+  mix: Record<string, SeatingProduct>;
   /** the app and time that last saved this file (Round 08; informational) */
   saved?: { by: string; at: string };
 }
@@ -360,7 +384,10 @@ export function defaultStudies(): StudiesParams {
     egress: { stepRate: 79, levelRate: 109, targetMin: 8, maxTravel: 30000 },
     sun: { month: 3, day: 21, hour: 15, latitude: 40 },
     carbon: { concrete: 330, rebarRate: 120, rebar: 1.99, steel: 1.55, steelFraction: 0.05, terraceThickness: 250, roofSteel: 100, roofCovering: 40, facade: 120, uncertainty: 0.3 },
-    revenue: { currency: 'USD', events: 25, occupancy: 0.85, ticket: 60, club: 250, suite: 150000 },
+    revenue: {
+      currency: 'USD', events: 25, occupancy: 0.85, ticket: 60, club: 250, suite: 150000, loge: 400, vip: 750, standing: 45,
+      conversion: { club: 1, loge: 1, suite: 0.6, vip: 1, standing: 1 }, suiteSeats: 12,
+    },
   };
 }
 
@@ -386,6 +413,7 @@ export function defaultProject(): Project {
     architecture: defaultArchitecture(),
     systems: defaultSystems(),
     studies: defaultStudies(),
+    mix: {},
   };
 }
 
@@ -416,6 +444,8 @@ export function serializeProject(p: Project): string {
  * built around the bowl and never move a seat.
  * v5 → v6: the design studies (egress, sun, carbon, revenue) take their defaults; they evaluate the
  * design and never change it.
+ * v6 → v7: no seating mix (every section sells as its tier); the new revenue products take their
+ * defaults. Geometry and capacity are unchanged.
  */
 export function parseProject(text: string): Project {
   return readProject(text).project;
@@ -441,13 +471,14 @@ export function readProject(text: string): { project: Project; repaired: string[
   const roofStands = p.architecture.roof.stands.filter((x) => STANDS.includes(x));
   if (roofStands.length !== p.architecture.roof.stands.length) { p.architecture.roof.stands = roofStands; repaired.push('architecture.roof.stands'); }
   p.tiers.forEach((t, i) => { if (t.kind !== 'general' && t.kind !== 'club') { t.kind = 'general'; repaired.push(`tiers[${i}].kind`); } });
+  for (const [k, v] of Object.entries(p.mix)) if (!SEATING_PRODUCTS.includes(v)) { delete p.mix[k]; repaired.push(`mix.${k}`); }
   return { project: p, repaired };
 }
 
 const STANDS: string[] = ['N', 'S', 'E', 'W'];
 /** fields with a fixed set of values; anything else falls back to the default */
 const ENUMS: [string, (string | number)[]][] = [
-  ['sport', ['soccer', 'nfl', 'stage']], ['units', ['metric', 'imperial']], ['sightlines.mode', ['cvalue', 'riser']],
+  ['sport', ['soccer', 'nfl', 'stage', 'basketball', 'hockey']], ['units', ['metric', 'imperial']], ['sightlines.mode', ['cvalue', 'riser']],
   ['architecture.structure.material', ['steel', 'steelDark', 'concrete']],
   ['architecture.roof.type', ['open', 'canopy', 'perimeter', 'enclosed', 'etfe', 'truss', 'retractable', 'aperture', 'sphere']],
   ['architecture.roof.material', ['ptfe', 'etfe', 'metal']],
@@ -504,8 +535,9 @@ function migrate(raw: any): Project {
       egress: { ...d.studies.egress, ...raw.studies?.egress },
       sun: { ...d.studies.sun, ...raw.studies?.sun },
       carbon: { ...d.studies.carbon, ...raw.studies?.carbon },
-      revenue: { ...d.studies.revenue, ...raw.studies?.revenue },
+      revenue: { ...d.studies.revenue, ...raw.studies?.revenue, conversion: { ...d.studies.revenue.conversion, ...raw.studies?.revenue?.conversion } },
     },
+    mix: raw.mix && typeof raw.mix === 'object' && !Array.isArray(raw.mix) ? { ...raw.mix } : {},
     tiers: Array.isArray(raw.tiers) && raw.tiers.length
       ? raw.tiers.map((t: Partial<TierParams>, i: number) => {
         const x = tier(t.id ?? `T${i + 1}`, t.name ?? `Tier ${i + 1}`, t);

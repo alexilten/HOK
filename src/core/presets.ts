@@ -10,7 +10,7 @@
 import { CHECKED, PRECEDENTS } from './data/precedents';
 import { adaRequired } from './engine/accessibility';
 import { evaluate, fitRowsToTarget, ROWS_MAX as ROWS_LIMIT } from './engine/optimize';
-import { defaultProject, suiteLevel, tier, type Project } from './schema';
+import { defaultProject, suiteLevel, tier, type PremiumLevel, type Project } from './schema';
 import { SPORTS, type SportId } from './sports';
 
 export type Confidence = 'generic' | 'low' | 'medium';
@@ -41,6 +41,41 @@ function base(sport: SportId, name: string, id: string): Project {
   if (sport === 'nfl') p.units = 'imperial';
   return p;
 }
+
+/** shown on every precedent-informed preset (Round 09) */
+export const CONCEPT_LABEL = 'Reference-inspired concept — not as-built geometry.';
+
+/**
+ * Round 09 arena planning defaults (HOK assumptions, listed in each arena preset): a smaller concourse and
+ * program band than a stadium, an enclosed roof with a centre-hung board and catwalk lighting, steeper
+ * rakes, and the sightline targets of an indoor bowl.
+ */
+function arena(p: Project, cornerRadius = 9000): Project {
+  p.units = 'imperial';
+  p.sightlines = { ...p.sightlines, maxRakeDeg: 37, targetC: 75 };
+  p.bowl.cornerRadius = cornerRadius;
+  p.tiers.forEach((t, i) => {
+    t.rowDepth = 850;
+    if (i === 0) t.elevation = 600;
+    else t.overhang = Math.min(t.overhang, -4000);
+  });
+  p.building = { ...p.building, concourseWidth: 7000, programDepth: 7000, cores: { ...p.building.cores, spacing: 45000, depth: 9000 } };
+  p.architecture.roof = { ...p.architecture.roof, type: 'enclosed', material: 'metal', clearance: 8000, overhang: 2000, pitch: 0, depth: 4500 };
+  p.architecture.facade = { ...p.architecture.facade, portals: 4, portalWidth: 9000, portalHeight: 6000 };
+  p.architecture.boh = { ...p.architecture.boh, corridor: 5000, depth: 14000, clear: 4000, scale: 0.6 };
+  p.systems.boards = { ...p.systems.boards, type: 'centre', width: 12000, height: 7000, clear: 22000 };
+  p.systems.lighting = { ...p.systems.lighting, mount: 'roof', target: 2000 };
+  p.systems.service = { ...p.systems.service, fieldAccess: 'E', dockBays: 4 };
+  return p;
+}
+const ARENA_ASSUMED = [
+  'One bowl round the court or rink, its first riser row 6 m from the sidelines and 7 m from the ends: courtside floor seats, and the shallower retractable front rows that reach the hockey glass, are not modelled, because a full riser bowl at the boards cannot meet the C-value at the field line',
+  'Indoor sightlines: C-value target 75 mm (60 mm upper tiers), 850 mm rows, rakes up to 37° (steeper than the 34–35° football guidance; HOK assumption)',
+  'Enclosed roof on long-span trusses with catwalk lighting and a centre-hung board; arena concourse, program and core allowances (HOK planning assumptions)',
+  'Suites drawn at 4.5 m per suite with 12 seats; the suite count is what fits, not a published number',
+];
+const arenaSuites = (id: string, belowTier: string, p: Partial<PremiumLevel> = {}) =>
+  suiteLevel(id, belowTier, { height: 4200, setback: 3000, stands: ['N', 'S', 'E', 'W'], unitWidth: 4500, unitDepth: 6000, seatsPerUnit: 12, ...p });
 
 /**
  * Round 02 planning defaults shared by every preset (HOK assumptions, listed in each preset's
@@ -79,6 +114,11 @@ const CITY: Record<string, { lat: number; lon: number; city: string }> = {
   'etihad-park': { lat: 40.8, lon: -73.8, city: 'New York' }, everbank: { lat: 30.3, lon: -81.6, city: 'Jacksonville' },
   'hard-rock': { lat: 26.0, lon: -80.2, city: 'Miami Gardens' }, 'lynn-family': { lat: 38.3, lon: -85.7, city: 'Louisville' },
   'ford-field': { lat: 42.3, lon: -83.0, city: 'Detroit' },
+  'roig-arena': { lat: 39.5, lon: -0.4, city: 'Valencia' }, 'etihad-arena': { lat: 24.5, lon: 54.6, city: 'Abu Dhabi' },
+  'mortgage-matchup': { lat: 33.4, lon: -112.1, city: 'Phoenix' }, 'little-caesars': { lat: 42.3, lon: -83.1, city: 'Detroit' },
+  'avicii-arena': { lat: 59.3, lon: 18.1, city: 'Stockholm' }, 'rocket-arena': { lat: 41.5, lon: -81.7, city: 'Cleveland' },
+  'state-farm-arena': { lat: 33.8, lon: -84.4, city: 'Atlanta' }, 'rogers-place': { lat: 53.5, lon: -113.5, city: 'Edmonton' },
+  'energizer-park': { lat: 38.6, lon: -90.2, city: 'St. Louis' },
 };
 
 const P = (meta: PresetMeta, make: () => Project): Preset => {
@@ -161,6 +201,99 @@ const HOK_PRESETS: Preset[] = [
       p.architecture.boh = { ...p.architecture.boh, depth: 19000 };
       return fitted(p);
     }),
+  // ── Round 09: HOK arenas (designs, collaborations and renovations; each credit in the precedent library)
+  P({ id: 'roig-arena', name: 'Basketball and concert arena — Roig Arena (HOK with ERRE)', short: '15,600 basketball · 18,600–20,000 concerts', category: 'precedent', sport: 'basketball', precedent: 'roig-arena',
+      verified: ['HOK with ERRE arquitectura; opened 6 Sep 2025, Valencia', 'Basketball 15,600; 180° concerts 18,600; 360° shows 20,000 including the floor'],
+      assumed: ['Two tiers round an NBA-size court with one suite level between them on both sidelines; the tier split and suites are not published in the sources read', ...ARENA_ASSUMED, 'Row counts fitted to the 15,600 basketball capacity; concert configurations are reference figures only'], confidence: 'low' },
+    () => {
+      const p = (base('basketball', 'Basketball and concert arena (Roig Arena)', 'roig-arena'));
+      p.bowl.targetCapacity = 15600;
+      p.tiers = [tier('T1', 'Lower bowl', { rows: 22, elevation: 1000 }), tier('T2', 'Upper bowl', { rows: 18, elevation: 4500, overhang: -2500, targetC: 60 })];
+      p.premium = [arenaSuites('P1', 'T2')];
+      return fitted(arena(p));
+    }),
+  P({ id: 'etihad-arena', name: 'Flexible events arena — Etihad Arena', short: 'up to 18,000 · concerts, combat sports, basketball', category: 'precedent', sport: 'basketball', precedent: 'etihad-arena',
+      verified: ['HOK; opened January 2021, Yas Island, Abu Dhabi', 'Up to 18,000; capacities by configuration are not published in the sources read'],
+      assumed: ['Modelled on a basketball court and fitted to the published maximum of 18,000, so the seated bowl is probably larger than the real basketball configuration', 'Two tiers with one suite level on both sidelines', ...ARENA_ASSUMED], confidence: 'low' },
+    () => {
+      const p = (base('basketball', 'Flexible events arena (Etihad Arena)', 'etihad-arena'));
+      p.bowl.targetCapacity = 18000;
+      p.tiers = [tier('T1', 'Lower bowl', { rows: 22, elevation: 1000 }), tier('T2', 'Upper bowl', { rows: 20, elevation: 4500, overhang: -2500, targetC: 60 })];
+      p.premium = [arenaSuites('P1', 'T2')];
+      return fitted(arena(p));
+    }),
+  P({ id: 'mortgage-matchup', name: 'Arena renovation for premium — Mortgage Matchup Center (HOK renovation)', short: '≈16,200 basketball · suites reworked into boxes and clubs', category: 'precedent', sport: 'basketball', precedent: 'mortgage-matchup',
+      verified: ['HOK renovation and expansion, finished for 2021–22; the original 1992 arena is by Ellerbe Becket', 'About 16,200 for basketball (HOK); Wikipedia lists 17,071 basketball and 16,210 hockey', 'Suites converted to mini suites, theater boxes and party boxes; about 10,000 ft² of sideline back-of-house turned into premium clubs'],
+      assumed: ['Lower and upper bowl with the reworked suite level between them on both sidelines; the box and club layout is not modelled seat by seat', ...ARENA_ASSUMED, 'Row counts fitted to 16,200'], confidence: 'low' },
+    () => {
+      const p = (base('basketball', 'Arena renovation for premium (Mortgage Matchup Center)', 'mortgage-matchup'));
+      p.bowl.targetCapacity = 16200;
+      p.tiers = [tier('T1', 'Lower bowl', { rows: 24, elevation: 1000 }), tier('T2', 'Upper bowl', { rows: 16, elevation: 4500, overhang: -2500, targetC: 60 })];
+      p.premium = [arenaSuites('P1', 'T2')];
+      return fitted(arena(p));
+    }),
+  P({ id: 'little-caesars', name: 'Steep NHL and NBA arena with a gondola — Little Caesars Arena', short: '19,515 hockey · 20,332 basketball · gondola level', category: 'precedent', sport: 'hockey', precedent: 'little-caesars',
+      verified: ['HOK; opened 5 Sep 2017, Detroit', 'Ice hockey 19,515; basketball 20,332; concerts 15,000–22,000', 'Steep bowl with a "gondola" seating level suspended above the stands; 62 executive suites'],
+      assumed: ['Three tiers round an NHL rink: the gondola is drawn as a short club tier with a suite level under it on both sidelines, not as a suspended structure', ...ARENA_ASSUMED, 'Row counts fitted to the 19,515 hockey capacity'], confidence: 'low' },
+    () => {
+      const p = (base('hockey', 'Steep NHL and NBA arena (Little Caesars Arena)', 'little-caesars'));
+      p.bowl.targetCapacity = 19515;
+      p.tiers = [
+        tier('T1', 'Lower bowl', { rows: 24, elevation: 1200 }),
+        tier('T2', 'Gondola (club)', { rows: 4, elevation: 4200, overhang: -2000, targetC: 60 }),
+        tier('T3', 'Upper bowl', { rows: 16, elevation: 4200, overhang: -2000, targetC: 60 }),
+      ];
+      p.premium = [arenaSuites('P1', 'T2')];
+      return fitted(arena(p));
+    }),
+  P({ id: 'avicii-arena', name: 'Spherical arena modernisation — Avicii Arena (HOK renovation)', short: '13,950 hockey · 16,000 concerts · gondola seating', category: 'precedent', sport: 'hockey', precedent: 'avicii-arena',
+      verified: ['HOK-led modernisation with C.F. Møller Architects (2024–25); the original 1989 Globe is by Berg Arkitektkontor', 'Ice hockey 13,950 (infobox; the article text says 13,850); concerts 16,000', 'New gondola seating and lounges; retractable acoustic ceiling inside the 110 m dome'],
+      assumed: ['A round bowl: an 18 m corner radius; the dome is drawn as an enclosed roof, not a sphere', 'The new gondola seating is drawn as a suite level under the upper tier on both sidelines', ...ARENA_ASSUMED, 'Row counts fitted to 13,950'], confidence: 'low' },
+    () => {
+      const p = (base('hockey', 'Spherical arena modernisation (Avicii Arena)', 'avicii-arena'));
+      p.bowl.targetCapacity = 13950;
+      p.tiers = [tier('T1', 'Lower bowl', { rows: 22, elevation: 1200 }), tier('T2', 'Upper bowl', { rows: 14, elevation: 4200, overhang: -2000, targetC: 60 })];
+      p.premium = [arenaSuites('P1', 'T2')];
+      return fitted(arena(p, 18000));
+    }),
+  P({ id: 'state-farm-arena', name: 'Arena transformation with social seating — State Farm Arena (HOK renovation)', short: '17,608 basketball · suite wall replaced by terraces and social suites', category: 'precedent', sport: 'basketball', precedent: 'state-farm-arena',
+      verified: ['HOK transformation, completed October 2018; the original 1999 Philips Arena is by HOK Sport (now Populous) with Arquitectonica', 'Basketball 17,608 (Wikipedia; HOK says about 17,000); up to 21,000 for concerts', 'The west-side wall of suites became terraces and social suites; suites cut from 90 to 40; courtside club and bar'],
+      assumed: ['The west sideline is the N stand here: its suite level is kept and the S sideline has none; terraces and social suites are not modelled', ...ARENA_ASSUMED, 'Row counts fitted to 17,608'], confidence: 'low' },
+    () => {
+      const p = (base('basketball', 'Arena transformation with social seating (State Farm Arena)', 'state-farm-arena'));
+      p.bowl.targetCapacity = 17608;
+      p.tiers = [tier('T1', 'Lower bowl', { rows: 24, elevation: 1000 }), tier('T2', 'Upper bowl', { rows: 18, elevation: 4500, overhang: -2500, targetC: 60 })];
+      p.premium = [arenaSuites('P1', 'T2', { stands: ['N'] })];
+      return fitted(arena(p));
+    }),
+  P({ id: 'rogers-place', name: 'NHL arena with club and loge products — Rogers Place', short: '18,347 hockey · 20,147 concerts · 3,100 club seats', category: 'precedent', sport: 'hockey', precedent: 'rogers-place',
+      verified: ['HOK; opened 8 Sep 2016, Edmonton', 'Ice hockey 18,347; concerts 20,147', '3,100 club seats, 900 loge seats, 57 executive suites and 24 theater boxes'],
+      assumed: ['Three tiers: lower bowl, a club tier and an upper bowl, with one suite level under the upper bowl on both sidelines', 'The club tier is fitted with the rest, so its seat count is the model\'s, not the published 3,100; loge seats are not separated out (assign them in the seating mix)', ...ARENA_ASSUMED, 'Row counts fitted to 18,347'], confidence: 'low' },
+    () => {
+      const p = (base('hockey', 'NHL arena with club and loge products (Rogers Place)', 'rogers-place'));
+      p.bowl.targetCapacity = 18347;
+      p.tiers = [
+        tier('T1', 'Lower bowl', { rows: 22, elevation: 1200 }),
+        tier('T2', 'Club level', { rows: 6, elevation: 4200, overhang: -2000, targetC: 60 }),
+        tier('T3', 'Upper bowl', { rows: 16, elevation: 4200, overhang: -2000, targetC: 60 }),
+      ];
+      p.premium = [arenaSuites('P1', 'T3')];
+      return fitted(arena(p));
+    }),
+  P({ id: 'rocket-arena', name: 'Arena transformation — Rocket Arena (SHoP with ROSSETTI; Gensler)', short: '19,432 basketball · 18,926 hockey · two suite levels', category: 'precedent', sport: 'basketball', precedent: 'rocket-arena',
+      verified: ['SHoP Architects with ROSSETTI (before ROSSETTI joined HOK), Gensler architect of record; finished 2019. The original 1994 arena is by Ellerbe Becket. Not an HOK design', 'Basketball 19,432; ice hockey 18,926', 'About 2,000 club seats; 88 suites on two levels plus event-level suites'],
+      assumed: ['Lower bowl, a club tier and an upper bowl, with suite levels under the club tier and the upper bowl on both sidelines', ...ARENA_ASSUMED, 'Row counts fitted to 19,432'], confidence: 'low' },
+    () => {
+      const p = (base('basketball', 'Arena transformation (Rocket Arena)', 'rocket-arena'));
+      p.bowl.targetCapacity = 19432;
+      p.tiers = [
+        tier('T1', 'Lower bowl', { rows: 22, elevation: 1000 }),
+        tier('T2', 'Club level', { rows: 5, elevation: 4200, overhang: -2000, targetC: 60 }),
+        tier('T3', 'Upper bowl', { rows: 18, elevation: 4200, overhang: -2000, targetC: 60 }),
+      ];
+      p.premium = [arenaSuites('P1', 'T2'), arenaSuites('P2', 'T3', { name: 'Upper suite level' })];
+      return fitted(arena(p));
+    }),
   P({ id: 'etihad-park', name: 'Intimate city soccer stadium — Etihad Park (NYCFC)', short: '25,000 · transparent roof, safe standing, tight urban site', category: 'precedent', sport: 'soccer', precedent: 'etihad-park',
       verified: ['HOK; Turner Construction. Under construction in Queens, opening for the 2027 MLS season', 'Capacity 25,000 including more than 3,400 safe-standing positions', 'Transparent roof over the stands that keeps crowd noise in the bowl; intimate bowl close to the pitch'],
       assumed: ['Two tiers, first row 6.5 m from the touchlines and 7.5 m from the goal lines', 'Roof modelled as a translucent perimeter canopy', 'The supporters\' safe-standing section is counted as seats; the jagged site and cut south-east corner are not modelled', 'Row counts fitted to 25,000'], confidence: 'low' },
@@ -171,6 +304,19 @@ const HOK_PRESETS: Preset[] = [
       p.tiers = [tier('T1', 'Lower bowl', { rows: 22, elevation: 1200 }), tier('T2', 'Upper bowl', { rows: 10, elevation: 4200, overhang: -6500, targetC: 60 })];
       p.premium = [suiteLevel('P1', 'T2', { name: 'Suite level', setback: 5000, stands: ['S'] })];
       p.architecture.roof = { ...p.architecture.roof, type: 'perimeter', material: 'etfe', clearance: 13000 };
+      return fitted(p);
+    }),
+  P({ id: 'energizer-park', name: 'Close-to-the-pitch soccer stadium — Energizer Park (HOK with Snow Kreilich)', short: '22,423 · every seat within 120 ft of the pitch', category: 'precedent', sport: 'soccer', precedent: 'energizer-park',
+      verified: ['HOK with Snow Kreilich Architects; opened 16 Nov 2022, St. Louis', 'Capacity 22,423 (about 2,500 more can be added)', 'Two tiers under a clear canopy; every seat within 120 ft (37 m) of the pitch; pitch 40 ft below street level'],
+      assumed: ['Two tiers, first row 5 m from the touchlines and 6 m from the goal lines', 'Canopy drawn as a translucent perimeter roof; the sunken pitch and premium products are not modelled (assign them in the seating mix)', 'Row counts fitted to 22,423'], confidence: 'low' },
+    () => {
+      const p = base('soccer', 'Close-to-the-pitch soccer stadium (Energizer Park)', 'energizer-park');
+      p.field.runoffSide = 4500; p.field.runoffEnd = 5500;
+      p.bowl = { sideDistance: 5000, endDistance: 6000, cornerRadius: 6000, targetCapacity: 22423, stands: {} };
+      p.sightlines.maxRakeDeg = 35;
+      p.tiers = [tier('T1', 'Lower bowl', { rows: 20, elevation: 1200 }), tier('T2', 'Upper bowl', { rows: 12, elevation: 4200, overhang: -5000, targetC: 60 })];
+      p.premium = [suiteLevel('P1', 'T2', { name: 'Suite level', setback: 5000, stands: ['S'] })];
+      p.architecture.roof = { ...p.architecture.roof, type: 'perimeter', material: 'etfe', clearance: 12000 };
       return fitted(p);
     }),
   P({ id: 'everbank', name: 'Enclosed NFL renovation — EverBank Stadium of the Future', short: '63,000 · full translucent ETFE roof over an existing bowl', category: 'precedent', sport: 'nfl', precedent: 'everbank',

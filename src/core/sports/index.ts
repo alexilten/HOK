@@ -10,17 +10,17 @@
 import type { Mm } from '../units';
 import { ft, m } from '../units';
 
-export type SportId = 'soccer' | 'nfl' | 'stage';
+export type SportId = 'soccer' | 'nfl' | 'stage' | 'basketball' | 'hockey';
 export type Vec2 = [number, number];
 export type Vec3 = [number, number, number];
 
 export type Marking =
   /** straight painted line; a→b is the centreline of the paint, `width` its full width */
-  | { kind: 'line'; id: string; a: Vec2; b: Vec2; width: Mm }
+  | { kind: 'line'; id: string; a: Vec2; b: Vec2; width: Mm; color?: string }
   /** circular arc, angles in radians CCW from +X; full circle when a1 - a0 = 2π */
-  | { kind: 'arc'; id: string; c: Vec2; r: Mm; a0: number; a1: number; width: Mm }
+  | { kind: 'arc'; id: string; c: Vec2; r: Mm; a0: number; a1: number; width: Mm; color?: string }
   /** filled spot */
-  | { kind: 'spot'; id: string; c: Vec2; r: Mm };
+  | { kind: 'spot'; id: string; c: Vec2; r: Mm; color?: string };
 
 export interface Rect { minX: Mm; maxX: Mm; minY: Mm; maxY: Mm }
 
@@ -215,6 +215,81 @@ function buildStage(p: FieldParams): FieldModel {
   };
 }
 
+// ── basketball (NBA court) and ice hockey (NHL rink): arena floors (Round 09) ────────────────
+const LINE_COURT = 51; // 2″ lines
+
+function buildBasketball(p: FieldParams): FieldModel {
+  const L = ft(94), W = ft(50), X = L / 2, Y = W / 2, w = LINE_COURT;
+  const mk: Marking[] = [];
+  const line = (id: string, a: Vec2, b: Vec2) => mk.push({ kind: 'line', id, a, b, width: w });
+  line('SIDELINE_N', [-X, Y], [X, Y]); line('SIDELINE_S', [-X, -Y], [X, -Y]);
+  line('BASELINE_E', [X, -Y], [X, Y]); line('BASELINE_W', [-X, -Y], [-X, Y]);
+  line('HALFCOURT', [0, -Y], [0, Y]);
+  mk.push({ kind: 'arc', id: 'CENTRE_CIRCLE', c: [0, 0], r: ft(6), a0: 0, a1: Math.PI * 2, width: w });
+  const hoopIn = ft(5, 3), lane = ft(8), ftLine = ft(19), arc = ft(23, 9), corner = ft(22);
+  for (const [s, end] of [[1, 'E'], [-1, 'W']] as const) {
+    const bx = s * X, hx = s * (X - hoopIn), fx = s * (X - ftLine);
+    line(`LANE_${end}_N`, [bx, lane], [fx, lane]); line(`LANE_${end}_S`, [bx, -lane], [fx, -lane]);
+    line(`FREE_THROW_${end}`, [fx, -lane], [fx, lane]);
+    mk.push({ kind: 'arc', id: `FREE_THROW_CIRCLE_${end}`, c: [fx, 0], r: ft(6), a0: 0, a1: Math.PI * 2, width: w });
+    // three-point line: straight 22 ft from the basket along each sideline, then the 23′9″ arc
+    const t = Math.asin(corner / arc), xb = hx - s * arc * Math.cos(t);
+    line(`THREE_${end}_N`, [bx, corner], [xb, corner]); line(`THREE_${end}_S`, [bx, -corner], [xb, -corner]);
+    mk.push({ kind: 'arc', id: `THREE_ARC_${end}`, c: [hx, 0], r: arc, a0: s > 0 ? Math.PI - t : -t, a1: s > 0 ? Math.PI + t : t, width: w });
+    mk.push({ kind: 'arc', id: `RESTRICTED_${end}`, c: [hx, 0], r: ft(4), a0: s > 0 ? Math.PI / 2 : -Math.PI / 2, a1: s > 0 ? Math.PI * 1.5 : Math.PI / 2, width: w });
+    mk.push({ kind: 'spot', id: `BASKET_${end}`, c: [hx, 0], r: 230 });
+  }
+  const surface: Rect = { minX: -X - p.runoffEnd, maxX: X + p.runoffEnd, minY: -Y - p.runoffSide, maxY: Y + p.runoffSide };
+  return {
+    sport: 'basketball', length: L, width: W, boundary: half(L, W), surface, markings: mk,
+    zones: [{ id: 'RUNOFF', label: 'Floor apron', kind: 'runoff', rect: surface }],
+    goals: [], numbers: [], stage: null,
+    landmarks: { CENTRE_COURT: [0, 0, 0], BASKET_E: [X - hoopIn, 0, ft(10)], BASKET_W: [-X + hoopIn, 0, ft(10)], CORNER_NE: [X, Y, 0], CORNER_NW: [-X, Y, 0], CORNER_SE: [X, -Y, 0], CORNER_SW: [-X, -Y, 0] },
+    lineColor: '#2b2b2e',
+    sources: ['nba.court', 'hok.arena.floor'],
+  };
+}
+
+const RED_LINE = '#c8323c', BLUE_LINE = '#2a5bb8';
+
+function buildHockey(p: FieldParams): FieldModel {
+  const L = ft(200), W = ft(85), X = L / 2, Y = W / 2;
+  const mk: Marking[] = [];
+  const line = (id: string, a: Vec2, b: Vec2, width: Mm, color: string) => mk.push({ kind: 'line', id, a, b, width, color });
+  // boards: straight runs and the 28 ft corners
+  const R = ft(28);
+  line('BOARDS_N', [-X + R, Y], [X - R, Y], 150, '#c9ccd2'); line('BOARDS_S', [-X + R, -Y], [X - R, -Y], 150, '#c9ccd2');
+  line('BOARDS_E', [X, -Y + R], [X, Y - R], 150, '#c9ccd2'); line('BOARDS_W', [-X, -Y + R], [-X, Y - R], 150, '#c9ccd2');
+  for (const [cx, cy, a0] of [[1, 1, 0], [-1, 1, Math.PI / 2], [-1, -1, Math.PI], [1, -1, Math.PI * 1.5]] as const)
+    mk.push({ kind: 'arc', id: `BOARDS_${cy > 0 ? 'N' : 'S'}${cx > 0 ? 'E' : 'W'}`, c: [cx * (X - R), cy * (Y - R)], r: R, a0, a1: a0 + Math.PI / 2, width: 150, color: '#c9ccd2' });
+  line('CENTRE_RED', [0, -Y], [0, Y], ft(1), RED_LINE);
+  mk.push({ kind: 'arc', id: 'CENTRE_CIRCLE', c: [0, 0], r: ft(15), a0: 0, a1: Math.PI * 2, width: 51, color: BLUE_LINE });
+  mk.push({ kind: 'spot', id: 'CENTRE_SPOT', c: [0, 0], r: 152, color: BLUE_LINE });
+  for (const [s, end] of [[1, 'E'], [-1, 'W']] as const) {
+    const gx = s * (X - ft(11)), bx = s * (X - ft(75));
+    // goal lines run board to board; the corners pull them in
+    const gy = Y - R + Math.sqrt(R * R - (ft(11) - R) ** 2);
+    line(`GOAL_LINE_${end}`, [gx, -gy], [gx, gy], 51, RED_LINE);
+    line(`BLUE_LINE_${end}`, [bx, -Y], [bx, Y], ft(1), BLUE_LINE);
+    mk.push({ kind: 'arc', id: `CREASE_${end}`, c: [gx, 0], r: ft(6), a0: s > 0 ? Math.PI / 2 : -Math.PI / 2, a1: s > 0 ? Math.PI * 1.5 : Math.PI / 2, width: 51, color: RED_LINE });
+    for (const sy of [1, -1]) {
+      const c: Vec2 = [gx - s * ft(20), sy * ft(22)];
+      mk.push({ kind: 'arc', id: `FACEOFF_${end}${sy > 0 ? 'N' : 'S'}`, c, r: ft(15), a0: 0, a1: Math.PI * 2, width: 51, color: RED_LINE });
+      mk.push({ kind: 'spot', id: `FACEOFF_SPOT_${end}${sy > 0 ? 'N' : 'S'}`, c, r: 305, color: RED_LINE });
+      mk.push({ kind: 'spot', id: `NEUTRAL_SPOT_${end}${sy > 0 ? 'N' : 'S'}`, c: [bx - s * ft(5), sy * ft(22)], r: 305, color: RED_LINE });
+    }
+  }
+  const surface: Rect = { minX: -X - p.runoffEnd, maxX: X + p.runoffEnd, minY: -Y - p.runoffSide, maxY: Y + p.runoffSide };
+  return {
+    sport: 'hockey', length: L, width: W, boundary: half(L, W), surface, markings: mk,
+    zones: [{ id: 'RUNOFF', label: 'Dasher boards and glass', kind: 'runoff', rect: surface }],
+    goals: [], numbers: [], stage: null,
+    landmarks: { CENTRE_ICE: [0, 0, 0], GOAL_E: [X - ft(11), 0, 0], GOAL_W: [-X + ft(11), 0, 0], CORNER_NE: [X, Y, 0], CORNER_NW: [-X, Y, 0], CORNER_SE: [X, -Y, 0], CORNER_SW: [-X, -Y, 0] },
+    lineColor: RED_LINE,
+    sources: ['nhl.rink', 'hok.arena.floor'],
+  };
+}
+
 export const SPORTS: Record<SportId, SportDef> = {
   soccer: {
     id: 'soccer', label: 'Football · Soccer',
@@ -238,4 +313,23 @@ export const SPORTS: Record<SportId, SportDef> = {
     build: buildStage,
     focusLabel: 'nearest edge of the event floor, at floor level',
   },
+  basketball: {
+    id: 'basketball', label: 'Basketball · NBA court',
+    limits: { length: [ft(94), ft(94)], width: [ft(50), ft(50)], fixed: true },
+    // courtside floor seats sit on the apron; the riser bowl starts behind them (HOK assumption, hok.arena.floor)
+    defaults: { length: ft(94), width: ft(50), runoffSide: m(3), runoffEnd: m(4), sideDistance: m(6), endDistance: m(7) },
+    build: buildBasketball,
+    focusLabel: 'nearest sideline / baseline, at floor level',
+  },
+  hockey: {
+    id: 'hockey', label: 'Ice hockey · NHL rink',
+    limits: { length: [ft(200), ft(200)], width: [ft(85), ft(85)], fixed: true },
+    // the riser bowl starts behind a shallow front section at the glass, which is not modelled (hok.arena.floor)
+    defaults: { length: ft(200), width: ft(85), runoffSide: m(2), runoffEnd: m(2), sideDistance: m(6), endDistance: m(7) },
+    build: buildHockey,
+    focusLabel: 'nearest board line, at ice level',
+  },
 };
+
+/** arena floors, which share one bowl between basketball, hockey and concerts */
+export const ARENA_SPORTS: SportId[] = ['basketball', 'hockey'];

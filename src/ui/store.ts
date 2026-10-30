@@ -5,10 +5,16 @@ import type { SegmentId } from '../core/engine/plan';
 import { parseProject, type Project } from '../core/schema';
 import { SHARE_KEY } from '../core/share';
 import { readAutosave, readUserPresets, writeAutosave, writeUserPresets, type UserPreset } from './persist';
+import { figures, sectionKey, venueModel, type ScenarioFigures } from '../core/venue';
+import { sectionLabel } from '../core/engine/seats';
 
 export type Mode = 'explore' | 'technical' | 'analysis';
 export type CameraView = 'perspective' | 'plan' | 'elevation' | 'section' | 'iso' | 'fieldLevel' | 'exterior';
-export type AnalysisMetric = 'cvalue' | 'distance' | 'quality' | 'egress' | 'sun' | 'tier' | 'sector' | 'class';
+export type AnalysisMetric = 'cvalue' | 'distance' | 'quality' | 'egress' | 'sun' | 'tier' | 'sector' | 'class' | 'product' | 'revenue';
+/** Round 09: metrics coloured from the venue model (one value per section) */
+export const VENUE_METRICS: AnalysisMetric[] = ['product', 'revenue'];
+/** what the revenue heatmap shows: price per place, revenue per seat, or revenue per section */
+export type RevenueMetric = 'price' | 'seat' | 'section';
 /** metrics coloured from a Round 07 study (one value per seat) */
 export const STUDY_METRICS: AnalysisMetric[] = ['quality', 'egress', 'sun'];
 
@@ -61,6 +67,29 @@ function writeScenarios(s: Scenario[]) {
   try { localStorage.setItem(SCENARIO_KEY, JSON.stringify(s)); } catch { /* storage unavailable: scenarios last for this session */ }
 }
 
+/**
+ * Round 09 scenario A/B: two slots, each a whole design (geometry, seating mix, event and the revenue
+ * assumptions all live in the project) with the figures worked out when it was saved, so a later change
+ * to the current assumptions never rewrites a saved scenario.
+ */
+export type Slot = 'A' | 'B';
+export interface AbScenario { name: string; project: Project; figures: ScenarioFigures; savedAt: string }
+const AB_KEY = 'hok.venue-ab.v1';
+function readAb(): Partial<Record<Slot, AbScenario>> {
+  try {
+    const raw = typeof localStorage !== 'undefined' ? localStorage.getItem(AB_KEY) : null;
+    if (!raw) return {};
+    const v = JSON.parse(raw) as { version: number; slots: Partial<Record<Slot, AbScenario>> };
+    if (v.version !== 1) return {};
+    const out: Partial<Record<Slot, AbScenario>> = {};
+    for (const k of ['A', 'B'] as Slot[]) { const x = v.slots[k]; if (x) try { out[k] = { ...x, project: parseProject(JSON.stringify(x.project)) }; } catch { /* a slot that no longer opens is dropped */ } }
+    return out;
+  } catch { return {}; }
+}
+function writeAb(slots: Partial<Record<Slot, AbScenario>>) {
+  try { localStorage.setItem(AB_KEY, JSON.stringify({ version: 1, slots })); } catch { /* storage unavailable: the slots last for this session */ }
+}
+
 interface State {
   project: Project;
   stadium: Stadium;
@@ -81,6 +110,19 @@ interface State {
   isolated: Record<LayerKey, boolean> | null;
   /** selected seat index into stadium.seats.seats */
   seat: number | null;
+  /** Round 09: selected bowl section (`tierId:label`), from a seat or from the venue panel */
+  section: string | null;
+  selectSection: (key: string | null) => void;
+  revenueMetric: RevenueMetric;
+  setRevenueMetric: (m: RevenueMetric) => void;
+  venueOpen: boolean;
+  setVenueOpen: (on: boolean) => void;
+  ab: Partial<Record<Slot, AbScenario>>;
+  /** the slot the open design was last opened from or saved to */
+  abActive: Slot | null;
+  saveAb: (slot: Slot, name?: string) => void;
+  openAb: (slot: Slot) => void;
+  clearAb: () => void;
   /** looking from the selected seat */
   seatView: boolean;
   cut: Cut;
@@ -144,6 +186,27 @@ export const useStore = create<State>((set, get) => ({
   night: false,
   isolated: null,
   seat: null, seatView: false,
+  section: null,
+  selectSection: (section) => set({ section }),
+  revenueMetric: 'seat',
+  setRevenueMetric: (revenueMetric) => set({ revenueMetric }),
+  venueOpen: true,
+  setVenueOpen: (venueOpen) => set({ venueOpen }),
+  ab: readAb(),
+  abActive: null,
+  saveAb: (slot, name) => {
+    const { project, stadium, ab } = get();
+    const next = { ...ab, [slot]: { name: name ?? ab[slot]?.name ?? (slot === 'A' ? 'Scenario A' : 'Scenario B'), project: structuredClone(project), figures: figures(venueModel(stadium).metrics), savedAt: new Date().toISOString() } };
+    writeAb(next);
+    set({ ab: next, abActive: slot });
+  },
+  openAb: (slot) => {
+    const x = get().ab[slot];
+    if (!x) return;
+    get().load(structuredClone(x.project));
+    set({ abActive: slot });
+  },
+  clearAb: () => { writeAb({}); set({ ab: {}, abActive: null }); },
   cut: { enabled: false, axis: 'x', offset: 0 },
   region: 'E',
   toast: null,
@@ -194,7 +257,8 @@ export const useStore = create<State>((set, get) => ({
   load: (p) => {
     let stadium: Stadium;
     try { stadium = resolveStadium(p); } catch (e) { refused(get, e); return; }
-    set({ project: p, stadium, past: [...get().past, get().project], future: [], lastEditKey: null, seat: null, seatView: false, viewNonce: get().viewNonce + 1 });
+    // a different venue never inherits the selection (its seating mix travels inside its own project)
+    set({ project: p, stadium, past: [...get().past, get().project], future: [], lastEditKey: null, seat: null, seatView: false, section: null, abActive: null, viewNonce: get().viewNonce + 1 });
   },
   loadPreset: (id) => {
     const p = getPreset(id).build();
@@ -227,7 +291,11 @@ export const useStore = create<State>((set, get) => ({
       set({ isolated: layers, layers: next, xray: true });
     } else if (!on && isolated) set({ layers: isolated, isolated: null, xray: false });
   },
-  selectSeat: (seat) => set({ seat, seatView: seat == null ? false : get().seatView }),
+  selectSeat: (seat) => {
+    const t = get().stadium.seats.seats, p = get().project;
+    const section = seat != null && seat < t.count ? sectionKey(p.tiers[t.tier[seat]].id, sectionLabel(t.tier[seat], t.section[seat])) : get().section;
+    set({ seat, section, seatView: seat == null ? false : get().seatView });
+  },
   setSeatView: (seatView) => set({ seatView, viewNonce: seatView ? get().viewNonce : get().viewNonce + 1 }),
   setCut: (c) => set({ cut: { ...get().cut, ...c } }),
   setRegion: (region) => set({ region }),

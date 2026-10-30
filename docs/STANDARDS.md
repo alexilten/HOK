@@ -57,6 +57,24 @@ Verification: **checked** means the rule was read in the cited source on the dat
 | `nfl.rule1.benches` | Players' benches a minimum 30 ft back from the sidelines. | ≥ 30 ft | governing | checked 2026-10-25 | [2024 NFL Rulebook, Rule 1 Sec. 1 Art. 2](https://operations.nfl.com/media/24emxacq/2024-nfl-rulebook.pdf) |
 | `hok.nfl.teamarea` | Team areas drawn between the 32-yard lines, from the border to the 30 ft bench line. Verify the extent against the current NFL Rulebook and league operations requirements. |  | assumption | recall | HOK default |
 
+## Basketball court
+
+| id | statement | value | kind | verification | source |
+|---|---|---|---|---|---|
+| `nba.court` | Court 94 ft × 50 ft; lines 2 in; centre circle 6 ft radius; lane 16 ft wide to the free-throw line 19 ft from the baseline; basket centre 5 ft 3 in from the baseline, rim 10 ft; three-point line 23 ft 9 in, 22 ft in the corners; restricted arc 4 ft. | 94 × 50 ft | governing | recall | NBA Official Rules, Rule 1 (court dimensions) |
+
+## Ice hockey rink
+
+| id | statement | value | kind | verification | source |
+|---|---|---|---|---|---|
+| `nhl.rink` | Rink 200 ft × 85 ft with 28 ft corner radii; goal lines 11 ft from the end boards; blue lines 75 ft from the end boards; red and blue lines 12 in wide; face-off circles 15 ft radius, spots 20 ft out from the goal lines and 22 ft either side of centre. | 200 × 85 ft | governing | recall | NHL Official Rules, Rule 1 (rink) |
+
+## Arena floor
+
+| id | statement | value | kind | verification | source |
+|---|---|---|---|---|---|
+| `hok.arena.floor` | The riser bowl starts 6 m from the sidelines and 7 m from the ends of the court or rink. Courtside floor seats on the basketball apron, and the shallow front rows that reach the hockey glass, are not modelled: a full riser bowl closer in cannot meet the C-value at the field line. A real arena moves retractable lower-bowl seats between basketball and hockey; that conversion is not modelled. |  | assumption | recall | HOK default |
+
 ## Event floor and stage
 
 | id | statement | value | kind | verification | source |
