@@ -150,6 +150,16 @@ export interface StudiesParams {
     suiteSeats: number;
     /** Round 09: standing places per m² of open event floor at concerts, gross of barriers and the mix position */
     floorDensity: number;
+    /**
+     * Round 09: price index per event (1 = the prices above), applied to every per-event price; suite
+     * licences are annual and never indexed. Events left out sell at 1.
+     */
+    eventPrice: Partial<Record<EventId, number>>;
+    /**
+     * Round 09: events a year by event. Empty (or all zero) means every one of `events` is the event
+     * shown; otherwise the annual figure is the blend, and the season total replaces `events`.
+     */
+    season: Partial<Record<EventId, number>>;
   };
 }
 
@@ -347,6 +357,11 @@ export interface Project {
    * An event lays its own floor inside the bowl and never moves a seat.
    */
   event: EventId | null;
+  /**
+   * Round 09: seating mix entries that apply at one event only, on top of `mix` (e.g. a floor-level
+   * section sold as VIP at concerts). Keyed by event, then `tierId:section`.
+   */
+  eventMix: Partial<Record<EventId, Record<string, SeatingProduct>>>;
   /** the app and time that last saved this file (Round 08; informational) */
   saved?: { by: string; at: string };
 }
@@ -394,7 +409,7 @@ export function defaultStudies(): StudiesParams {
     carbon: { concrete: 330, rebarRate: 120, rebar: 1.99, steel: 1.55, steelFraction: 0.05, terraceThickness: 250, roofSteel: 100, roofCovering: 40, facade: 120, uncertainty: 0.3 },
     revenue: {
       currency: 'USD', events: 25, occupancy: 0.85, ticket: 60, club: 250, suite: 150000, loge: 400, vip: 750, standing: 45,
-      conversion: { club: 1, loge: 1, suite: 0.6, vip: 1, standing: 1 }, suiteSeats: 12, floorDensity: 1.5,
+      conversion: { club: 1, loge: 1, suite: 0.6, vip: 1, standing: 1 }, suiteSeats: 12, floorDensity: 1.5, eventPrice: {}, season: {},
     },
   };
 }
@@ -423,6 +438,7 @@ export function defaultProject(): Project {
     studies: defaultStudies(),
     mix: {},
     event: null,
+    eventMix: {},
   };
 }
 
@@ -482,6 +498,14 @@ export function readProject(text: string): { project: Project; repaired: string[
   p.tiers.forEach((t, i) => { if (t.kind !== 'general' && t.kind !== 'club') { t.kind = 'general'; repaired.push(`tiers[${i}].kind`); } });
   for (const [k, v] of Object.entries(p.mix)) if (!SEATING_PRODUCTS.includes(v)) { delete p.mix[k]; repaired.push(`mix.${k}`); }
   if (p.event !== null && !EVENT_IDS.includes(p.event)) { p.event = null; repaired.push('event'); }
+  for (const [e, m] of Object.entries(p.eventMix)) {
+    if (!EVENT_IDS.includes(e as EventId) || !m || typeof m !== 'object' || Array.isArray(m)) { delete p.eventMix[e as EventId]; repaired.push(`eventMix.${e}`); continue; }
+    for (const [k, v] of Object.entries(m)) if (!SEATING_PRODUCTS.includes(v)) { delete m[k]; repaired.push(`eventMix.${e}.${k}`); }
+  }
+  const R = p.studies.revenue;
+  for (const key of ['eventPrice', 'season'] as const) {
+    for (const [e, v] of Object.entries(R[key])) if (!EVENT_IDS.includes(e as EventId) || typeof v !== 'number' || !Number.isFinite(v) || v < 0) { delete R[key][e as EventId]; repaired.push(`studies.revenue.${key}.${e}`); }
+  }
   return { project: p, repaired };
 }
 
@@ -548,6 +572,7 @@ function migrate(raw: any): Project {
       revenue: { ...d.studies.revenue, ...raw.studies?.revenue, conversion: { ...d.studies.revenue.conversion, ...raw.studies?.revenue?.conversion } },
     },
     event: raw.event ?? null,
+    eventMix: raw.eventMix && typeof raw.eventMix === 'object' && !Array.isArray(raw.eventMix) ? structuredClone(raw.eventMix) : {},
     mix: raw.mix && typeof raw.mix === 'object' && !Array.isArray(raw.mix) ? { ...raw.mix } : {},
     tiers: Array.isArray(raw.tiers) && raw.tiers.length
       ? raw.tiers.map((t: Partial<TierParams>, i: number) => {

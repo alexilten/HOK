@@ -200,11 +200,11 @@ function RevenueStudy() {
       <div className="sub-label">Premium price scenarios</div>
       {r.scenarios.map((x) => <KV key={x.name} k={x.name} v={`${money(x.annual, r.currency)} · premium ${money(x.premium, r.currency)}`} />)}
       <NumberControl label="Events a year" value={R.events} min={1} max={120} step={1} onChange={(v) => ed('revenue', 'events', v)} />
-      <NumberControl label="Occupancy" value={Math.round(R.occupancy * 100)} min={10} max={100} step={1} suffix=" %" onChange={(v) => ed('revenue', 'occupancy', v / 100)} />
+      <NumberControl label="Sell-through" value={Math.round(R.occupancy * 100)} min={10} max={100} step={1} suffix=" %" onChange={(v) => ed('revenue', 'occupancy', v / 100)} />
       <NumberControl label="General ticket" value={R.ticket} min={0} max={500} step={5} onChange={(v) => ed('revenue', 'ticket', v)} />
       <NumberControl label="Club seat, per event" value={R.club} min={0} max={2000} step={10} onChange={(v) => ed('revenue', 'club', v)} />
       <NumberControl label="Suite, per year" value={R.suite} min={0} max={1_000_000} step={5000} onChange={(v) => ed('revenue', 'suite', v)} />
-      <Method>Placeholder prices with no market data ({r.currency}); premium prices scaled ×0.75 and ×1.25 for the low and high scenarios. Gate and premium seats only; not a business case (hok.revenue).</Method>
+      <Method>The same model as Venue intelligence: it follows the seating mix, the event and the conversion ratios, and the panel holds the other prices. Placeholder prices with no market data ({r.currency}); premium prices scaled ×0.75 and ×1.25 for the low and high scenarios. Illustrative gross ticket revenue only; not a business case (hok.revenue).</Method>
     </>
   );
 }

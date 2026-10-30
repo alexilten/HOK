@@ -234,7 +234,7 @@ Verification: **checked** means the rule was read in the cited source on the dat
 
 | id | statement | value | kind | verification | source |
 |---|---|---|---|---|---|
-| `hok.revenue` | Annual revenue = general seats × average ticket × occupancy × events + club seats × club price × occupancy × events + suites × annual licence. Default prices (60 and 250 per event, 150,000 per suite a year, 25 events, 85 % occupancy) are placeholders with no market basis; the low and high scenarios scale premium prices by 0.75 and 1.25. Not a business case. |  | assumption | recall | HOK placeholders; user-editable |
+| `hok.revenue` | Annual gross ticket revenue (Round 09 venue model, shared by the design study and Venue intelligence) = Σ over seating products of sellable places × price × sell-through × events + suites × annual licence. Sellable places follow the seating mix, the event and the conversion ratios; suites are sold whole; accessible positions are never converted. Default prices (60 general, 250 club, 400 loge, 750 VIP and 45 standing per event, 150,000 per suite a year, 25 events, 85 % sell-through) are placeholders with no market basis; the low and high scenarios scale premium prices by 0.75 and 1.25. Not profit, net operating income or a business case. |  | assumption | recall | HOK placeholders; user-editable |
 
 ## Optimisation
 

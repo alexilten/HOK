@@ -44,7 +44,14 @@ The model runs for one operating event (`project.event`; empty means the design 
 
     event capacity = seats in use + suite seats − seats behind an end stage + floor standing
 
-Not modelled: retractable seating, partial obstruction beside a stage, a seated floor, a separate seating mix or prices for each event, and an annual mix of events. The annual figure assumes every event is the one shown.
+Not modelled: retractable seating, partial obstruction beside a stage, and a seated floor.
+
+## Selling by event, and the season
+
+- **Only at this event.** In a section's card, tick *Only at …* before picking a product. The change is stored for the event shown (`project.eventMix`), on top of the mix every event shares. An example is a lower-bowl section sold as VIP at concerts only.
+- **Price index.** Each event can scale every per-event price (`revenue.eventPrice`, 100 % by default). Suite licences are annual and never indexed.
+- **Season.** Set events a year by kind (`revenue.season`), for example 41 hockey, 41 basketball and 20 end-stage concerts. The annual figure then becomes the sum, over each event, of events a year × that event's gross per event, each at its own layout, mix and price index. The season total also replaces *Events a year*, so a suite licence is spread over the whole season and counted once. Events the bowl cannot hold earn nothing, and the checks say so. With no season set, every event counts as the one shown.
+- The **Design studies** revenue tab shows the same model.
 
 ## Manifest and hover
 
@@ -72,8 +79,8 @@ Arena bowls start their first riser row 6 m from the court or rink (7 m at the e
 
 ## Not yet built
 
-- A separate seating mix and prices for each event, and an annual mix of events.
-- The Round 07 revenue study in **Design studies** still uses its own simpler formula (it ignores the mix and prices accessible positions in club tiers as general admission); folding it into this model would change its existing figures.
+- Retractable lower-bowl seating between basketball and hockey, courtside and glass seats, and partial obstruction beside a stage.
+- Non-ticket revenue: concessions, parking, media, naming rights. It stays out on purpose: this is a design comparison tool, not a pro forma.
 
 ## Screenshots
 
@@ -84,3 +91,5 @@ Arena bowls start their first riser row 6 m from the court or rink (7 m at the e
 ![Little Caesars Arena set for an end-stage concert: sections behind the stage held back, the floor sold as standing, the manifest and a hover card](screenshots/44-venue-events-manifest.png)
 
 ![Scenario A (hockey) against B (end-stage concert with club sections), changed sections washed amber](screenshots/45-venue-ab-changes.png)
+
+![A season of 41 hockey games, 20 end-stage and 4 centre-stage concerts at Rogers Place, with concert price indices](screenshots/46-venue-season.png)

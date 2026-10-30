@@ -5,7 +5,7 @@
  */
 import { EVENT_LABEL } from './events';
 import { defaultStudies, type Project, type StudiesParams } from './schema';
-import { changedSections, compareFigures, isPremium, PRODUCT_LABEL, projectModel, unitPrice, venueModel, type ScenarioFigures } from './venue';
+import { changedSections, compareFigures, eventsPerYear, isPremium, PRODUCT_LABEL, projectModel, unitPrice, venueModel, type ScenarioFigures } from './venue';
 import type { Stadium } from './engine/stadium';
 
 export const VENUE_DISCLAIMER = 'Illustrative gross ticket revenue from placeholder assumptions: not profit, net operating income or total venue revenue, and not data from any HOK project. Seat counts come from the model geometry. Not connected to or endorsed by HOK\'s Scrum tool.';
@@ -34,10 +34,10 @@ export function manifestCsv(s: Stadium): string {
   }
   if (m.suites.fromLevels) {
     const seats = s.building.suites.reduce((a, u) => a + u.seats, 0);
-    lines.push(row(['SUITE_LEVELS', 'Suite levels', '', 'Premium levels', '', PRODUCT_LABEL.suite, true, false, seats, 0, seats, m.suites.fromLevels, r2(unitPrice(p, 'suite')), r2((m.suites.fromLevels * R.suite) / Math.max(1, R.events)), 'suites sold whole by annual licence']));
+    lines.push(row(['SUITE_LEVELS', 'Suite levels', '', 'Premium levels', '', PRODUCT_LABEL.suite, true, false, seats, 0, seats, m.suites.fromLevels, r2(unitPrice(p, 'suite')), r2((m.suites.fromLevels * R.suite) / eventsPerYear(p)), 'suites sold whole by annual licence']));
   }
   if (m.floor.places) {
-    lines.push(row(['FLOOR', 'Event floor', '', 'Floor', '', PRODUCT_LABEL.standing, false, false, 0, 0, m.floor.places, 0, r2(unitPrice(p, 'standing')), r2(m.floor.revenue), `${r2(m.floor.area)} m² at ${R.floorDensity} per m²`]));
+    lines.push(row(['FLOOR', 'Event floor', '', 'Floor', '', PRODUCT_LABEL.standing, false, false, 0, 0, m.floor.places, 0, r2(unitPrice(p, 'standing', m.event)), r2(m.floor.revenue), `${r2(m.floor.area)} m² at ${R.floorDensity} per m²`]));
   }
   return lines.join('\n') + '\n';
 }
