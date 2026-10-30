@@ -431,3 +431,53 @@ kbd { font-family: var(--mono); font-size: 11px; padding: 1px 6px; border-radius
 button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
 .menu.glass { background: var(--sheet-solid); }
+
+/* ── Round 09: Venue intelligence, a floating layer over the model */
+.venue { position: absolute; left: 332px; top: 78px; width: 340px; max-height: calc(100% - 172px); z-index: 7; border-radius: var(--radius); display: flex; flex-direction: column; overflow: hidden; animation: pop 0.24s var(--ease) both; }
+.venue-head { display: flex; align-items: center; gap: 8px; padding: 12px 14px 8px; border-bottom: 0.5px solid var(--line); }
+.venue-head .close { margin-left: auto; font-size: 18px; line-height: 1; width: 26px; height: 26px; }
+.venue-event { font-size: 11px; color: var(--ink-3); padding: 2px 8px; border-radius: 999px; background: var(--card); }
+.venue-body { overflow-y: auto; padding: 10px 14px 14px; display: flex; flex-direction: column; gap: 12px; }
+.venue-pill { position: absolute; left: 332px; top: 78px; z-index: 7; display: flex; gap: 12px; align-items: center; padding: 8px 14px; border-radius: 999px; font-size: 11.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; animation: pop 0.22s var(--ease) both; }
+.venue-pill-title { font-weight: 600; color: var(--ink); }
+.venue-figures { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+.fig { background: var(--card); border-radius: 10px; padding: 7px 8px; min-width: 0; transition: background 0.3s var(--ease); }
+.fig.strong { background: var(--accent-soft); }
+.fig-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fig-value { font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; margin-top: 2px; letter-spacing: -0.01em; white-space: nowrap; }
+.fig.strong .fig-value { color: var(--accent-ink); }
+.fig-sub { font-size: 10.5px; color: var(--ink-3); margin-top: 1px; line-height: 1.3; }
+.venue-view { display: flex; flex-direction: column; gap: 6px; }
+.mix-bar { display: flex; height: 10px; border-radius: 999px; overflow: hidden; background: var(--card); box-shadow: inset 0 0 0 0.5px var(--line-2); }
+.mix-bar span { display: block; height: 100%; transition: width 0.45s var(--ease); }
+.mix-table, .ab-table { width: 100%; border-collapse: collapse; font-size: 11.5px; font-variant-numeric: tabular-nums; margin-top: 6px; }
+.mix-table th, .ab-table th { font-weight: 500; color: var(--ink-3); text-align: right; padding: 2px 4px; font-size: 10.5px; }
+.mix-table td, .ab-table td { text-align: right; padding: 3px 4px; border-top: 0.5px solid var(--line); white-space: nowrap; }
+.mix-table td:first-child, .ab-table td:first-child { text-align: left; white-space: normal; color: var(--ink-2); }
+.mix-table i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; vertical-align: 0; }
+.ab-table td.up { color: var(--ok); font-weight: 600; }
+.ab-table td.down { color: var(--err); font-weight: 600; }
+.venue-section { background: rgba(255, 255, 255, 0.7); border-radius: 12px; padding: 10px; box-shadow: 0 0 0 0.5px var(--line-2); animation: pop 0.2s var(--ease) both; }
+.venue-section.empty { background: var(--card); box-shadow: none; }
+.venue-section-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
+.venue-section-head .icon-btn { margin-left: auto; width: 22px; height: 22px; }
+.product-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+.product-chip { display: inline-flex; align-items: center; gap: 5px; height: 24px; padding: 0 9px; border-radius: 999px; font-size: 11px; background: var(--card); color: var(--ink-2); transition: background 0.2s var(--ease), box-shadow 0.2s var(--ease); }
+.product-chip:hover { background: var(--hover); }
+.product-chip.on { background: #fff; color: var(--ink); box-shadow: 0 0 0 1px var(--ink), 0 2px 6px -2px rgba(0,0,0,.2); }
+.product-chip i { width: 8px; height: 8px; border-radius: 50%; }
+.kv-grid { display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; font-size: 11.5px; }
+.kv-grid span { color: var(--ink-3); }
+.kv-grid b { font-weight: 500; text-align: right; font-variant-numeric: tabular-nums; }
+.kv-grid b.warn, .small.warn { color: var(--warn); }
+.ab-slot { display: flex; align-items: center; gap: 8px; padding: 5px 6px; border-radius: 8px; font-size: 11.5px; }
+.ab-slot.on { background: var(--accent-soft); }
+.ab-letter { width: 20px; height: 20px; border-radius: 6px; display: grid; place-items: center; font-weight: 700; background: var(--ink); color: #fff; font-size: 11px; }
+.ab-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink-2); }
+.sub-label.as-button { display: block; width: 100%; text-align: left; }
+.concept { color: var(--warn); font-weight: 500; }
+.ref-table a { color: var(--accent-ink); text-decoration: none; }
+.venue-checks { margin: 0; }
+@media (max-width: 1100px) { .venue, .venue-pill { left: 14px; top: auto; bottom: 110px; } .venue { width: min(340px, calc(100% - 28px)); max-height: 46%; } }
+.venue .sub-label { margin: 0 0 4px; }
+.venue .segmented { display: flex; } .venue .segmented button { flex: 1; padding: 0 6px; }

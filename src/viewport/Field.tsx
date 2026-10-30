@@ -109,6 +109,15 @@ export function fieldTexture(f: FieldModel): THREE.CanvasTexture {
     g.fillStyle = '#3a3b40'; g.fillRect(0, 0, cw, ch);
     g.fillStyle = 'rgba(255,255,255,0.035)';
     for (let x = 0; x < cw; x += Math.max(2, 1200 * pxPerMm)) g.fillRect(x, 0, 1, ch);
+  } else if (f.sport === 'basketball') {
+    // maple floor in boards along the court, a darker apron round it
+    g.fillStyle = '#b48a5c'; g.fillRect(0, 0, cw, ch);
+    rect(f.boundary, '#d9b483');
+    g.fillStyle = 'rgba(120,80,40,0.06)';
+    for (let y = 0; y < ch; y += Math.max(2, 600 * pxPerMm)) g.fillRect(0, y, cw, 1);
+  } else if (f.sport === 'hockey') {
+    g.fillStyle = '#dfe3e8'; g.fillRect(0, 0, cw, ch);
+    rect(f.boundary, '#f7f9fb');
   } else {
     g.fillStyle = '#7fa073'; g.fillRect(0, 0, cw, ch);
     // mowing stripes across the field length
@@ -133,9 +142,10 @@ export function fieldTexture(f: FieldModel): THREE.CanvasTexture {
     g.fillRect(X(o.minX), Y(b.maxY), (b.minX - o.minX) * pxPerMm, f.width * pxPerMm);
     g.fillRect(X(b.maxX), Y(b.maxY), (o.maxX - b.maxX) * pxPerMm, f.width * pxPerMm);
   }
-  g.strokeStyle = g.fillStyle = 'rgba(255,255,255,0.95)';
+  const paint = f.sport === 'basketball' || f.sport === 'hockey' ? f.lineColor : 'rgba(255,255,255,0.95)';
   g.lineCap = 'butt';
   for (const m of f.markings) {
+    g.strokeStyle = g.fillStyle = m.color ?? paint;
     if (m.kind === 'line') {
       g.lineWidth = Math.max(1.5, m.width * pxPerMm);
       g.beginPath(); g.moveTo(X(m.a[0]), Y(m.a[1])); g.lineTo(X(m.b[0]), Y(m.b[1])); g.stroke();

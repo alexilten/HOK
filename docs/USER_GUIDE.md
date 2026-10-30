@@ -89,6 +89,19 @@ design and alternatives A–E to apply or save.
 These studies are conceptual. They help compare options early on. They are not code compliance,
 engineering or a business case. [STUDIES.md](STUDIES.md) states each method and its limits.
 
+## 5b. Venue intelligence
+
+The **Venue intelligence** panel floats over the model (collapse it with –). It reads the model's own seats, never a published capacity.
+
+- **Select a section:** click any seat. The section is washed in blue and its card shows its seats, accessible positions, sellable places, category, assumed price and gross revenue per event.
+- **Change how it is sold:** pick general admission, premium club, loge, luxury suite, VIP, standing room or unavailable. *Apply to this tier's sidelines* (or ends, or corners) sells the matching sections the same way. The seats never move.
+- **See it:** switch the model between *Architecture*, *Categories* and *Revenue map*; the revenue map can show the price per seat, the revenue per seat or the revenue per section.
+- **Assumptions:** events a year, sell-through, a price per product, the suite licence and the conversion ratios. They are placeholders, not project data. *Reset financial assumptions* puts the defaults back.
+- **Compare scenarios:** save the design as A, change the mix, the event (the sport in **Field**), the prices or the geometry, and save as B. Each scenario keeps the figures and assumptions it was saved with; open either one to keep working on it.
+- **Reference:** precedent presets list their published capacities by event with sources, and *Restore the original preset* reloads it.
+
+The revenue is illustrative gross ticket revenue, not profit, net operating income or total venue revenue. See [VENUE.md](VENUE.md) for the method.
+
 ## 6. Keep, share and export
 
 - **Autosave.** The open design is saved in this browser as you work and comes back on your next

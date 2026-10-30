@@ -15,6 +15,22 @@ export const CHECKED = '2026-10-25';
 
 export type Status = 'completed' | 'renovation-completed' | 'under-construction' | 'in-design' | 'proposal' | 'unbuilt' | 'competition-win-unbuilt';
 export interface Fact<T = string | number> { value: T; v: 'checked' | 'recall' | 'inferred'; note?: string }
+/**
+ * Round 09: HOK's actual role, kept apart from the firm the library files the project under, so a
+ * renovation of another studio's building is never read as HOK's design.
+ */
+export type Attribution = 'hok' | 'hok-collaboration' | 'hok-renovation' | 'rossetti' | 'rossetti-collaboration' | 'independent';
+export const ATTRIBUTION_LABEL: Record<Attribution, string> = {
+  hok: 'HOK design',
+  'hok-collaboration': 'HOK with a co-designing studio',
+  'hok-renovation': 'HOK renovation of another studio\'s building',
+  rossetti: 'ROSSETTI legacy (before joining HOK)',
+  'rossetti-collaboration': 'ROSSETTI collaboration (before joining HOK)',
+  independent: 'Independent reference',
+};
+/** a published capacity for one event configuration, with the page it was read on */
+export interface EventCapacity { event: string; value: number; v: 'checked' | 'recall'; source: string; note?: string }
+
 export interface Precedent {
   id: string;
   name: string;
@@ -30,6 +46,9 @@ export interface Precedent {
   bowl?: Fact<string>;
   features?: string[];
   sources: string[];
+  attribution?: Attribution;
+  /** published reference capacities by event; never the model's own seat count */
+  capacities?: EventCapacity[];
 }
 
 export const PRECEDENTS: Precedent[] = [
@@ -182,6 +201,7 @@ export const PRECEDENTS: Precedent[] = [
     capacity: { value: 60108, v: 'checked', note: 'Smallest in the NFL; about 63,000 with standing room; up to 66,000 by event' },
     roof: { value: '360° canopy following the bowl over roughly two-thirds of the seats (about 65% in promotional material), field open; the opening is deliberately off-centre to cover more sideline seats and light the grass; largest stadium snow-melt system in the world', v: 'checked' },
     bowl: { value: 'Relatively steep, stacked lower bowl and upper deck; the upper deck closer to the field than at any other NFL stadium; suites stacked on the west sideline, main club on the east; open concourses; "window to the world" opening in the north end-zone upper level', v: 'checked' },
+    attribution: 'independent',
     sources: ['https://en.wikipedia.org/wiki/Highmark_Stadium', 'https://www.athleticbusiness.com/facilities/stadium-arena/article/15832413/how-populous-designed-the-new-highmark-stadium-to-be-loud-and-comfortable-with-clear-visibility-of-the-field-at-all-times'],
   },
   { id: 'yankee', name: 'Yankee Stadium', firm: 'Populous', typology: 'ballpark', sport: 'MLB', location: 'The Bronx, New York, USA', status: { value: 'completed', v: 'recall' }, year: { value: '2009', v: 'recall' }, credits: { value: 'HOK Sport (Populous from 2009). Historic HOK Sport credit — not the contemporary HOK.', v: 'recall' }, capacity: { value: 46537, v: 'recall' }, sources: [] },
@@ -200,6 +220,13 @@ export const PRECEDENTS: Precedent[] = [
     roof: { value: 'Retractable "oculus" of eight triangular steel-framed petals clad in ETFE (> 143,500 ft² in the petals), sliding in unison along 16 straight rails, each petal about 200 ft long and travelling 185–230 ft; opens or closes in about 8–12 minutes like a camera aperture. Four primary trusses span 723 ft at a typical depth of 70 ft; roof about 14.5 acres. Inspired by the Pantheon\'s oculus', v: 'checked' },
     bowl: { value: 'Three levels: 100 lower, 200 mezzanine (with the midfield club) and 300 upper; middle concourse and upper bowl removed at the east end zone for the 16-storey "window to the city" (22,664 ft²). Retractable lower-bowl seats widen the field for soccer. 190 suites (Wikipedia; another source says 180); about 7,500 club seats; 21 in seats', v: 'checked' },
     features: ['Halo video board ringing the oculus: 58 ft tall, about 1,075–1,100 ft round, 62,350–63,800 ft² (sources differ)', '101 ft "mega column" wrapped in LED', 'Facade of eight wing-like panels in ETFE, glass and metal; building rises about 305 ft', 'First LEED Platinum professional sports venue; 4,000 PV panels; 2 million-gallon stormwater cistern', 'About 2 million ft² (1.9 million ft² per Architect magazine)'],
+    attribution: 'hok',
+    capacities: [
+      { event: 'Football (NFL)', value: 71000, v: 'checked', source: 'https://en.wikipedia.org/wiki/Mercedes-Benz_Stadium' },
+      { event: 'Football, expanded', value: 75000, v: 'checked', source: 'https://en.wikipedia.org/wiki/Mercedes-Benz_Stadium' },
+      { event: 'Concert', value: 83000, v: 'checked', source: 'https://en.wikipedia.org/wiki/Mercedes-Benz_Stadium', note: 'about 83,000' },
+      { event: 'Soccer, reduced configuration', value: 42500, v: 'checked', source: 'https://en.wikipedia.org/wiki/Mercedes-Benz_Stadium' },
+    ],
     sources: ['https://en.wikipedia.org/wiki/Mercedes-Benz_Stadium', 'https://www.hok.com/news/2017-08/atlantas-mercedes-benz-stadium-to-host-first-game/', 'https://www.aisc.org/globalassets/modern-steel/archives/2017/03/riseup.pdf', 'https://www.architecturalrecord.com/articles/13888-super-bowl-2019-mercedes-benz-stadium-architect-takes-us-inside-the-venue', 'https://www.archpaper.com/2019/02/super-bowl-liii-mercedes-benz-stadium-atlanta/', 'https://www.burohappold.com/projects/mercedes-benz-stadium/', 'https://www.stadiumsofprofootball.com/stadiums/mercedes-benz-stadium/', 'https://www.wftv.com/sports/super-bowl/fun-facts-mercedesbenz-stadium-by-the-numbers/912833501/', 'https://worldstadia.com/mercedes-benz-stadium.html'],
   },
   {
@@ -211,6 +238,7 @@ export const PRECEDENTS: Precedent[] = [
     roof: { value: 'Transparent roof over the stands that lets daylight into the concourse and keeps crowd noise in the bowl; roof-mounted solar array', v: 'checked' },
     bowl: { value: 'Intimate bowl close to the pitch on a narrow, jagged site (the south-east corner is cut off by Willets Point Boulevard); suites, pitchside lounges and a Tunnel Club', v: 'checked' },
     features: ['"The Cube": a seven-storey glass and LED entry with over 11,000 ft² of displays', 'First fully electric MLS stadium', 'Brick and black structural steel'],
+    attribution: 'hok',
     sources: ['https://www.hok.com/projects/view/new-york-city-football-clubs-etihad-park/', 'https://en.wikipedia.org/wiki/Etihad_Park_(New_York_City)'],
   },
   {
@@ -221,6 +249,8 @@ export const PRECEDENTS: Precedent[] = [
     capacity: { value: 63000, v: 'checked', note: 'Just over 63,000 after the renovation, down from just under 68,000; provision to expand to 70,000' },
     roof: { value: 'A full roof over the seats and the field, largely translucent ETFE, meeting a facade of mirrored panels whose undulating lower edge leaves openings on the north and south sides for natural ventilation', v: 'checked' },
     bowl: { value: 'Existing bowl kept, including the large end-zone video boards; about two-thirds of seats stay general admission', v: 'checked' },
+    attribution: 'hok-renovation',
+    capacities: [{ event: 'Football (NFL), after the renovation', value: 63000, v: 'checked', source: 'https://stadiumdb.com/designs/usa/stadium_of_the_future', note: 'just over 63,000, from just under 68,000' }],
     sources: ['https://stadiumdb.com/designs/usa/stadium_of_the_future'],
   },
   {
@@ -231,6 +261,7 @@ export const PRECEDENTS: Precedent[] = [
     capacity: { value: 64767, v: 'checked', note: 'From 75,000 before the modernization (Wikipedia infobox)' },
     roof: { value: 'A 14-acre steel shade canopy over the seats with the field left open: four 350 ft corner masts on transfer trusses between eight concrete super columns, 450 ft sideline and 350 ft end-zone trusses, 64 locked-coil cables; four canopy-hung video boards', v: 'checked' },
     bowl: { value: 'Existing bowl reworked with additional suites and premium seating', v: 'checked' },
+    attribution: 'hok-renovation',
     sources: ['https://www.structuremag.org/article/hard-rock-stadium/', 'https://en.wikipedia.org/wiki/Hard_Rock_Stadium'],
   },
   {
@@ -241,6 +272,7 @@ export const PRECEDENTS: Precedent[] = [
     capacity: { value: 11700, v: 'checked', note: '15,304 with standing room; expandable to 20,000' },
     roof: { value: 'Roof over the stands with a facade read as a "bourbon barrel"; roof-mounted floodlights', v: 'checked' },
     bowl: { value: 'Stands on three sides; the open west end looks to the Ohio River bridges, with a 40 × 72.5 ft video board. 18 suites and a 250-seat Premier Club', v: 'checked' },
+    attribution: 'hok',
     sources: ['https://en.wikipedia.org/wiki/Lynn_Family_Stadium'],
   },
   {
@@ -251,7 +283,137 @@ export const PRECEDENTS: Precedent[] = [
     capacity: { value: 65000, v: 'checked', note: 'About 65,000; expandable to about 70,000 for football' },
     roof: { value: 'Fixed dome with large skylights and glazed open corners; frosted ceiling windows', v: 'checked' },
     bowl: { value: 'A 1920s Hudson\'s warehouse along the south sideline holds most suites and the club lounges; one suite level in the north upper deck; gaps in the upper bowl at the south-west and south-east corners; field 45 ft below street level', v: 'checked' },
+    attribution: 'rossetti',
     sources: ['https://en.wikipedia.org/wiki/Ford_Field', 'https://www.athleticbusiness.com/industry-press-room/press-release/15823574/hok-hok-and-rossetti-join-forces-to-create-expanded-global-sports-recreation-and-entertainment-design-practice'],
+  },
+  // ── Round 09: arenas and Energizer Park. Credits read on 30 Oct 2026; each names every studio found
+  //    credited, the original architect of a renovated building, and HOK's actual role.
+  {
+    id: 'roig-arena', name: 'Roig Arena', firm: 'HOK', typology: 'arena', sport: 'Basketball (Valencia Basket), concerts, events', location: 'Valencia, Spain',
+    status: { value: 'completed', v: 'checked', note: 'Opened 6 Sep 2025 (checked 30 Oct 2026)' },
+    year: { value: '2025', v: 'checked' },
+    credits: { value: 'HOK with ERRE arquitectura (Wikipedia credits "ERRE and HOK"); HOK news covers the design and the eight roof trusses.', v: 'checked' },
+    capacity: { value: 15600, v: 'checked', note: 'Basketball; 18,600 for 180° concerts and 20,000 for 360° shows' },
+    bowl: { value: 'Not described in the sources read: tiers, suites and hospitality are not published there', v: 'checked' },
+    attribution: 'hok-collaboration',
+    capacities: [
+      { event: 'Basketball', value: 15600, v: 'checked', source: 'https://en.wikipedia.org/wiki/Roig_Arena' },
+      { event: 'Concert, 180° end stage', value: 18600, v: 'checked', source: 'https://en.wikipedia.org/wiki/Roig_Arena' },
+      { event: 'Show, 360° centre stage', value: 20000, v: 'checked', source: 'https://en.wikipedia.org/wiki/Roig_Arena', note: 'including the floor' },
+    ],
+    sources: ['https://en.wikipedia.org/wiki/Roig_Arena', 'https://www.hok.com/projects/view/roig-arena/', 'https://www.hok.com/news/2023-10/valencias-roig-arena-achieves-construction-milestone-with-installation-of-eight-monumental-trusses/'],
+  },
+  {
+    id: 'etihad-arena', name: 'Etihad Arena', firm: 'HOK', typology: 'arena', sport: 'Concerts, UFC, boxing, NBA preseason, events', location: 'Yas Island, Abu Dhabi, UAE',
+    status: { value: 'completed', v: 'checked', note: 'Opened January 2021 after a COVID-19 delay (checked 30 Oct 2026)' },
+    year: { value: '2021', v: 'checked' },
+    credits: { value: 'HOK (design unveiled as Yas Arena, June 2017).', v: 'checked' },
+    capacity: { value: 18000, v: 'checked', note: 'Up to 18,000; no breakdown by configuration in the sources read' },
+    attribution: 'hok',
+    capacities: [{ event: 'Maximum, any configuration', value: 18000, v: 'checked', source: 'https://en.wikipedia.org/wiki/Etihad_Arena', note: 'per-event capacities not published in the sources read' }],
+    features: ['2018 MENA Green Building Award, Sustainable Building Design of the Year', 'Temporary 25 m pool for the 2021 FINA World Swimming Championships'],
+    sources: ['https://en.wikipedia.org/wiki/Etihad_Arena', 'https://www.hok.com/news/2017-06/hok-unveils-design-for-yas-arena-in-abu-dhabi/', 'https://www.hok.com/projects/view/etihad-arena'],
+  },
+  {
+    id: 'mortgage-matchup', name: 'Mortgage Matchup Center (formerly Footprint Center) modernization', firm: 'HOK', typology: 'arena', sport: 'NBA (Phoenix Suns), WNBA (Phoenix Mercury), concerts', location: 'Phoenix, Arizona, USA',
+    status: { value: 'renovation-completed', v: 'checked', note: 'Two phases; finished for the 2021–22 season (checked 30 Oct 2026)' },
+    year: { value: '2021', v: 'checked' },
+    credits: { value: 'HOK designed the renovation and expansion. The original 1992 arena (America West Arena) is by Ellerbe Becket, not HOK.', v: 'checked' },
+    capacity: { value: 16200, v: 'checked', note: 'About 16,200 for basketball per HOK; Wikipedia lists 17,071 basketball and 16,210 ice hockey' },
+    bowl: { value: 'Existing suites converted to mini suites, theater boxes and party boxes opening onto private lounges; about 10,000 ft² of back-of-house along the east and west sidelines turned into premium clubs', v: 'checked' },
+    attribution: 'hok-renovation',
+    capacities: [
+      { event: 'Basketball', value: 16200, v: 'checked', source: 'https://hok.com/projects/view/phoenix-suns-arena-modernization', note: 'about 16,200 (HOK)' },
+      { event: 'Basketball', value: 17071, v: 'checked', source: 'https://en.wikipedia.org/wiki/Mortgage_Matchup_Center', note: 'Wikipedia figure; differs from HOK' },
+      { event: 'Ice hockey', value: 16210, v: 'checked', source: 'https://en.wikipedia.org/wiki/Mortgage_Matchup_Center' },
+      { event: 'Concert, centre stage', value: 17716, v: 'checked', source: 'https://en.wikipedia.org/wiki/Mortgage_Matchup_Center' },
+      { event: 'Concert, end stage', value: 12565, v: 'checked', source: 'https://en.wikipedia.org/wiki/Mortgage_Matchup_Center' },
+    ],
+    sources: ['https://hok.com/projects/view/phoenix-suns-arena-modernization', 'https://hok.com/news/2021-01/hok-designs-modernization-of-phoenix-suns-arena', 'https://en.wikipedia.org/wiki/Mortgage_Matchup_Center'],
+  },
+  {
+    id: 'little-caesars', name: 'Little Caesars Arena', firm: 'HOK', typology: 'arena', sport: 'NHL (Red Wings), NBA (Pistons), concerts', location: 'Detroit, Michigan, USA',
+    status: { value: 'completed', v: 'checked', note: 'Opened 5 Sep 2017 (checked 30 Oct 2026)' },
+    year: { value: '2017', v: 'checked' },
+    credits: { value: 'HOK; Magnusson Klemencic Associates structural engineer; Smith Seckman Reid services engineer.', v: 'checked' },
+    capacity: { value: 19515, v: 'checked', note: 'Ice hockey; 20,332 basketball; 15,000–22,000 concerts' },
+    bowl: { value: 'Steep bowl with a "gondola" seating level suspended above the stands; 62 executive suites; floor about 40 ft below street level', v: 'checked' },
+    attribution: 'hok',
+    capacities: [
+      { event: 'Ice hockey', value: 19515, v: 'checked', source: 'https://en.wikipedia.org/wiki/Little_Caesars_Arena' },
+      { event: 'Basketball', value: 20332, v: 'checked', source: 'https://en.wikipedia.org/wiki/Little_Caesars_Arena' },
+      { event: 'Concert, upper bound', value: 22000, v: 'checked', source: 'https://en.wikipedia.org/wiki/Little_Caesars_Arena', note: '15,000–22,000 by configuration' },
+    ],
+    sources: ['https://en.wikipedia.org/wiki/Little_Caesars_Arena'],
+  },
+  {
+    id: 'avicii-arena', name: 'Avicii Arena (Globen) renovation and modernisation', firm: 'HOK', typology: 'arena', sport: 'Ice hockey, concerts, events', location: 'Stockholm, Sweden',
+    status: { value: 'renovation-completed', v: 'checked', note: 'Construction Jan 2024 – Jan 2025; reopened 1 Feb 2025 (checked 30 Oct 2026)' },
+    year: { value: '2025', v: 'checked' },
+    credits: { value: 'HOK led the design team for the modernisation with C.F. Møller Architects; schlaich bergermann partner structural engineers; NCC contractor. The original 1989 Stockholm Globe Arena is by Berg Arkitektkontor (Svante Berg and Lars Vretblad), not HOK.', v: 'checked' },
+    capacity: { value: 16000, v: 'checked', note: 'Concerts and shows; ice hockey 13,950 (infobox) or 13,850 (article text)' },
+    bowl: { value: 'New gondola seating, lounges and tiers; retractable acoustic ceiling and rigging grid hung on a cable net inside the dome; 110 m diameter, 65 m inner height', v: 'checked' },
+    attribution: 'hok-renovation',
+    capacities: [
+      { event: 'Ice hockey', value: 13950, v: 'checked', source: 'https://en.wikipedia.org/wiki/Avicii_Arena', note: 'the article text says 13,850' },
+      { event: 'Concert', value: 16000, v: 'checked', source: 'https://en.wikipedia.org/wiki/Avicii_Arena' },
+    ],
+    sources: ['https://www.hok.com/news/2025-02/avicii-arena-reopens-following-extensive-renovation-and-modernisation/', 'https://en.wikipedia.org/wiki/Avicii_Arena'],
+  },
+  {
+    id: 'rocket-arena', name: 'Rocket Arena (Rocket Mortgage FieldHouse) transformation', firm: 'Other', typology: 'arena', sport: 'NBA (Cavaliers), AHL hockey, concerts', location: 'Cleveland, Ohio, USA',
+    status: { value: 'renovation-completed', v: 'checked', note: 'Announced Dec 2016; finished Sep 2019 (checked 30 Oct 2026)' },
+    year: { value: '2019', v: 'checked' },
+    credits: { value: 'SHoP Architects with ROSSETTI, engaged together by the Cavaliers (SHoP the creative lead), and Gensler architect of record. ROSSETTI joined HOK in 2026, after this project. The original 1994 arena is by Ellerbe Becket. Not an HOK design.', v: 'checked' },
+    capacity: { value: 19432, v: 'checked', note: 'Basketball; 18,926 ice hockey and arena football' },
+    bowl: { value: 'About 2,000 club seats and 88 suites (32 lower, 60 upper, 5 event-level platinum, as listed); three upper-level sections removed in 2018', v: 'checked' },
+    attribution: 'rossetti-collaboration',
+    capacities: [
+      { event: 'Basketball', value: 19432, v: 'checked', source: 'https://en.wikipedia.org/wiki/Rocket_Arena' },
+      { event: 'Ice hockey', value: 18926, v: 'checked', source: 'https://en.wikipedia.org/wiki/Rocket_Arena' },
+    ],
+    sources: ['https://www.shoparc.com/projects/the-q/', 'https://GENSLER.COM/projects/rocket-mortgage-fieldhouse', 'https://en.wikipedia.org/wiki/Rocket_Arena'],
+  },
+  {
+    id: 'state-farm-arena', name: 'State Farm Arena transformation', firm: 'HOK', typology: 'arena', sport: 'NBA (Atlanta Hawks), concerts', location: 'Atlanta, Georgia, USA',
+    status: { value: 'renovation-completed', v: 'checked', note: 'Completed October 2018 (checked 30 Oct 2026)' },
+    year: { value: '2018', v: 'checked' },
+    credits: { value: 'HOK designed the $192.5 million transformation. The original 1999 Philips Arena is by HOK Sport (now Populous) with Arquitectonica, not the contemporary HOK.', v: 'checked' },
+    capacity: { value: 17608, v: 'checked', note: 'Basketball (Wikipedia, "17,608+"); HOK says about 17,000; up to 21,000 for concerts' },
+    bowl: { value: 'A four-level wall of suites on the west side replaced by Veranda and Loft suites, Topgolf Swing Suites, the Atlanta Social suite experience and viewing terraces; suites cut from 90 to 40; a courtside club and the NBA\'s first courtside bar; social seating "neighborhoods"', v: 'checked' },
+    attribution: 'hok-renovation',
+    capacities: [
+      { event: 'Basketball', value: 17608, v: 'checked', source: 'https://en.wikipedia.org/wiki/State_Farm_Arena' },
+      { event: 'Basketball', value: 17000, v: 'checked', source: 'https://hok.com/news/2018-10/atlanta-hawks-celebrate-completion-of-hok-designed-state-farm-arena-transformation', note: 'HOK figure' },
+      { event: 'Concert, upper bound', value: 21000, v: 'checked', source: 'https://en.wikipedia.org/wiki/State_Farm_Arena' },
+    ],
+    sources: ['https://hok.com/news/2018-10/atlanta-hawks-celebrate-completion-of-hok-designed-state-farm-arena-transformation', 'https://en.wikipedia.org/wiki/State_Farm_Arena'],
+  },
+  {
+    id: 'rogers-place', name: 'Rogers Place', firm: 'HOK', typology: 'arena', sport: 'NHL (Edmonton Oilers), concerts', location: 'Edmonton, Alberta, Canada',
+    status: { value: 'completed', v: 'checked', note: 'Opened 8 Sep 2016 (checked 30 Oct 2026)' },
+    year: { value: '2016', v: 'checked' },
+    credits: { value: 'HOK; PCL Construction on the design team. Shugarman Architecture + Design, WAM Development and Hariri Pontarini Architects helped develop the ICE District.', v: 'checked' },
+    capacity: { value: 18347, v: 'checked', note: 'Ice hockey; 20,147 concerts' },
+    bowl: { value: '3,100 club seats, 900 loge seats, 500 drink-rail seats, 300 Ozone club seats, 57 executive suites and 24 theater boxes; three clubs and two club lounges', v: 'checked' },
+    attribution: 'hok',
+    capacities: [
+      { event: 'Ice hockey', value: 18347, v: 'checked', source: 'https://www.hok.com/news/2016-11/hok-designed-rogers-place-arena-in-edmonton-shatters-attendance-records/' },
+      { event: 'Concert', value: 20147, v: 'checked', source: 'https://www.hok.com/news/2016-11/hok-designed-rogers-place-arena-in-edmonton-shatters-attendance-records/' },
+    ],
+    sources: ['https://www.hok.com/news/2016-11/hok-designed-rogers-place-arena-in-edmonton-shatters-attendance-records/'],
+  },
+  {
+    id: 'energizer-park', name: 'Energizer Park (formerly CityPark)', firm: 'HOK', typology: 'stadium', sport: 'MLS soccer (St. Louis City SC)', location: 'St. Louis, Missouri, USA',
+    status: { value: 'completed', v: 'checked', note: 'Opened 16 Nov 2022; first MLS match 4 Mar 2023 (checked 30 Oct 2026)' },
+    year: { value: '2022', v: 'checked' },
+    credits: { value: 'HOK with Snow Kreilich Architects.', v: 'checked' },
+    capacity: { value: 22423, v: 'checked', note: 'Plus about 2,500 more; HOK material rounds to 22,500' },
+    roof: { value: 'Clear canopy over the two seating tiers that keeps out weather and holds in crowd noise without shading the pitch', v: 'checked' },
+    bowl: { value: 'Two tiers; every seat within 120 ft (37 m) of the pitch, the closest in MLS; pitch 40 ft (12 m) below street level', v: 'checked' },
+    attribution: 'hok-collaboration',
+    capacities: [{ event: 'Soccer', value: 22423, v: 'checked', source: 'https://en.wikipedia.org/wiki/Energizer_Park' }],
+    sources: ['https://en.wikipedia.org/wiki/Energizer_Park', 'https://www.hok.com/projects/view/mls-st-louis-city-sc-citypark/'],
   },
   { id: 'arthur-ashe', name: 'Arthur Ashe Stadium reimagination / USTA Billie Jean King NTC', firm: 'ROSSETTI', typology: 'stadium', sport: 'Tennis', location: 'Queens, New York, USA', status: { value: 'in-design', v: 'checked', note: '"Ongoing reimagination" (Apr 2026)' }, credits: { value: 'ROSSETTI.', v: 'checked' }, sources: ['https://www.athleticbusiness.com/industry-press-room/press-release/15823574/hok-hok-and-rossetti-join-forces-to-create-expanded-global-sports-recreation-and-entertainment-design-practice'] },
   { id: 'daytona', name: 'Daytona International Speedway — DAYTONA Rising', firm: 'ROSSETTI', typology: 'stadium', sport: 'Motorsport', location: 'Daytona Beach, Florida, USA', status: { value: 'renovation-completed', v: 'recall' }, year: { value: '2016', v: 'recall' }, credits: { value: 'ROSSETTI.', v: 'recall' }, sources: [] },

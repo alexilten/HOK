@@ -12,7 +12,16 @@ They are **not** the architects' geometry, they use no drawings or CAD, and they
 |---|---|---:|---:|---:|---:|---:|---:|---|---:|---:|---|
 | Aperture-roof NFL stadium — Mercedes-Benz Stadium | NFL | 71,000 | 70,864 | 60 | 72,218 | 3 | 48 / 11 / 27 | Aperture (iris petals) | 60 | 231 | medium |
 | Steep open-air NFL bowl — New Highmark Stadium (Populous) | NFL | 60,108 | 59,994 | 34 | 62,198 | 3 | 28 / 7 / 24 | Perimeter canopy | 60 | 205 | low |
+| Basketball and concert arena — Roig Arena (HOK with ERRE) | Soccer | 15,600 | 15,380 | 42 | 15,812 | 2 | 20 / 17 | Fixed enclosed | 61 | 81 | low |
+| Flexible events arena — Etihad Arena | Soccer | 18,000 | 17,724 | 42 | 18,240 | 2 | 21 / 20 | Fixed enclosed | 60 | 85 | low |
+| Arena renovation for premium — Mortgage Matchup Center (HOK renovation) | Soccer | 16,200 | 16,236 | 46 | 16,288 | 2 | 23 / 15 | Fixed enclosed | 60 | 82 | low |
+| Steep NHL and NBA arena with a gondola — Little Caesars Arena | Soccer | 19,515 | 19,638 | 56 | 19,716 | 3 | 19 / 3 / 12 | Fixed enclosed | 60 | 116 | low |
+| Spherical arena modernisation — Avicii Arena (HOK renovation) | Soccer | 13,950 | 14,134 | 54 | 14,024 | 2 | 17 / 11 | Fixed enclosed | -92 | 104 | low |
+| Arena transformation with social seating — State Farm Arena (HOK renovation) | Soccer | 17,608 | 17,820 | 4 | 18,780 | 2 | 24 / 18 | Fixed enclosed | 60 | 86 | low |
+| NHL arena with club and loge products — Rogers Place | Soccer | 18,347 | 18,266 | 64 | 18,232 | 3 | 16 / 4 / 12 | Fixed enclosed | 61 | 114 | low |
+| Arena transformation — Rocket Arena (SHoP with ROSSETTI; Gensler) | Soccer | 19,432 | 19,620 | 100 | 19,616 | 3 | 20 / 5 / 16 | Fixed enclosed | 36 | 95 | low |
 | Intimate city soccer stadium — Etihad Park (NYCFC) | Soccer | 25,000 | 25,049 | 18 | 25,856 | 2 | 21 / 9 | Perimeter canopy | 61 | 169 | low |
+| Close-to-the-pitch soccer stadium — Energizer Park (HOK with Snow Kreilich) | Soccer | 22,423 | 22,172 | 18 | 22,822 | 2 | 17 / 10 | Perimeter canopy | 17 | 164 | low |
 | Enclosed NFL renovation — EverBank Stadium of the Future | NFL | 63,000 | 63,160 | 36 | 65,822 | 3 | 32 / 8 / 23 | Translucent ETFE | 60 | 201 | low |
 | Shade canopy over an NFL bowl — Hard Rock Stadium modernization | NFL | 64,767 | 65,052 | 30 | 67,496 | 3 | 35 / 8 / 23 | Perimeter canopy | 60 | 202 | low |
 | Three-sided soccer ground — Lynn Family Stadium | Soccer | 11,700 | 11,622 | 0 | 12,132 | 1 | 21 | Partial canopy | 91 | 149 | low |
@@ -77,6 +86,212 @@ Precedent: **New Highmark Stadium** (Orchard Park, New York, USA). Status: compl
 - Row counts fitted to 60,108
 - Site at the latitude of Orchard Park (Buffalo) (≈ 42.8° N) for the sun study; the pitch orientation is the HOK default, not the real site's
 
+### Basketball and concert arena — Roig Arena (HOK with ERRE)
+
+15,600 basketball · 18,600–20,000 concerts.
+
+Precedent: **Roig Arena** (Valencia, Spain). Status: completed (Opened 6 Sep 2025 (checked 30 Oct 2026)). Credits: HOK with ERRE arquitectura (Wikipedia credits "ERRE and HOK"); HOK news covers the design and the eight roof trusses.
+
+**Published (sourced in [PRECEDENTS.md](PRECEDENTS.md)):**
+
+- HOK with ERRE arquitectura; opened 6 Sep 2025, Valencia
+- Basketball 15,600; 180° concerts 18,600; 360° shows 20,000 including the floor
+
+**Assumed by HOK:**
+
+- Two tiers round an NBA-size court with one suite level between them on both sidelines; the tier split and suites are not published in the sources read
+- One bowl round the court or rink, its first riser row 6 m from the sidelines and 7 m from the ends: courtside floor seats, and the shallower retractable front rows that reach the hockey glass, are not modelled, because a full riser bowl at the boards cannot meet the C-value at the field line
+- Indoor sightlines: C-value target 75 mm (60 mm upper tiers), 850 mm rows, rakes up to 37° (steeper than the 34–35° football guidance; HOK assumption)
+- Enclosed roof on long-span trusses with catwalk lighting and a centre-hung board; arena concourse, program and core allowances (HOK planning assumptions)
+- Suites drawn at 4.5 m per suite with 12 seats; the suite count is what fits, not a published number
+- Row counts fitted to the 15,600 basketball capacity; concert configurations are reference figures only
+- Site at the latitude of Valencia (≈ 39.5° N) for the sun study; the pitch orientation is the HOK default, not the real site's
+
+**Checks raised:**
+
+- Back-of-house rooms get 2.9 m clear under the lowest concourse. Raise the lower tier's vomitory row or the concourse level.
+
+### Flexible events arena — Etihad Arena
+
+up to 18,000 · concerts, combat sports, basketball.
+
+Precedent: **Etihad Arena** (Yas Island, Abu Dhabi, UAE). Status: completed (Opened January 2021 after a COVID-19 delay (checked 30 Oct 2026)). Credits: HOK (design unveiled as Yas Arena, June 2017).
+
+**Published (sourced in [PRECEDENTS.md](PRECEDENTS.md)):**
+
+- HOK; opened January 2021, Yas Island, Abu Dhabi
+- Up to 18,000; capacities by configuration are not published in the sources read
+
+**Assumed by HOK:**
+
+- Modelled on a basketball court and fitted to the published maximum of 18,000, so the seated bowl is probably larger than the real basketball configuration
+- Two tiers with one suite level on both sidelines
+- One bowl round the court or rink, its first riser row 6 m from the sidelines and 7 m from the ends: courtside floor seats, and the shallower retractable front rows that reach the hockey glass, are not modelled, because a full riser bowl at the boards cannot meet the C-value at the field line
+- Indoor sightlines: C-value target 75 mm (60 mm upper tiers), 850 mm rows, rakes up to 37° (steeper than the 34–35° football guidance; HOK assumption)
+- Enclosed roof on long-span trusses with catwalk lighting and a centre-hung board; arena concourse, program and core allowances (HOK planning assumptions)
+- Suites drawn at 4.5 m per suite with 12 seats; the suite count is what fits, not a published number
+- Site at the latitude of Abu Dhabi (≈ 24.5° N) for the sun study; the pitch orientation is the HOK default, not the real site's
+
+**Checks raised:**
+
+- Back-of-house rooms get 2.9 m clear under the lowest concourse. Raise the lower tier's vomitory row or the concourse level.
+
+### Arena renovation for premium — Mortgage Matchup Center (HOK renovation)
+
+≈16,200 basketball · suites reworked into boxes and clubs.
+
+Precedent: **Mortgage Matchup Center (formerly Footprint Center) modernization** (Phoenix, Arizona, USA). Status: renovation-completed (Two phases; finished for the 2021–22 season (checked 30 Oct 2026)). Credits: HOK designed the renovation and expansion. The original 1992 arena (America West Arena) is by Ellerbe Becket, not HOK.
+
+**Published (sourced in [PRECEDENTS.md](PRECEDENTS.md)):**
+
+- HOK renovation and expansion, finished for 2021–22; the original 1992 arena is by Ellerbe Becket
+- About 16,200 for basketball (HOK); Wikipedia lists 17,071 basketball and 16,210 hockey
+- Suites converted to mini suites, theater boxes and party boxes; about 10,000 ft² of sideline back-of-house turned into premium clubs
+
+**Assumed by HOK:**
+
+- Lower and upper bowl with the reworked suite level between them on both sidelines; the box and club layout is not modelled seat by seat
+- One bowl round the court or rink, its first riser row 6 m from the sidelines and 7 m from the ends: courtside floor seats, and the shallower retractable front rows that reach the hockey glass, are not modelled, because a full riser bowl at the boards cannot meet the C-value at the field line
+- Indoor sightlines: C-value target 75 mm (60 mm upper tiers), 850 mm rows, rakes up to 37° (steeper than the 34–35° football guidance; HOK assumption)
+- Enclosed roof on long-span trusses with catwalk lighting and a centre-hung board; arena concourse, program and core allowances (HOK planning assumptions)
+- Suites drawn at 4.5 m per suite with 12 seats; the suite count is what fits, not a published number
+- Row counts fitted to 16,200
+- Site at the latitude of Phoenix (≈ 33.4° N) for the sun study; the pitch orientation is the HOK default, not the real site's
+
+### Steep NHL and NBA arena with a gondola — Little Caesars Arena
+
+19,515 hockey · 20,332 basketball · gondola level.
+
+Precedent: **Little Caesars Arena** (Detroit, Michigan, USA). Status: completed (Opened 5 Sep 2017 (checked 30 Oct 2026)). Credits: HOK; Magnusson Klemencic Associates structural engineer; Smith Seckman Reid services engineer.
+
+**Published (sourced in [PRECEDENTS.md](PRECEDENTS.md)):**
+
+- HOK; opened 5 Sep 2017, Detroit
+- Ice hockey 19,515; basketball 20,332; concerts 15,000–22,000
+- Steep bowl with a "gondola" seating level suspended above the stands; 62 executive suites
+
+**Assumed by HOK:**
+
+- Three tiers round an NHL rink: the gondola is drawn as a short club tier with a suite level under it on both sidelines, not as a suspended structure
+- One bowl round the court or rink, its first riser row 6 m from the sidelines and 7 m from the ends: courtside floor seats, and the shallower retractable front rows that reach the hockey glass, are not modelled, because a full riser bowl at the boards cannot meet the C-value at the field line
+- Indoor sightlines: C-value target 75 mm (60 mm upper tiers), 850 mm rows, rakes up to 37° (steeper than the 34–35° football guidance; HOK assumption)
+- Enclosed roof on long-span trusses with catwalk lighting and a centre-hung board; arena concourse, program and core allowances (HOK planning assumptions)
+- Suites drawn at 4.5 m per suite with 12 seats; the suite count is what fits, not a published number
+- Row counts fitted to the 19,515 hockey capacity
+- Site at the latitude of Detroit (≈ 42.3° N) for the sun study; the pitch orientation is the HOK default, not the real site's
+
+**Checks raised:**
+
+- The east frontage holds only 97% of the service yard and energy centre. Pick a longer frontage or reduce the plant allowance.
+
+### Spherical arena modernisation — Avicii Arena (HOK renovation)
+
+13,950 hockey · 16,000 concerts · gondola seating.
+
+Precedent: **Avicii Arena (Globen) renovation and modernisation** (Stockholm, Sweden). Status: renovation-completed (Construction Jan 2024 – Jan 2025; reopened 1 Feb 2025 (checked 30 Oct 2026)). Credits: HOK led the design team for the modernisation with C.F. Møller Architects; schlaich bergermann partner structural engineers; NCC contractor. The original 1989 Stockholm Globe Arena is by Berg Arkitektkontor (Svante Berg and Lars Vretblad), not HOK.
+
+**Published (sourced in [PRECEDENTS.md](PRECEDENTS.md)):**
+
+- HOK-led modernisation with C.F. Møller Architects (2024–25); the original 1989 Globe is by Berg Arkitektkontor
+- Ice hockey 13,950 (infobox; the article text says 13,850); concerts 16,000
+- New gondola seating and lounges; retractable acoustic ceiling inside the 110 m dome
+
+**Assumed by HOK:**
+
+- A round bowl: an 18 m corner radius; the dome is drawn as an enclosed roof, not a sphere
+- The new gondola seating is drawn as a suite level under the upper tier on both sidelines
+- One bowl round the court or rink, its first riser row 6 m from the sidelines and 7 m from the ends: courtside floor seats, and the shallower retractable front rows that reach the hockey glass, are not modelled, because a full riser bowl at the boards cannot meet the C-value at the field line
+- Indoor sightlines: C-value target 75 mm (60 mm upper tiers), 850 mm rows, rakes up to 37° (steeper than the 34–35° football guidance; HOK assumption)
+- Enclosed roof on long-span trusses with catwalk lighting and a centre-hung board; arena concourse, program and core allowances (HOK planning assumptions)
+- Suites drawn at 4.5 m per suite with 12 seats; the suite count is what fits, not a published number
+- Row counts fitted to 13,950
+- Site at the latitude of Stockholm (≈ 59.3° N) for the sun study; the pitch orientation is the HOK default, not the real site's
+
+**Checks raised:**
+
+- Lower bowl: 16 rows hit the 37° rake limit, so the C-value target is not met there. Move the tier closer to the field, lower its first row or accept a lower target.
+- Lower bowl: lowest C-value -46 mm is below the 60 mm minimum.
+- Upper bowl: 10 rows hit the 37° rake limit, so the C-value target is not met there. Move the tier closer to the field, lower its first row or accept a lower target.
+- Upper bowl: lowest C-value -92 mm is below the 60 mm minimum.
+
+### Arena transformation with social seating — State Farm Arena (HOK renovation)
+
+17,608 basketball · suite wall replaced by terraces and social suites.
+
+Precedent: **State Farm Arena transformation** (Atlanta, Georgia, USA). Status: renovation-completed (Completed October 2018 (checked 30 Oct 2026)). Credits: HOK designed the $192.5 million transformation. The original 1999 Philips Arena is by HOK Sport (now Populous) with Arquitectonica, not the contemporary HOK.
+
+**Published (sourced in [PRECEDENTS.md](PRECEDENTS.md)):**
+
+- HOK transformation, completed October 2018; the original 1999 Philips Arena is by HOK Sport (now Populous) with Arquitectonica
+- Basketball 17,608 (Wikipedia; HOK says about 17,000); up to 21,000 for concerts
+- The west-side wall of suites became terraces and social suites; suites cut from 90 to 40; courtside club and bar
+
+**Assumed by HOK:**
+
+- The west sideline is the N stand here: its suite level is kept and the S sideline has none; terraces and social suites are not modelled
+- One bowl round the court or rink, its first riser row 6 m from the sidelines and 7 m from the ends: courtside floor seats, and the shallower retractable front rows that reach the hockey glass, are not modelled, because a full riser bowl at the boards cannot meet the C-value at the field line
+- Indoor sightlines: C-value target 75 mm (60 mm upper tiers), 850 mm rows, rakes up to 37° (steeper than the 34–35° football guidance; HOK assumption)
+- Enclosed roof on long-span trusses with catwalk lighting and a centre-hung board; arena concourse, program and core allowances (HOK planning assumptions)
+- Suites drawn at 4.5 m per suite with 12 seats; the suite count is what fits, not a published number
+- Row counts fitted to 17,608
+- Site at the latitude of Atlanta (≈ 33.8° N) for the sun study; the pitch orientation is the HOK default, not the real site's
+
+### NHL arena with club and loge products — Rogers Place
+
+18,347 hockey · 20,147 concerts · 3,100 club seats.
+
+Precedent: **Rogers Place** (Edmonton, Alberta, Canada). Status: completed (Opened 8 Sep 2016 (checked 30 Oct 2026)). Credits: HOK; PCL Construction on the design team. Shugarman Architecture + Design, WAM Development and Hariri Pontarini Architects helped develop the ICE District.
+
+**Published (sourced in [PRECEDENTS.md](PRECEDENTS.md)):**
+
+- HOK; opened 8 Sep 2016, Edmonton
+- Ice hockey 18,347; concerts 20,147
+- 3,100 club seats, 900 loge seats, 57 executive suites and 24 theater boxes
+
+**Assumed by HOK:**
+
+- Three tiers: lower bowl, a club tier and an upper bowl, with one suite level under the upper bowl on both sidelines
+- The club tier is fitted with the rest, so its seat count is the model's, not the published 3,100; loge seats are not separated out (assign them in the seating mix)
+- One bowl round the court or rink, its first riser row 6 m from the sidelines and 7 m from the ends: courtside floor seats, and the shallower retractable front rows that reach the hockey glass, are not modelled, because a full riser bowl at the boards cannot meet the C-value at the field line
+- Indoor sightlines: C-value target 75 mm (60 mm upper tiers), 850 mm rows, rakes up to 37° (steeper than the 34–35° football guidance; HOK assumption)
+- Enclosed roof on long-span trusses with catwalk lighting and a centre-hung board; arena concourse, program and core allowances (HOK planning assumptions)
+- Suites drawn at 4.5 m per suite with 12 seats; the suite count is what fits, not a published number
+- Row counts fitted to 18,347
+- Site at the latitude of Edmonton (≈ 53.5° N) for the sun study; the pitch orientation is the HOK default, not the real site's
+
+**Checks raised:**
+
+- Back-of-house rooms get 2.9 m clear under the lowest concourse. Raise the lower tier's vomitory row or the concourse level.
+- The east frontage holds only 97% of the service yard and energy centre. Pick a longer frontage or reduce the plant allowance.
+
+### Arena transformation — Rocket Arena (SHoP with ROSSETTI; Gensler)
+
+19,432 basketball · 18,926 hockey · two suite levels.
+
+Precedent: **Rocket Arena (Rocket Mortgage FieldHouse) transformation** (Cleveland, Ohio, USA). Status: renovation-completed (Announced Dec 2016; finished Sep 2019 (checked 30 Oct 2026)). Credits: SHoP Architects with ROSSETTI, engaged together by the Cavaliers (SHoP the creative lead), and Gensler architect of record. ROSSETTI joined HOK in 2026, after this project. The original 1994 arena is by Ellerbe Becket. Not an HOK design.
+
+**Published (sourced in [PRECEDENTS.md](PRECEDENTS.md)):**
+
+- SHoP Architects with ROSSETTI (before ROSSETTI joined HOK), Gensler architect of record; finished 2019. The original 1994 arena is by Ellerbe Becket. Not an HOK design
+- Basketball 19,432; ice hockey 18,926
+- About 2,000 club seats; 88 suites on two levels plus event-level suites
+
+**Assumed by HOK:**
+
+- Lower bowl, a club tier and an upper bowl, with suite levels under the club tier and the upper bowl on both sidelines
+- One bowl round the court or rink, its first riser row 6 m from the sidelines and 7 m from the ends: courtside floor seats, and the shallower retractable front rows that reach the hockey glass, are not modelled, because a full riser bowl at the boards cannot meet the C-value at the field line
+- Indoor sightlines: C-value target 75 mm (60 mm upper tiers), 850 mm rows, rakes up to 37° (steeper than the 34–35° football guidance; HOK assumption)
+- Enclosed roof on long-span trusses with catwalk lighting and a centre-hung board; arena concourse, program and core allowances (HOK planning assumptions)
+- Suites drawn at 4.5 m per suite with 12 seats; the suite count is what fits, not a published number
+- Row counts fitted to 19,432
+- Site at the latitude of Cleveland (≈ 41.5° N) for the sun study; the pitch orientation is the HOK default, not the real site's
+
+**Checks raised:**
+
+- Upper bowl: 15 rows hit the 37° rake limit, so the C-value target is not met there. Move the tier closer to the field, lower its first row or accept a lower target.
+- Upper bowl: lowest C-value 36 mm is below the 60 mm minimum.
+- Back-of-house rooms get 2.9 m clear under the lowest concourse. Raise the lower tier's vomitory row or the concourse level.
+
 ### Intimate city soccer stadium — Etihad Park (NYCFC)
 
 25,000 · transparent roof, safe standing, tight urban site.
@@ -100,6 +315,32 @@ Precedent: **Etihad Park (NYCFC)** (Willets Point, Queens, New York, USA). Statu
 **Checks raised:**
 
 - 2 floodlights are aimed more than 70° from the vertical (steepest 70°), which adds glare. Mount them higher or closer to the field.
+
+### Close-to-the-pitch soccer stadium — Energizer Park (HOK with Snow Kreilich)
+
+22,423 · every seat within 120 ft of the pitch.
+
+Precedent: **Energizer Park (formerly CityPark)** (St. Louis, Missouri, USA). Status: completed (Opened 16 Nov 2022; first MLS match 4 Mar 2023 (checked 30 Oct 2026)). Credits: HOK with Snow Kreilich Architects.
+
+**Published (sourced in [PRECEDENTS.md](PRECEDENTS.md)):**
+
+- HOK with Snow Kreilich Architects; opened 16 Nov 2022, St. Louis
+- Capacity 22,423 (about 2,500 more can be added)
+- Two tiers under a clear canopy; every seat within 120 ft (37 m) of the pitch; pitch 40 ft below street level
+
+**Assumed by HOK:**
+
+- Two tiers, first row 5 m from the touchlines and 6 m from the goal lines
+- Canopy drawn as a translucent perimeter roof; the sunken pitch and premium products are not modelled (assign them in the seating mix)
+- Row counts fitted to 22,423
+- Site at the latitude of St. Louis (≈ 38.6° N) for the sun study; the pitch orientation is the HOK default, not the real site's
+
+**Checks raised:**
+
+- Lower bowl: 2 rows hit the 35° rake limit, so the C-value target is not met there. Move the tier closer to the field, lower its first row or accept a lower target.
+- Upper bowl: 9 rows hit the 35° rake limit, so the C-value target is not met there. Move the tier closer to the field, lower its first row or accept a lower target.
+- Upper bowl: lowest C-value 17 mm is below the 60 mm minimum.
+- 4 floodlights are aimed more than 70° from the vertical (steepest 70°), which adds glare. Mount them higher or closer to the field.
 
 ### Enclosed NFL renovation — EverBank Stadium of the Future
 

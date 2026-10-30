@@ -4,6 +4,7 @@ import { Viewport } from '../viewport/Viewport';
 import { AboutSheet } from './About';
 import { ErrorBoundary } from './ErrorBoundary';
 import { ComparePanel } from './ComparePanel';
+import { VenuePanel } from './VenuePanel';
 import { Segmented } from './controls';
 import { LeftPanel } from './LeftPanel';
 import { RightPanel } from './RightPanel';
@@ -18,6 +19,7 @@ export function App() {
       <Toolbar />
       <ErrorBoundary area="design panel" className="crash-left"><LeftPanel /></ErrorBoundary>
       <ErrorBoundary area="information panel" className="crash-right"><RightPanel /></ErrorBoundary>
+      <ErrorBoundary area="Venue intelligence" className="crash-view"><VenuePanel /></ErrorBoundary>
       <ViewBar />
       <Hud />
       <ErrorBoundary area="Compare panel" className="crash-view"><ComparePanel /></ErrorBoundary>

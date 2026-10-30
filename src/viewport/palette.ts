@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import type { SeatTable } from '../core/engine/seats';
-import type { Project } from '../core/schema';
+import { SEATING_PRODUCTS, type Project } from '../core/schema';
+import { PRODUCT_LABEL } from '../core/venue';
 import type { AnalysisMetric, Mode } from '../ui/store';
 
 /** Explore-mode seat tones by tier: graphite to pale slate, like a finished architectural model. */
@@ -22,6 +23,11 @@ const ramp = (out: THREE.Color, a: THREE.Color, b: THREE.Color, c: THREE.Color, 
   return x < 0.5 ? out.copy(a).lerp(b, x * 2) : out.copy(b).lerp(c, (x - 0.5) * 2);
 };
 
+/** Round 09 seating products, in SEATING_PRODUCTS order: restrained tones that read on the white model */
+export const PRODUCT_TONES = ['#a3a9b3', '#b8893a', '#7a5c99', '#2f6f6a', '#8c3b4a', '#6f8a5c', '#dcdce1'];
+/** revenue heatmap: pale to deep blue */
+const LOW = new THREE.Color('#eceef2'), MIDV = new THREE.Color('#9db6d6'), HIGH = new THREE.Color('#1f4f8f');
+
 /** `values`: the per-seat study result for the study metrics (quality score, egress route in mm, sun 0–1). */
 export function seatColor(t: SeatTable, i: number, p: Project, mode: Mode, metric: AnalysisMetric, out: THREE.Color, values?: Float32Array): THREE.Color {
   if (mode !== 'analysis') return out.set(t.cls[i] === 1 ? '#8a6a3a' : t.cls[i] === 3 ? '#3d6fb0' : TIER_TONES[t.tier[i] % TIER_TONES.length]);
@@ -40,6 +46,11 @@ export function seatColor(t: SeatTable, i: number, p: Project, mode: Mode, metri
       const k = values?.[i] ?? NaN;
       if (!Number.isFinite(k)) return out.set(EXCLUDED_TONE);
       return out.copy(SHADE).lerp(SUN, k);
+    }
+    case 'product': return out.set(PRODUCT_TONES[values?.[i] ?? 0] ?? PRODUCT_TONES[0]);
+    case 'revenue': {
+      const k = values?.[i] ?? NaN;
+      return Number.isFinite(k) ? ramp(out, LOW, MIDV, HIGH, k) : out.set(PRODUCT_TONES[6]);
     }
     case 'class': return out.set(t.status[i] !== 0 ? EXCLUDED_TONE : CLASS_TONES[t.cls[i]] ?? CLASS_TONES[0]);
     case 'cvalue': {
@@ -61,6 +72,8 @@ export function seatColor(t: SeatTable, i: number, p: Project, mode: Mode, metri
 
 export function legendFor(metric: AnalysisMetric, p: Project): { color: string; label: string }[] {
   switch (metric) {
+    case 'product': return SEATING_PRODUCTS.map((x, k) => ({ color: PRODUCT_TONES[k], label: PRODUCT_LABEL[x] }));
+    case 'revenue': return [{ color: '#eceef2', label: 'Lowest' }, { color: '#9db6d6', label: 'Middle' }, { color: '#1f4f8f', label: 'Highest (metric in Venue intelligence)' }, { color: PRODUCT_TONES[6], label: 'Not sold' }];
     case 'cvalue': return [
       { color: '#e5484d', label: `< ${p.sightlines.minC} mm` },
       { color: '#f0a020', label: `${p.sightlines.minC}–target` },

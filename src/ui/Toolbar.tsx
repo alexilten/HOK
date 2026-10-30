@@ -1,16 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
-import type { Precedent } from '../core/data/precedents';
+import { ATTRIBUTION_LABEL, type Attribution, type Precedent } from '../core/data/precedents';
 import { precedentOf, PRESETS, type Preset } from '../core/presets';
 import { encodeShare } from '../core/share';
-import type { SportId } from '../core/sports';
+import { ARENA_SPORTS, type SportId } from '../core/sports';
 import { export3dm, exportDxfFile, exportElements, exportGlbFile, exportIfcFile, exportJoinScript, exportProject, exportQuantities, exportReport, exportSeatsCsv, exportStudies, loadRhino, loadWriters, openProjectFile } from '../export/browser';
 import { Segmented } from './controls';
 import { Icon } from './icons';
 import { useStore, type CameraView, type Mode } from './store';
 
-const SPORT_TAG: Record<SportId, string> = { soccer: 'Soccer', nfl: 'NFL', stage: 'Stage' };
+const SPORT_TAG: Record<SportId, string> = { soccer: 'Soccer', nfl: 'NFL', stage: 'Stage', basketball: 'Basketball', hockey: 'Hockey' };
 /** the credited studio on a precedent card (the library's credits say who else worked on it) */
 const FIRM_TAG: Partial<Record<Precedent['firm'], string>> = { HOK: 'HOK', ROSSETTI: 'ROSSETTI (now HOK)', Populous: 'Populous' };
+/** Round 09: the card says HOK's actual role where the library knows it (a renovation is not HOK's original design) */
+const ROLE_TAG: Partial<Record<Attribution, string>> = { hok: 'HOK', 'hok-collaboration': 'HOK + co-designer', 'hok-renovation': 'HOK renovation', rossetti: 'ROSSETTI (now HOK)', 'rossetti-collaboration': 'ROSSETTI collaboration' };
+const roleTag = (p: Preset) => { const x = precedentOf(p); return x?.attribution ? ROLE_TAG[x.attribution] ?? FIRM_TAG[x.firm] : FIRM_TAG[x?.firm ?? 'Other']; };
 
 export function Toolbar() {
   const project = useStore((s) => s.project);
@@ -188,10 +191,11 @@ function PresetMenu({ onClose }: { onClose: () => void }) {
   const removeUserPreset = useStore((s) => s.removeUserPreset);
   const loadUserPreset = useStore((s) => s.loadUserPreset);
   const toast = useStore((s) => s.showToast);
-  const [sport, setSport] = useState<'all' | 'soccer' | 'nfl' | 'stage'>('all');
+  const [sport, setSport] = useState<'all' | 'soccer' | 'nfl' | 'stage' | 'arena'>('all');
   const [name, setName] = useState(projectName);
-  const fits = (s: string) => sport === 'all' || s === sport;
-  const hok = (p: Preset) => ['HOK', 'ROSSETTI'].includes(precedentOf(p)?.firm ?? '');
+  const fits = (s: string) => sport === 'all' || s === sport || (sport === 'arena' && (ARENA_SPORTS as string[]).includes(s));
+  // Round 09: HOK's portfolio is filed by HOK's actual role, so ROSSETTI collaborations sit beside HOK renovations
+  const hok = (p: Preset) => ['HOK', 'ROSSETTI'].includes(precedentOf(p)?.firm ?? '') || precedentOf(p)?.attribution === 'rossetti-collaboration';
   const groups = [
     { title: 'Featured', items: PRESETS.filter((p) => p.featured && fits(p.sport)) },
     { title: 'HOK portfolio', items: PRESETS.filter((p) => !p.featured && hok(p) && fits(p.sport)) },
@@ -203,7 +207,7 @@ function PresetMenu({ onClose }: { onClose: () => void }) {
   return (
     <div className="menu glass preset-menu">
       <div className="preset-filter">
-        <Segmented size="sm" value={sport} onChange={setSport} options={[{ value: 'all', label: 'All' }, { value: 'soccer', label: 'Soccer' }, { value: 'nfl', label: 'NFL' }, { value: 'stage', label: 'Stage' }]} />
+        <Segmented size="sm" value={sport} onChange={setSport} options={[{ value: 'all', label: 'All' }, { value: 'soccer', label: 'Soccer' }, { value: 'nfl', label: 'NFL' }, { value: 'arena', label: 'Arena' }, { value: 'stage', label: 'Stage' }]} />
         <span className="small muted">{groups.reduce((a, g) => a + g.items.length, 0) + own.length} presets</span>
       </div>
       <div className="menu-title">My presets</div>
@@ -232,7 +236,7 @@ function PresetMenu({ onClose }: { onClose: () => void }) {
               <button key={p.id} className={`preset-card ${current === p.id ? 'on' : ''}`} onClick={() => { loadPreset(p.id); onClose(); }}>
                 <span className="preset-name">{p.name}</span>
                 <span className="preset-sum">{p.short}</span>
-                <span className="preset-tags"><span className="tag">{SPORT_TAG[p.sport]}</span>{FIRM_TAG[precedentOf(p)?.firm ?? 'Other'] && <span className="tag">{FIRM_TAG[precedentOf(p)?.firm ?? 'Other']}</span>}{p.category === 'precedent' && <span className="tag">confidence: {p.confidence}</span>}</span>
+                <span className="preset-tags"><span className="tag">{SPORT_TAG[p.sport]}</span>{roleTag(p) && <span className="tag" title={ATTRIBUTION_LABEL[precedentOf(p)?.attribution ?? 'independent']}>{roleTag(p)}</span>}{p.category === 'precedent' && <span className="tag">confidence: {p.confidence}</span>}</span>
               </button>
             ))}
           </div>

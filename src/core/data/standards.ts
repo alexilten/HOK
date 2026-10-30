@@ -57,6 +57,13 @@ export const RULES: Rule[] = [
     statement: 'Players\' benches a minimum 30 ft back from the sidelines.', value: '≥ 30 ft' },
   { id: 'hok.nfl.teamarea', topic: 'NFL team area', kind: 'assumption', verification: 'recall', source: 'HOK default',
     statement: 'Team areas drawn between the 32-yard lines, from the border to the 30 ft bench line. Verify the extent against the current NFL Rulebook and league operations requirements.' },
+  // ── arena floors (Round 09)
+  { id: 'nba.court', topic: 'Basketball court', kind: 'governing', verification: 'recall', source: 'NBA Official Rules, Rule 1 (court dimensions)',
+    statement: 'Court 94 ft × 50 ft; lines 2 in; centre circle 6 ft radius; lane 16 ft wide to the free-throw line 19 ft from the baseline; basket centre 5 ft 3 in from the baseline, rim 10 ft; three-point line 23 ft 9 in, 22 ft in the corners; restricted arc 4 ft.', value: '94 × 50 ft' },
+  { id: 'nhl.rink', topic: 'Ice hockey rink', kind: 'governing', verification: 'recall', source: 'NHL Official Rules, Rule 1 (rink)',
+    statement: 'Rink 200 ft × 85 ft with 28 ft corner radii; goal lines 11 ft from the end boards; blue lines 75 ft from the end boards; red and blue lines 12 in wide; face-off circles 15 ft radius, spots 20 ft out from the goal lines and 22 ft either side of centre.', value: '200 × 85 ft' },
+  { id: 'hok.arena.floor', topic: 'Arena floor', kind: 'assumption', verification: 'recall', source: 'HOK default',
+    statement: 'The riser bowl starts 6 m from the sidelines and 7 m from the ends of the court or rink. Courtside floor seats on the basketball apron, and the shallow front rows that reach the hockey glass, are not modelled: a full riser bowl closer in cannot meet the C-value at the field line. A real arena moves retractable lower-bowl seats between basketball and hockey; that conversion is not modelled.' },
   { id: 'hok.stage', topic: 'Event floor and stage', kind: 'assumption', verification: 'recall', source: 'HOK default',
     statement: 'Event venues replace the playing field with a flat event floor (standing or retractable seating) and a raised stage at its east end, 16 m deep at +1.5 m, spanning the floor. The sightline focus is the nearest edge of the floor at floor level. Production, rigging and stage-house requirements come from the operator.' },
   // ── sightlines

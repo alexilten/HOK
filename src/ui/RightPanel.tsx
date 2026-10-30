@@ -2,7 +2,8 @@ import { SECTORS, SECTOR_LABEL } from '../core/engine/plan';
 import { suggestMoves, type Move } from '../core/engine/optimize';
 import { SEAT_CLASS_LABEL, SEAT_CLASSES, SEAT_STATUS, SEAT_STATUS_LABEL, sectionLabel, seatId } from '../core/engine/seats';
 import { RULE } from '../core/data/standards';
-import { getPreset, precedentOf } from '../core/presets';
+import { CONCEPT_LABEL, getPreset, precedentOf } from '../core/presets';
+import { ATTRIBUTION_LABEL } from '../core/data/precedents';
 import { formatArea, formatLength } from '../core/units';
 import { useEffect, useState } from 'react';
 import { KV, Metric, Section, Segmented } from './controls';
@@ -84,7 +85,7 @@ export function RightPanel() {
 
         {mode === 'analysis' && (
           <Section title="Analysis colouring">
-            <Segmented value={metric} onChange={(v: AnalysisMetric) => setMetric(v)} wrap options={[{ value: 'cvalue', label: 'C-value' }, { value: 'distance', label: 'Distance' }, { value: 'quality', label: 'Quality', title: 'View quality score (Round 07)' }, { value: 'egress', label: 'Egress', title: 'Route to the exit (Round 07)' }, { value: 'sun', label: 'Sun', title: 'Sun at kick-off, and pitch sunlight hours (Round 07)' }, { value: 'tier', label: 'Tier' }, { value: 'sector', label: 'Sector' }, { value: 'class', label: 'Class', title: 'Seat class and excluded positions' }]} />
+            <Segmented value={metric} onChange={(v: AnalysisMetric) => setMetric(v)} wrap options={[{ value: 'cvalue', label: 'C-value' }, { value: 'distance', label: 'Distance' }, { value: 'quality', label: 'Quality', title: 'View quality score (Round 07)' }, { value: 'egress', label: 'Egress', title: 'Route to the exit (Round 07)' }, { value: 'sun', label: 'Sun', title: 'Sun at kick-off, and pitch sunlight hours (Round 07)' }, { value: 'tier', label: 'Tier' }, { value: 'sector', label: 'Sector' }, { value: 'class', label: 'Class', title: 'Seat class and excluded positions' }, { value: 'product', label: 'Category', title: 'Seating category from the seating mix (Round 09)' }, { value: 'revenue', label: 'Revenue', title: 'Revenue heatmap; pick the measure in Venue intelligence (Round 09)' }]} />
             <div className="legend">{legendFor(metric, p).map((l) => <span key={l.label}><i style={{ background: l.color }} />{l.label}</span>)}</div>
           </Section>
         )}
@@ -179,6 +180,8 @@ function PresetInfo() {
       <div className="sub-label">Assumed by HOK</div>
       <ul className="facts">{pr.assumed.map((v) => <li key={v}>{v}</li>)}</ul>
       {prec && <p className="source">{prec.credits.value} {prec.sources.slice(0, 2).map((s, i) => <a key={s} href={s} target="_blank" rel="noreferrer"> [{i + 1}]</a>)}</p>}
+      {prec?.attribution && <KV k="HOK's role" v={ATTRIBUTION_LABEL[prec.attribution]} />}
+      {pr.category === 'precedent' && <p className="small concept">{CONCEPT_LABEL}</p>}
       <p className="muted small">An independent parametric study from public information — not the architects' geometry, and not affiliated with or endorsed by them.</p>
     </Section>
   );

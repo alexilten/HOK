@@ -5,7 +5,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { getPreset } from '../src/core/presets';
-import { defaultProject, parseProject, type Project } from '../src/core/schema';
+import { defaultProject, parseProject, SCHEMA_VERSION, type Project } from '../src/core/schema';
 import { carbon, STEEL_DENSITY } from '../src/studies/carbon';
 import { egress } from '../src/studies/egress';
 import { applyVars, bounds, explore, paretoFront, scoreDesign } from '../src/studies/explore';
@@ -201,10 +201,10 @@ describe('AV · scenario comparison', () => {
 });
 
 describe('AW · v5 files', () => {
-  it('v5 files open as v6 with the default studies and unchanged capacity and floor area', () => {
+  it('v5 files open as the current version with the default studies and unchanged capacity and floor area', () => {
     for (const [f, total, gfa] of [['generic-nfl', 64578, 81097], ['milano', 71398, 49585]] as const) {
       const p = parseProject(readFileSync(`tests/fixtures/v5-${f}.hok.json`, 'utf8'));
-      expect(p.version).toBe(6);
+      expect(p.version).toBe(SCHEMA_VERSION);
       expect(p.studies).toEqual(defaultProject().studies);
       const s = fresh(p);
       expect([s.metrics.total, Math.round(s.architecture.metrics.grossArea)], f).toEqual([total, gfa]);
