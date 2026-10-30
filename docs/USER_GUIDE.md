@@ -12,7 +12,7 @@ runs along the field.
 Open the **Preset** menu in the toolbar.
 
 - **Featured** presets come first: Mercedes-Benz Stadium (HOK), with its aperture roof and halo
-  board, and the new Highmark Stadium (Populous). A new visitor opens on Mercedes-Benz Stadium.
+  board, and the new Highmark Stadium (Populous). A new visitor opens on the generic soccer bowl.
 - **HOK portfolio** holds HOK's other stadiums, including Ford Field by ROSSETTI, now part of HOK.
   Each card names the credited studio.
 - **Generic** presets are clean starting points for soccer and NFL.
@@ -95,9 +95,11 @@ The **Venue intelligence** panel floats over the model (collapse it with –). I
 
 - **Select a section:** click any seat. The section is washed in blue and its card shows its seats, accessible positions, sellable places, category, assumed price and gross revenue per event.
 - **Change how it is sold:** pick general admission, premium club, loge, luxury suite, VIP, standing room or unavailable. *Apply to this tier's sidelines* (or ends, or corners) sells the matching sections the same way. The seats never move.
+- **Event:** run the venue for another event without changing the bowl. Arenas host basketball, hockey and end- or centre-stage concerts; stadiums host football, soccer and an end-stage concert. An event that doesn't fit the bowl is shown as unsupported, with the reason. At an end-stage concert, the sections behind the stage are held back and the floor sells standing places.
+- **Seating manifest** (`M`): every section in a table you can sort and filter to premium or held-back sections. Click a row to select the section in 3D, and the other way round. In *Categories* and *Revenue map*, hovering over a seat shows a card for its section.
 - **See it:** switch the model between *Architecture*, *Categories* and *Revenue map*; the revenue map can show the price per seat, the revenue per seat or the revenue per section.
 - **Assumptions:** events a year, sell-through, a price per product, the suite licence and the conversion ratios. They are placeholders, not project data. *Reset financial assumptions* puts the defaults back.
-- **Compare scenarios:** save the design as A, change the mix, the event (the sport in **Field**), the prices or the geometry, and save as B. Each scenario keeps the figures and assumptions it was saved with; open either one to keep working on it.
+- **Compare scenarios:** save the design as A, change the mix, the event, the prices or the geometry, and save as B. *Show changed sections in 3D* washes the sections sold differently amber. Each scenario keeps the figures and assumptions it was saved with; open either one to keep working on it.
 - **Reference:** precedent presets list their published capacities by event with sources, and *Restore the original preset* reloads it.
 
 The revenue is illustrative gross ticket revenue, not profit, net operating income or total venue revenue. See [VENUE.md](VENUE.md) for the method.
@@ -122,6 +124,7 @@ so save a project file to keep a design elsewhere.
 | Keys | Does |
 |---|---|
 | `E` `T` `A` | Explore, Technical, Analysis |
+| `V` `M` | Venue intelligence, seating manifest |
 | `1`–`7` | Perspective, plan, elevation, section, iso, field level, exterior |
 | `O` | Compare and optimise |
 | `⌘Z` / `⇧⌘Z` | Undo / redo |

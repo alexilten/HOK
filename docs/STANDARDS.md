@@ -81,6 +81,12 @@ Verification: **checked** means the rule was read in the cited source on the dat
 |---|---|---|---|---|---|
 | `hok.stage` | Event venues replace the playing field with a flat event floor (standing or retractable seating) and a raised stage at its east end, 16 m deep at +1.5 m, spanning the floor. The sightline focus is the nearest edge of the floor at floor level. Production, rigging and stage-house requirements come from the operator. |  | assumption | recall | HOK default |
 
+## Event floors
+
+| id | statement | value | kind | verification | source |
+|---|---|---|---|---|---|
+| `hok.event.floor` | Round 09: an operating event lays its floor inside the existing first-row line, less a 1.5 m clearance zone, and never moves a seat; sightlines stay those of the design event. A sport fits when its rule-size field and run-off fit (soccer 3 m all round; NFL a 6 ft border at the end lines and 36 ft along the sidelines; basketball and hockey their design run-off). An end stage is 16 m deep and up to 40 m wide at the east end of the floor; the bowl sections whose centre lies past its front, within the width of the floor, are held back. A centre stage is 15 m square. The open floor sells standing places at an editable density (default 1.5 per m², gross of barriers and the mix position). Retractable seating, partial obstruction beside a stage and a seated floor are not modelled. |  | assumption | recall | HOK default |
+
 ## Sightlines
 
 | id | statement | value | kind | verification | source |

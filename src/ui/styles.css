@@ -481,3 +481,29 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 @media (max-width: 1100px) { .venue, .venue-pill { left: 14px; top: auto; bottom: 110px; } .venue { width: min(340px, calc(100% - 28px)); max-height: 46%; } }
 .venue .sub-label { margin: 0 0 4px; }
 .venue .segmented { display: flex; } .venue .segmented button { flex: 1; padding: 0 6px; }
+
+/* ── Round 09 phase 2: events, seating manifest, hover card */
+.venue-events { display: flex; flex-direction: column; gap: 6px; }
+.event-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.product-chip.off { opacity: 0.45; cursor: not-allowed; text-decoration: line-through; text-decoration-thickness: 0.5px; }
+.btn-sm.on { background: var(--accent-soft); color: var(--accent-ink); box-shadow: 0 0 0 1px var(--accent); }
+.manifest { position: absolute; left: 684px; right: 332px; bottom: 64px; max-height: 44%; z-index: 7; border-radius: var(--radius); display: flex; flex-direction: column; overflow: hidden; animation: pop 0.22s var(--ease) both; }
+.manifest-head { display: flex; align-items: center; gap: 8px; padding: 10px 14px 8px; border-bottom: 0.5px solid var(--line); flex-wrap: wrap; }
+.manifest-head .close { margin-left: auto; font-size: 18px; line-height: 1; width: 26px; height: 26px; }
+.manifest-body { overflow: auto; }
+.manifest-table { width: 100%; border-collapse: collapse; font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.manifest-table thead th { position: sticky; top: 0; background: var(--glass-strong); text-align: left; font-weight: 600; padding: 0; z-index: 1; }
+.manifest-table th.num, .manifest-table td.num { text-align: right; }
+.manifest-table th .sort { width: 100%; text-align: inherit; padding: 6px 8px; font: inherit; color: var(--ink-2); white-space: nowrap; }
+.manifest-table th .sort.on { color: var(--accent-ink); }
+.manifest-table td { padding: 4px 8px; border-top: 0.5px solid var(--line); white-space: nowrap; }
+.manifest-table td i, .hover-title i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; vertical-align: 0; }
+.manifest-table tbody tr { cursor: pointer; }
+.manifest-table tbody tr:hover { background: var(--hover); }
+.manifest-table tbody tr.sel { background: var(--accent-soft); }
+.manifest-table tbody tr.held td { color: var(--ink-3); }
+.manifest-table tfoot td { font-weight: 600; border-top: 0.5px solid var(--line-2); position: sticky; bottom: 0; background: var(--glass-strong); }
+.manifest-table .note-col { white-space: normal; min-width: 140px; font-size: 10.5px; }
+.hover-card { position: fixed; z-index: 20; width: 250px; padding: 8px 10px; border-radius: 12px; pointer-events: none; font-size: 11.5px; }
+.hover-title { font-weight: 600; margin-bottom: 4px; }
+@media (max-width: 1100px) { .manifest { left: 14px; right: 14px; } }

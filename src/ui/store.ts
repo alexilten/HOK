@@ -117,6 +117,13 @@ interface State {
   setRevenueMetric: (m: RevenueMetric) => void;
   venueOpen: boolean;
   setVenueOpen: (on: boolean) => void;
+  /** Round 09 phase 2: the seating manifest table, the section under the pointer and the A/B change wash */
+  manifestOpen: boolean;
+  setManifestOpen: (on: boolean) => void;
+  hover: { key: string; x: number; y: number } | null;
+  setHover: (h: { key: string; x: number; y: number } | null) => void;
+  abDiff: boolean;
+  setAbDiff: (on: boolean) => void;
   ab: Partial<Record<Slot, AbScenario>>;
   /** the slot the open design was last opened from or saved to */
   abActive: Slot | null;
@@ -192,6 +199,12 @@ export const useStore = create<State>((set, get) => ({
   setRevenueMetric: (revenueMetric) => set({ revenueMetric }),
   venueOpen: true,
   setVenueOpen: (venueOpen) => set({ venueOpen }),
+  manifestOpen: false,
+  setManifestOpen: (manifestOpen) => set({ manifestOpen }),
+  hover: null,
+  setHover: (hover) => { const h = get().hover; if (h?.key !== hover?.key || h?.x !== hover?.x || h?.y !== hover?.y) set({ hover }); },
+  abDiff: false,
+  setAbDiff: (abDiff) => set({ abDiff }),
   ab: readAb(),
   abActive: null,
   saveAb: (slot, name) => {
@@ -206,7 +219,7 @@ export const useStore = create<State>((set, get) => ({
     get().load(structuredClone(x.project));
     set({ abActive: slot });
   },
-  clearAb: () => { writeAb({}); set({ ab: {}, abActive: null }); },
+  clearAb: () => { writeAb({}); set({ ab: {}, abActive: null, abDiff: false }); },
   cut: { enabled: false, axis: 'x', offset: 0 },
   region: 'E',
   toast: null,

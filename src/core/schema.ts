@@ -8,6 +8,7 @@
  * Site placement (north, geolocation) is held separately in `site` and never moves geometry.
  */
 import { SPORTS, type SportId } from './sports';
+import { EVENT_IDS, type EventId } from './events';
 import type { DisplayUnits, Mm } from './units';
 
 export const SCHEMA_ID = 'hok.project';
@@ -147,6 +148,8 @@ export interface StudiesParams {
     conversion: Record<ConvertibleProduct, number>;
     /** seats per suite when a bowl section is converted to suites (each suite is sold whole, by licence) */
     suiteSeats: number;
+    /** Round 09: standing places per m² of open event floor at concerts, gross of barriers and the mix position */
+    floorDensity: number;
   };
 }
 
@@ -339,6 +342,11 @@ export interface Project {
    * Sections left out follow their tier (a club tier sells as club, any other tier as general admission).
    */
   mix: Record<string, SeatingProduct>;
+  /**
+   * Round 09 phase 2: the event the venue is operated for (core/events.ts). null runs the design event.
+   * An event lays its own floor inside the bowl and never moves a seat.
+   */
+  event: EventId | null;
   /** the app and time that last saved this file (Round 08; informational) */
   saved?: { by: string; at: string };
 }
@@ -386,7 +394,7 @@ export function defaultStudies(): StudiesParams {
     carbon: { concrete: 330, rebarRate: 120, rebar: 1.99, steel: 1.55, steelFraction: 0.05, terraceThickness: 250, roofSteel: 100, roofCovering: 40, facade: 120, uncertainty: 0.3 },
     revenue: {
       currency: 'USD', events: 25, occupancy: 0.85, ticket: 60, club: 250, suite: 150000, loge: 400, vip: 750, standing: 45,
-      conversion: { club: 1, loge: 1, suite: 0.6, vip: 1, standing: 1 }, suiteSeats: 12,
+      conversion: { club: 1, loge: 1, suite: 0.6, vip: 1, standing: 1 }, suiteSeats: 12, floorDensity: 1.5,
     },
   };
 }
@@ -414,6 +422,7 @@ export function defaultProject(): Project {
     systems: defaultSystems(),
     studies: defaultStudies(),
     mix: {},
+    event: null,
   };
 }
 
@@ -472,6 +481,7 @@ export function readProject(text: string): { project: Project; repaired: string[
   if (roofStands.length !== p.architecture.roof.stands.length) { p.architecture.roof.stands = roofStands; repaired.push('architecture.roof.stands'); }
   p.tiers.forEach((t, i) => { if (t.kind !== 'general' && t.kind !== 'club') { t.kind = 'general'; repaired.push(`tiers[${i}].kind`); } });
   for (const [k, v] of Object.entries(p.mix)) if (!SEATING_PRODUCTS.includes(v)) { delete p.mix[k]; repaired.push(`mix.${k}`); }
+  if (p.event !== null && !EVENT_IDS.includes(p.event)) { p.event = null; repaired.push('event'); }
   return { project: p, repaired };
 }
 
@@ -537,6 +547,7 @@ function migrate(raw: any): Project {
       carbon: { ...d.studies.carbon, ...raw.studies?.carbon },
       revenue: { ...d.studies.revenue, ...raw.studies?.revenue, conversion: { ...d.studies.revenue.conversion, ...raw.studies?.revenue?.conversion } },
     },
+    event: raw.event ?? null,
     mix: raw.mix && typeof raw.mix === 'object' && !Array.isArray(raw.mix) ? { ...raw.mix } : {},
     tiers: Array.isArray(raw.tiers) && raw.tiers.length
       ? raw.tiers.map((t: Partial<TierParams>, i: number) => {

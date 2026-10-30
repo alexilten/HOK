@@ -7,6 +7,13 @@ as `saved.by`. Earlier rounds are numbered here after the fact; they were not ta
 The project file has its own version (`hok.project` v1 to v7). A newer HOK opens every older
 file; an older HOK refuses a newer file instead of half-reading it.
 
+## Unreleased · Venue intelligence (Round 09, phase 2)
+
+- **Events.** Run an arena for basketball, hockey, or an end- or centre-stage concert, and a stadium for football, soccer or an end-stage concert, without moving a seat. An event that doesn't fit the bowl is shown as unsupported, with the reason. End stages hold back the sections behind them; concert floors sell standing at an editable density. Saved in the project as `event` (still v7; older files open on the design event).
+- **Seating manifest.** Every section in a sortable table, filtered to premium or held-back sections, selected together with the 3D view.
+- **Hover cards** over sections in the category and revenue views, and **changed sections** between scenarios A and B washed amber in 3D.
+- **Opens on the generic soccer bowl.** New visitors start on Generic soccer; the library still leads with HOK's portfolio.
+
 ## Unreleased · Venue intelligence (Round 09, phase 1)
 
 - **Arena floors.** Two new field types: an NBA basketball court and an NHL hockey rink, drawn with their markings and exported like the other fields.

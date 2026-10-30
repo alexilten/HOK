@@ -15,8 +15,8 @@ const FT = 304.8;
 const mbs = () => getPreset('mercedes-benz').build();
 
 describe('HOK portfolio in the preset library', () => {
-  it('opens on Mercedes-Benz Stadium, with the Bills stadium beside it and HOK\'s own stadiums next', () => {
-    expect(DEFAULT_PRESET.id).toBe('mercedes-benz');
+  it('opens on the generic soccer bowl, leads the library with Mercedes-Benz Stadium, the Bills stadium beside it and HOK\'s own stadiums next', () => {
+    expect(DEFAULT_PRESET.id).toBe('generic-soccer');
     expect(PRESETS.slice(0, 2).map((p) => p.id)).toEqual(['mercedes-benz', 'highmark']);
     const firms = PRESETS.slice(2, 7).map((p) => precedentOf(p)?.firm);
     expect(firms.every((f) => f === 'HOK' || f === 'ROSSETTI')).toBe(true);

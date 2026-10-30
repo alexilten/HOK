@@ -589,8 +589,8 @@ const OTHER_PRESETS: Preset[] = [
 
 export const PRESETS: Preset[] = [...HOK_PRESETS, ...OTHER_PRESETS];
 
-/** New visitors open on HOK's flagship: Mercedes-Benz Stadium. */
-export const DEFAULT_PRESET = PRESETS[0];
+/** the design HOK opens on (and falls back to): the generic soccer bowl; the library still leads with HOK's portfolio */
+export const DEFAULT_PRESET = PRESETS.find((p) => p.id === 'generic-soccer')!;
 export const getPreset = (id: string) => PRESETS.find((p) => p.id === id) ?? DEFAULT_PRESET;
 export const precedentOf = (p: PresetMeta) => (p.precedent ? PRECEDENTS.find((x) => x.id === p.precedent) : undefined);
 export const PRESETS_CHECKED = CHECKED;
