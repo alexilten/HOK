@@ -1,0 +1,122 @@
+[
+  {
+    "file": "four-stand-30k_rhino8.3dm",
+    "preset": "four-stand",
+    "seats": 29540,
+    "grossSeats": 30504,
+    "vomitories": 14,
+    "wheelchair": 196,
+    "exportedSeats": true,
+    "bytes": 25445503,
+    "exportMs": 3387,
+    "readBack": {
+      "units": "Millimeters",
+      "layers": 120,
+      "objects": 32759,
+      "blocks": [
+        {
+          "name": "HOK_FLOODLIGHT_GENERIC",
+          "parts": 1,
+          "instances": 364
+        },
+        {
+          "name": "HOK_SEAT_500MM",
+          "parts": 3,
+          "instances": 29344
+        },
+        {
+          "name": "HOK_WHEELCHAIR_1400x900MM",
+          "parts": 1,
+          "instances": 196
+        }
+      ],
+      "groups": [
+        "TERRACE_T1",
+        "TERRACE_T2"
+      ]
+    }
+  },
+  {
+    "file": "generic-soccer_bowl-only_rhino8.3dm",
+    "preset": "generic-soccer",
+    "seats": 41998,
+    "grossSeats": 44180,
+    "vomitories": 42,
+    "wheelchair": 290,
+    "exportedSeats": false,
+    "bytes": 3657157,
+    "exportMs": 190,
+    "readBack": {
+      "units": "Millimeters",
+      "layers": 120,
+      "objects": 2453,
+      "blocks": [
+        {
+          "name": "HOK_FLOODLIGHT_GENERIC",
+          "parts": 1,
+          "instances": 364
+        }
+      ],
+      "groups": [
+        "TERRACE_T1",
+        "TERRACE_T2"
+      ]
+    }
+  },
+  {
+    "file": "generic-nfl_building_rhino8.3dm",
+    "preset": "generic-nfl",
+    "seats": 64034,
+    "grossSeats": 67272,
+    "vomitories": 50,
+    "wheelchair": 462,
+    "exportedSeats": false,
+    "bytes": 4677259,
+    "exportMs": 252,
+    "readBack": {
+      "units": "Millimeters",
+      "layers": 130,
+      "objects": 3433,
+      "blocks": [
+        {
+          "name": "HOK_FLOODLIGHT_GENERIC",
+          "parts": 1,
+          "instances": 319
+        }
+      ],
+      "groups": [
+        "TERRACE_T1",
+        "TERRACE_T2",
+        "TERRACE_T3"
+      ]
+    }
+  },
+  {
+    "file": "allegiant-inspired_architecture_rhino8.3dm",
+    "preset": "allegiant",
+    "seats": 63747,
+    "grossSeats": 66780,
+    "vomitories": 48,
+    "wheelchair": 458,
+    "exportedSeats": false,
+    "bytes": 4797622,
+    "exportMs": 349,
+    "readBack": {
+      "units": "Millimeters",
+      "layers": 130,
+      "objects": 3500,
+      "blocks": [
+        {
+          "name": "HOK_FLOODLIGHT_GENERIC",
+          "parts": 1,
+          "instances": 319
+        }
+      ],
+      "groups": [
+        "TERRACE_T1",
+        "TERRACE_T2",
+        "TERRACE_T3"
+      ]
+    }
+  }
+]
