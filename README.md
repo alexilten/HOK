@@ -6,6 +6,18 @@
 
 ![Generic soccer bowl, perspective](docs/screenshots/01-perspective.png)
 
+## Preview for HOK: a five-minute tour
+
+This is a work-in-progress build for the team to try. Every revenue figure is an illustrative placeholder, not project data.
+
+1. **Open a precedent.** Use the preset menu (top centre) to open **Mercedes-Benz Stadium** or **Little Caesars Arena**. Each preset is a reference-inspired concept, not as-built geometry, and the right panel names HOK's actual role.
+2. **Change the bowl.** In the left panel, drag *First row from sidelines* or a tier's rows. Every seat, sightline and capacity figure regenerates live.
+3. **Venue intelligence** (floating panel, `V`). Click any seat to select its section and sell it as club, loge, suite, VIP, standing or unavailable. Watch sellable places, premium share and gross ticket revenue update.
+4. **See it.** Switch between *Categories* and *Revenue map*, and hover over seats for section cards. Press `M` for the seating manifest.
+5. **Change the event.** In an arena, switch between basketball, hockey and end-stage or centre-stage concerts. Events that don't fit the bowl are marked unsupported, and sections behind an end stage are held back.
+6. **Compare.** Save the design as scenario A, change something, save it as B, and turn on *Show changed sections in 3D*.
+7. **Take it away.** Export a Rhino `.3dm` or IFC model from **Export**, or the seating manifest `.csv` and the assumptions and scenario `.json` files.
+
 ## Presets: HOK's portfolio first
 
 HOK opens on the generic soccer bowl. The preset library leads with **Mercedes-Benz Stadium** (HOK, Atlanta, 2017), the most researched preset: 71,000 seats on three levels with the east end zone left open for the window to the city, 21 in seats, the eight-petal aperture roof and the halo board, which comes out at about 1,080 ft round against the published 1,075–1,100 ft. Beside it is the **new Highmark Stadium** (Populous, 2026), which the team worked on. Then come HOK's other stadiums (Etihad Park, the EverBank Stadium renovation, the Hard Rock Stadium modernization, Lynn Family Stadium, and Ford Field by ROSSETTI, now part of HOK), the generic presets and the other precedents. Every precedent names the studio actually credited, with sources, in [PRECEDENTS.md](docs/PRECEDENTS.md); [PRESETS.md](docs/PRESETS.md) lists what each preset takes from published facts and what it assumes.
@@ -16,11 +28,11 @@ HOK opens on the generic soccer bowl. The preset library leads with **Mercedes-B
 
 ![Preset library with HOK's portfolio first](docs/screenshots/40-hok-preset-library.png)
 
-## Status after Round 08
+## Status after Round 09
 
 | Area | What works now |
 |---|---|
-| Sports | Soccer, built to IFAB Law 1 with FIFA 105 × 68 m defaults. NFL, built to Rule 1 (360 × 160 ft) with end zones, hash marks, numbers, goalposts and team areas. Baseball is shown but disabled. |
+| Sports | Soccer, built to IFAB Law 1 with FIFA 105 × 68 m defaults. NFL, built to Rule 1 (360 × 160 ft) with end zones, hash marks, numbers, goalposts and team areas. Arena floors: an NBA court (94 × 50 ft) and an NHL rink (200 × 85 ft). An event floor with an end stage. Baseball is shown but disabled: it is planned for a later round. |
 | Bowl | One continuous bowl. The first-row line is a rounded rectangle offset from the field with a corner radius from 0 (four separate stands). Each stand (N, S, E, W) can sit at its own distance, and each stand or corner can carry its own row count per tier or be left open (a horseshoe). |
 | Tiers | One to three tiers, general or club. Each tier sets its rows, row depth, seat width, first-row elevation or gap above the tier below, overhang or setback, front barrier, C-value target, lateral cross-aisles, vomitories and wheelchair positions. |
 | Sightlines | Risers are solved row by row to a target C-value (FIFA: 60, 90 or 120 mm), rounded to a riser step and capped at a maximum rake. A constant-riser mode is also available. Each seat's C-value is measured along its true plan sightline, so corners are checked obliquely. |
@@ -39,6 +51,7 @@ HOK opens on the generic soccer bowl. The preset library leads with **Mercedes-B
 | Files | Save and open `.hok.json`. Export to Rhino 8 or 7 `.3dm` with or without seats (structural grid, rakers and columns as exact extrusions, roof deck, cap, frames and trusses, facade skin, mullions and portals, back-of-house rooms, floodlights as aimed blocks with aiming lines, catwalk or masts, video and ribbon boards, broadcast positions, MEP risers, rooms, duct zones, energy centre yards and the service yard as exact extrusions, floor plates, suites, program zones and cores, vomitory solids, wheelchair and companion positions, club seats and excluded positions on their own layers), a seat schedule `.csv` with class and status, and a RhinoPython script that joins each tier and cuts its vomitories. A HOK `.3dm` can be reopened in HOK. |
 | Interoperability | One BIM element model behind every export, with each element marked as a generic parametric element, conceptual mass, space reservation or generic placeholder. **IFC 4** with project, site, building and storeys, typed seats and floodlights, vomitory openings voiding the terraces, property and quantity sets and stable GlobalIds (validated with IfcOpenShell). **glTF** (.glb) with instanced seats, a **plan and section DXF**, **quantity and element schedules** (CSV) and a 15-check **model check** with a report. See [INTEROP.md](docs/INTEROP.md) for the IFC mapping and Revit notes. |
 | Design studies | **View quality** per seat (distance, C-value and head turn) with a heat map. **Egress** from the seating: every seat's route to its vomitory or tier exit, exit loads and times at Green Guide rates of passage. **Sun and shade:** pitch sunlight hours and seats in sun at kick-off from the solar position at the site, through a massing of the bowl, facade and roof. **Materials and embodied carbon** (A1–A3) from the element model with editable generic factors. **Premium revenue** scenarios from the seat mix. Each study states its method and assumptions ([STUDIES.md](docs/STUDIES.md)). |
+| Venue intelligence | A seating mix per section (general, club, loge, suite, VIP, standing, unavailable) with explicit conversion ratios and protected accessible positions. Operating events inside the same bowl (basketball, hockey, concerts; football, soccer, concerts), with unsupported events reported. A category view, a revenue heatmap, hover cards and a seating manifest synced with the model. Scenario A/B with deltas and changed sections. A mix and price index per event, a season blend, and manifest CSV, assumptions JSON and scenario JSON exports. Illustrative gross ticket revenue only. See [VENUE.md](docs/VENUE.md). |
 | Site | Field orientation (N–S, NE–SW, E–W, SE–NW or any bearing), latitude and longitude. They drive the sun study and the IFC site, and never move geometry. |
 | Options | **Compare** saved scenarios side by side on every study. **Explore** capacity against proximity: about 80 regenerated designs, the Pareto front, a recommended design for the target and alternatives A–E, each one click to apply or save. |
 | Working with it | The open design is **saved in the browser** as you work and restored on the next visit. **Share links** carry the whole design in the link (about 2 kB, nothing uploaded). **My presets** sit beside the built-in library, which filters by sport. Damaged project files are repaired value by value, a change the engine cannot build is refused with a message, and a failing panel offers a way back. **About** (click the logo) shows the version and build, which every saved file also records; `?` lists the shortcuts. See the [user guide](docs/USER_GUIDE.md) and the [changelog](CHANGELOG.md). |
