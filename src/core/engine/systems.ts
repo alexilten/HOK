@@ -257,6 +257,22 @@ export function buildSystems(
       faces.push([ring.cx, ring.cy, B.clear + B.height / 2]);
       clash = Math.max(0, B.clear + B.height - arch.metrics.viewClear);
     }
+  } else if (B.type === 'halo') {
+    // a continuous ring of LED ringing the roof opening, hung under the roof at its leading edge (the
+    // Mercedes-Benz Stadium halo board, HOK 2017); only a roof that rings the field can carry it
+    built = roof.spans.includes('ring');
+    if (built) {
+      const d0 = roof.dIn + 500, z1 = roofUnderAt(roof, d0 + 600) - 500, z0 = Math.max(0, z1 - B.height);
+      for (const g of SEGMENTS) {
+        const len = segmentLength(ring, g, d0);
+        if (len < 500) continue;
+        zone({ id: `AV.HALO.${g}`, system: 'avit', kind: 'board', label: 'Halo video board', seg: g, u0: 0, u1: 1, d0, d1: d0 + 600, z0, z1, area: (len * (z1 - z0)) / 1e6 });
+        boardArea += (len * (z1 - z0)) / 1e6;
+        const c = pointAt(ring, g, 0.5, d0);
+        faces.push([c.x, c.y, (z0 + z1) / 2]);
+      }
+      clash = Math.max(0, B.height - (z1 - z0));
+    }
   }
   let ribbon = 0;
   if (B.ribbon) profiles.forEach((t, ti) => {
@@ -425,7 +441,7 @@ export function buildSystems(
         average: (fixtures.length * L.lumens * L.maintenance * L.utilisation) / Math.max(1, litArea),
         loadKW: loadLighting, minAngle: fixtures.length ? minAngle : 0, maxTilt, overTilt, mastHeight,
       },
-      boards: { count: faces.length, area: boardArea, ribbon, maxView, meanView: nView ? sumView / nView : 0, clash, built },
+      boards: { count: B.type === 'halo' && built ? 1 : faces.length, area: boardArea, ribbon, maxView, meanView: nView ? sumView / nView : 0, clash, built },
       broadcast: { cameras: cameras.length, mainDepression: mainCam.depression, mainDistance, tribuneSeats, commentary: SY.broadcast.commentary, compound: SY.broadcast.compound },
       mep: {
         conditioned, demandKW: mep.demandKW, transformers: mep.transformers, generators: mep.generators,

@@ -14,7 +14,7 @@
 import type { Project } from '../schema';
 import { SPORTS, type FieldModel } from '../sports';
 import { adaRequired } from './accessibility';
-import { buildArchitecture, ENCLOSED, ROOF_LABEL, type Architecture } from './architecture';
+import { buildArchitecture, ENCLOSED, OPERABLE, ROOF_LABEL, type Architecture } from './architecture';
 import { buildBuilding, type Building } from './building';
 import { buildSystems, MAX_TILT, MIN_LIGHT_ANGLE, type Systems } from './systems';
 import { regionRows, standDistances, type Layout } from './layout';
@@ -251,7 +251,7 @@ function addBuilding(p: Project, ring: PlanRing, profiles: TierProfile[], m: Met
 function addArchitecture(p: Project, ring: PlanRing, layout: Layout, profiles: TierProfile[], b: Building, seats: SeatResult, field: FieldModel, m: Metrics, w: Warning[]): Architecture {
   const a = buildArchitecture(p, ring, layout, profiles, b, { seats: seats.seats, net: m.net, fieldLength: field.length, fieldWidth: field.width });
   const r = p.architecture.roof, am = a.metrics;
-  const open = !ENCLOSED.includes(r.type) || (r.type === 'retractable' && r.open > 0.5);
+  const open = !ENCLOSED.includes(r.type) || (OPERABLE.includes(r.type) && r.open > 0.5);
   if (r.type !== 'open' && am.viewClear < r.skyView) w.push({ level: 'warn', code: 'roof.view', rule: 'hok.roof', message: open
     ? `${ROOF_LABEL[r.type]}: the back-row sightline under the roof edge reaches only ${(am.viewClear / 1000).toFixed(1)} m over the centre spot (${(r.skyView / 1000).toFixed(0)} m wanted for high balls). Raise the roof, pull its edge back or pitch it up.`
     : `${ROOF_LABEL[r.type]}: ${(am.viewClear / 1000).toFixed(1)} m clear over the centre spot (${(r.skyView / 1000).toFixed(0)} m wanted). Raise the roof clearance.` });
@@ -271,6 +271,8 @@ function addSystems(p: Project, ring: PlanRing, layout: Layout, profiles: TierPr
   if (B.type === 'centre' && !sm.boards.built) w.push({ level: 'warn', code: 'board.centre', rule: 'hok.boards', message: 'A centre-hung board needs a fixed roof over the field (enclosed, ETFE or truss), so it is not built. Use end boards or change the roof.' });
   if (B.type === 'centre' && sm.boards.built && B.clear < p.architecture.roof.skyView) w.push({ level: 'warn', code: 'board.low', rule: 'hok.boards', message: `The centre-hung board's underside is ${(B.clear / 1000).toFixed(1)} m above the field, inside the ${(p.architecture.roof.skyView / 1000).toFixed(0)} m high-ball zone. Raise it.` });
   if (sm.boards.clash > 0 && B.type === 'centre') w.push({ level: 'warn', code: 'board.roof', rule: 'hok.boards', message: `The centre-hung board reaches ${(sm.boards.clash / 1000).toFixed(1)} m into the roof structure. Lower it or make it shorter.` });
+  if (B.type === 'halo' && !sm.boards.built) w.push({ level: 'warn', code: 'board.halo', rule: 'hok.boards', message: 'A halo board rings the roof opening, so it needs a roof all the way round the bowl (perimeter, enclosed, retractable or aperture). Use end boards or change the roof.' });
+  if (B.type === 'halo' && sm.boards.built && sm.boards.clash > 0) w.push({ level: 'info', code: 'board.halo.low', rule: 'hok.boards', message: `The roof edge leaves room for a halo ${((B.height - sm.boards.clash) / 1000).toFixed(1)} m tall (${(B.height / 1000).toFixed(1)} m asked), so it is cut to fit above the field.` });
   if (sm.boards.clash > 0 && B.type === 'ends') w.push({ level: sm.boards.clash > B.height / 2 ? 'warn' : 'info', code: 'board.roof', rule: 'hok.boards', message: `The roof leaves room for end boards ${((B.height - sm.boards.clash) / 1000).toFixed(1)} m tall (${(B.height / 1000).toFixed(1)} m asked), so they are cut to fit. Raise the roof clearance for taller boards.` });
   if (sm.service.yardFit < 0.98) w.push({ level: 'warn', code: 'systems.yard', rule: 'hok.mep', message: `The ${({ N: 'north', S: 'south', E: 'east', W: 'west' } as const)[sm.service.yard]} frontage holds only ${Math.round(sm.service.yardFit * 100)}% of the service yard and energy centre. Pick a longer frontage or reduce the plant allowance.` });
   if (p.building.concourseClear - p.systems.mep.ductZone < 3000) w.push({ level: 'warn', code: 'mep.duct', rule: 'hok.mep', message: `The duct zone leaves ${((p.building.concourseClear - p.systems.mep.ductZone) / 1000).toFixed(1)} m clear on the concourses. Raise the concourse clear height or shallow the duct zone.` });

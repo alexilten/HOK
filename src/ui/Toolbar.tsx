@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { PRESETS } from '../core/presets';
+import type { Precedent } from '../core/data/precedents';
+import { precedentOf, PRESETS, type Preset } from '../core/presets';
 import { encodeShare } from '../core/share';
 import type { SportId } from '../core/sports';
 import { export3dm, exportDxfFile, exportElements, exportGlbFile, exportIfcFile, exportJoinScript, exportProject, exportQuantities, exportReport, exportSeatsCsv, exportStudies, loadRhino, loadWriters, openProjectFile } from '../export/browser';
@@ -8,6 +9,8 @@ import { Icon } from './icons';
 import { useStore, type CameraView, type Mode } from './store';
 
 const SPORT_TAG: Record<SportId, string> = { soccer: 'Soccer', nfl: 'NFL', stage: 'Stage' };
+/** the credited studio on a precedent card (the library's credits say who else worked on it) */
+const FIRM_TAG: Partial<Record<Precedent['firm'], string>> = { HOK: 'HOK', ROSSETTI: 'ROSSETTI (now HOK)', Populous: 'Populous' };
 
 export function Toolbar() {
   const project = useStore((s) => s.project);
@@ -188,9 +191,12 @@ function PresetMenu({ onClose }: { onClose: () => void }) {
   const [sport, setSport] = useState<'all' | 'soccer' | 'nfl' | 'stage'>('all');
   const [name, setName] = useState(projectName);
   const fits = (s: string) => sport === 'all' || s === sport;
+  const hok = (p: Preset) => ['HOK', 'ROSSETTI'].includes(precedentOf(p)?.firm ?? '');
   const groups = [
+    { title: 'Featured', items: PRESETS.filter((p) => p.featured && fits(p.sport)) },
+    { title: 'HOK portfolio', items: PRESETS.filter((p) => !p.featured && hok(p) && fits(p.sport)) },
     { title: 'Generic', items: PRESETS.filter((p) => p.category === 'generic' && fits(p.sport)) },
-    { title: 'Precedent-informed studies', items: PRESETS.filter((p) => p.category === 'precedent' && fits(p.sport)) },
+    { title: 'Other precedent-informed studies', items: PRESETS.filter((p) => p.category === 'precedent' && !p.featured && !hok(p) && fits(p.sport)) },
   ];
   const own = mine.filter((u) => fits(u.project.sport));
   const save = () => { const n = name.trim() || projectName; saveUserPreset(n); toast(`Saved "${n}" to My presets in this browser`); };
@@ -226,13 +232,13 @@ function PresetMenu({ onClose }: { onClose: () => void }) {
               <button key={p.id} className={`preset-card ${current === p.id ? 'on' : ''}`} onClick={() => { loadPreset(p.id); onClose(); }}>
                 <span className="preset-name">{p.name}</span>
                 <span className="preset-sum">{p.short}</span>
-                <span className="preset-tags"><span className="tag">{SPORT_TAG[p.sport]}</span>{p.category === 'precedent' && <span className="tag">confidence: {p.confidence}</span>}</span>
+                <span className="preset-tags"><span className="tag">{SPORT_TAG[p.sport]}</span>{FIRM_TAG[precedentOf(p)?.firm ?? 'Other'] && <span className="tag">{FIRM_TAG[precedentOf(p)?.firm ?? 'Other']}</span>}{p.category === 'precedent' && <span className="tag">confidence: {p.confidence}</span>}</span>
               </button>
             ))}
           </div>
         </div>
       ))}
-      <p className="preset-blurb">Precedent-informed presets are independent parametric studies built from published facts (capacity, sport, tiers, roof). Row counts are fitted by the engine to the published capacity. Not the architects' geometry; not affiliated with or endorsed by HOK or any studio. My presets are kept in this browser only; save a project file to keep one elsewhere.</p>
+      <p className="preset-blurb">Precedent-informed presets are independent parametric studies built from published facts (capacity, sport, tiers, roof). Row counts are fitted by the engine to the published capacity. Not the architects' geometry, and each card names the studio actually credited. My presets are kept in this browser only; save a project file to keep one elsewhere.</p>
     </div>
   );
 }

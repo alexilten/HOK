@@ -81,7 +81,7 @@ export interface BuildingParams {
   cores: { spacing: Mm; width: Mm; depth: Mm; stairs: number; stairWidth: Mm; lifts: number };
 }
 
-export type RoofType = 'open' | 'canopy' | 'perimeter' | 'enclosed' | 'etfe' | 'truss' | 'retractable' | 'sphere';
+export type RoofType = 'open' | 'canopy' | 'perimeter' | 'enclosed' | 'etfe' | 'truss' | 'retractable' | 'aperture' | 'sphere';
 export type FacadeType = 'glazed' | 'solid' | 'perforated' | 'fins';
 export type StructureMaterial = 'steel' | 'steelDark' | 'concrete';
 export type RoofMaterial = 'ptfe' | 'etfe' | 'metal';
@@ -93,7 +93,7 @@ export type FacadeMaterial = 'glass' | 'aluminium' | 'bronze' | 'precast';
  * Conceptual and spatial: not a structural design.
  */
 export type LightingMount = 'auto' | 'roof' | 'masts';
-export type BoardType = 'ends' | 'centre' | 'none';
+export type BoardType = 'ends' | 'centre' | 'halo' | 'none';
 
 /**
  * Technical infrastructure (Round 05): field lighting, video boards, broadcast, MEP space reservations
@@ -151,7 +151,7 @@ export interface SystemsParams {
     maintenance: number; utilisation: number;
   };
   boards: {
-    /** video boards at the back of both end stands, one centre-hung over the field, or none */
+    /** video boards at the back of both end stands, one centre-hung over the field, a halo ringing an aperture roof's opening, or none */
     type: BoardType;
     width: Mm; height: Mm;
     /** centre-hung: underside above the field */
@@ -205,8 +205,10 @@ export interface ArchitectureParams {
     depth: Mm;
     /** a primary roof frame on every n-th structural grid line */
     frameEvery: number;
-    /** retractable roofs: how far the panels are open, 0–1 */
+    /** retractable and aperture roofs: how far the panels are open, 0–1 */
     open: number;
+    /** aperture roofs: triangular petals that slide open from the centre like a camera iris */
+    petals: number;
     /** high-ball view: the back-row sightline under the leading edge should clear this height over the centre spot (HOK assumption) */
     skyView: Mm;
     material: RoofMaterial;
@@ -337,7 +339,7 @@ export function defaultBuilding(): BuildingParams {
 export function defaultArchitecture(): ArchitectureParams {
   return {
     structure: { bay: 10000, column: 900, rakerDepth: 1100, material: 'steel' },
-    roof: { type: 'perimeter', stands: ['N', 'S'], overhang: 2000, clearance: 9000, pitch: 4, depth: 5000, frameEvery: 2, open: 1, skyView: 20000, material: 'ptfe' },
+    roof: { type: 'perimeter', stands: ['N', 'S'], overhang: 2000, clearance: 9000, pitch: 4, depth: 5000, frameEvery: 2, open: 1, petals: 8, skyView: 20000, material: 'ptfe' },
     facade: { type: 'glazed', module: 3000, offset: 3000, portals: 4, portalWidth: 12000, portalHeight: 7000, material: 'glass' },
     boh: { mainStand: 'S', corridor: 6000, depth: 16000, clear: 4500, scale: 1 },
   };
@@ -447,12 +449,12 @@ const STANDS: string[] = ['N', 'S', 'E', 'W'];
 const ENUMS: [string, (string | number)[]][] = [
   ['sport', ['soccer', 'nfl', 'stage']], ['units', ['metric', 'imperial']], ['sightlines.mode', ['cvalue', 'riser']],
   ['architecture.structure.material', ['steel', 'steelDark', 'concrete']],
-  ['architecture.roof.type', ['open', 'canopy', 'perimeter', 'enclosed', 'etfe', 'truss', 'retractable', 'sphere']],
+  ['architecture.roof.type', ['open', 'canopy', 'perimeter', 'enclosed', 'etfe', 'truss', 'retractable', 'aperture', 'sphere']],
   ['architecture.roof.material', ['ptfe', 'etfe', 'metal']],
   ['architecture.facade.type', ['glazed', 'solid', 'perforated', 'fins']],
   ['architecture.facade.material', ['glass', 'aluminium', 'bronze', 'precast']],
   ['architecture.facade.portals', [0, 4, 8]], ['architecture.boh.mainStand', STANDS],
-  ['systems.lighting.mount', ['auto', 'roof', 'masts']], ['systems.service.yard', [...STANDS, 'auto']], ['systems.service.fieldAccess', STANDS], ['systems.boards.type', ['ends', 'centre', 'none']],
+  ['systems.lighting.mount', ['auto', 'roof', 'masts']], ['systems.service.yard', [...STANDS, 'auto']], ['systems.service.fieldAccess', STANDS], ['systems.boards.type', ['ends', 'centre', 'halo', 'none']],
 ];
 
 type Rec = Record<string, unknown>;

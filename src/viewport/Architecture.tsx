@@ -1,7 +1,7 @@
 import { Html, Line } from '@react-three/drei';
 import { useMemo } from 'react';
 import * as THREE from 'three';
-import { BOH_KINDS, boxSolid, capSolid, memberSolid, pieceSolid, roofSkin, stationsAt, type Architecture as ArchModel, type BohKind } from '../core/engine/architecture';
+import { BOH_KINDS, boxSolid, capSolid, memberSolid, petalSolid, pieceSolid, roofSkin, stationsAt, type Architecture as ArchModel, type BohKind } from '../core/engine/architecture';
 import { bandSolid, SLAB } from '../core/engine/building';
 import { pointAt, type PlanRing } from '../core/engine/plan';
 import type { FacadeMaterial, Project, RoofMaterial, StructureMaterial } from '../core/schema';
@@ -45,16 +45,17 @@ export function Structure({ ring, arch, project, clip }: { ring: PlanRing; arch:
   return <mesh geometry={geo} castShadow receiveShadow><Mat f={STRUCTURE_FINISH[project.architecture.structure.material]} clip={clip} /></mesh>;
 }
 
-/** Roof skin, cap, primary frames, trusses and retractable panels. */
+/** Roof skin, cap, primary frames, trusses, retractable panels and aperture petals. */
 export function Roof({ ring, arch, project, clip, xray }: { ring: PlanRing; arch: ArchModel; project: Project; clip: THREE.Plane[]; xray: boolean }) {
   const r = arch.roof;
   // open roofs get a translucent leading band; enclosed roofs read as one deck and cap
-  const band = r.cap || r.type === 'retractable' || project.architecture.roof.material === 'etfe' ? 0 : 0.28;
+  const band = r.cap || r.type === 'retractable' || r.type === 'aperture' || project.architecture.roof.material === 'etfe' ? 0 : 0.28;
   const skins = useMemo(() => roofSkin(ring, r, band), [ring, r, band]);
   const skin = useGeo(() => {
     const parts = skins.deck.map((m) => ({ m }));
     if (r.cap) parts.push({ m: capSolid(ring, r.dIn, r.cap.z, r.cap.rise) });
     for (const b of r.boxes) if (b.kind === 'panel') parts.push({ m: boxSolid(b.min, b.max) });
+    for (const q of r.petals) parts.push({ m: petalSolid(q) });
     return parts.length ? merge(parts) : null;
   }, [ring, r, skins]);
   const edge = useGeo(() => (skins.edge.length ? merge(skins.edge.map((m) => ({ m }))) : null), [skins]);

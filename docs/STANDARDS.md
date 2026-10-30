@@ -140,7 +140,7 @@ Verification: **checked** means the rule was read in the cited source on the dat
 
 | id | statement | value | kind | verification | source |
 |---|---|---|---|---|---|
-| `hok.roof` | The roof bears on the outer column line. Its deck underside clears the highest tread by the set clearance (default 9 m) and rises toward the field at the set pitch; primary frames taper from the set depth to a quarter of it at the leading edge, above the deck on open roofs and below it on enclosed ones. Coverage counts seats inside the roof outline in plan (wind-driven rain is not modelled). The high-ball view is the height over the centre spot of the back-row sightline under the leading edge; the 20 m default is a HOK assumption, not a published standard. Long-span truss depth defaults to span / 12. |  | assumption | recall | HOK method; user-editable |
+| `hok.roof` | The roof bears on the outer column line. Its deck underside clears the highest tread by the set clearance (default 9 m) and rises toward the field at the set pitch; primary frames taper from the set depth to a quarter of it at the leading edge, above the deck on open roofs and below it on enclosed ones. Coverage counts seats inside the roof outline in plan (wind-driven rain is not modelled). The high-ball view is the height over the centre spot of the back-row sightline under the leading edge; the 20 m default is a HOK assumption, not a published standard. Long-span truss depth defaults to span / 12. An aperture roof (after Mercedes-Benz Stadium, HOK 2017) frames the opening with four primary trusses whose depth is at least span / 10.3, from the published 723 ft span and 70 ft depth (AISC Modern Steel Construction, Mar 2017); its triangular petals lap 4 m onto the fixed roof, ride 1.5 m above the trusses and slide out along their own edges, nine-tenths of the way to the opening edge when fully open. Petal sizes, thickness and travel are HOK assumptions. |  | assumption | recall | HOK method; user-editable |
 
 ## Spherical envelope
 
@@ -165,7 +165,7 @@ Verification: **checked** means the rule was read in the cited source on the dat
 
 | id | statement | value | kind | verification | source |
 |---|---|---|---|---|---|
-| `hok.boards` | End video boards (default 36 × 13 m) stand 1 m behind the back row of each end stand with their underside 3 m above its last tread, and are checked against the roof underside. A centre-hung board hangs from a fixed roof over the field (default underside 30 m) and is checked against the clear height and the high-ball view. LED ribbons (0.9 m) run along the fascia of every upper tier. Sizes are placeholders, not products; screen resolution and readability are not checked. |  | assumption | recall | HOK default; user-editable |
+| `hok.boards` | End video boards (default 36 × 13 m) stand 1 m behind the back row of each end stand with their underside 3 m above its last tread, and are checked against the roof underside. A centre-hung board hangs from a fixed roof over the field (default underside 30 m) and is checked against the clear height and the high-ball view. A halo board is a continuous LED ring hung 0.5 m under the roof at its leading edge, all the way round the opening (the Mercedes-Benz Stadium halo is published at 58 ft tall and about 1,100 ft round). LED ribbons (0.9 m) run along the fascia of every upper tier. Sizes are placeholders, not products; screen resolution and readability are not checked. |  | assumption | recall | HOK default; user-editable |
 
 ## Broadcast
 

@@ -6,6 +6,153 @@ Research status as of 2026-10-25. Each fact is tagged: **checked** means it was 
 
 Proposals and competition entries are labelled as such and are never presented as completed buildings.
 
+## HOK
+
+### Mercedes-Benz Stadium
+
+- **Location:** Atlanta, Georgia, USA · **Type:** stadium · **Sport:** NFL (Atlanta Falcons), MLS (Atlanta United), college football, events
+- **Status:** completed _(checked)_ · Groundbreaking 19 May 2014; opened 26 Aug 2017; roof finished July 2018
+- **Year:** 2017 _(checked)_
+- **Credits:** HOK architect (design principal and principal in charge Bill Johnson, who founded 360 Architecture, acquired by HOK in Jan 2015; Wikipedia lists the architect as "360 Architecture (HOK subsidiary)"). Design collaborators tvsdesign, Goode Van Slyke Architecture and Stanley Beaman & Sears. BuroHappold structural engineer (with HOK structural engineers), WSP MEP and fire, Sykes Consulting foundations, Uni-Systems roof mechanisms, Darden & Company project manager, Holder–Hunt–Russell–Moody JV contractor. Owner Georgia World Congress Center Authority. _(checked)_
+- **Capacity:** 71,000 _(checked)_ · Expandable to 75,000 for major football and soccer events and about 83,000 for concerts; soccer 42,500 in its reduced configuration
+- **Roof:** Retractable "oculus" of eight triangular steel-framed petals clad in ETFE (> 143,500 ft² in the petals), sliding in unison along 16 straight rails, each petal about 200 ft long and travelling 185–230 ft; opens or closes in about 8–12 minutes like a camera aperture. Four primary trusses span 723 ft at a typical depth of 70 ft; roof about 14.5 acres. Inspired by the Pantheon's oculus _(checked)_
+- **Bowl:** Three levels: 100 lower, 200 mezzanine (with the midfield club) and 300 upper; middle concourse and upper bowl removed at the east end zone for the 16-storey "window to the city" (22,664 ft²). Retractable lower-bowl seats widen the field for soccer. 190 suites (Wikipedia; another source says 180); about 7,500 club seats; 21 in seats _(checked)_
+- Halo video board ringing the oculus: 58 ft tall, about 1,075–1,100 ft round, 62,350–63,800 ft² (sources differ)
+- 101 ft "mega column" wrapped in LED
+- Facade of eight wing-like panels in ETFE, glass and metal; building rises about 305 ft
+- First LEED Platinum professional sports venue; 4,000 PV panels; 2 million-gallon stormwater cistern
+- About 2 million ft² (1.9 million ft² per Architect magazine)
+- **Sources:** [1](https://en.wikipedia.org/wiki/Mercedes-Benz_Stadium) · [2](https://www.hok.com/news/2017-08/atlantas-mercedes-benz-stadium-to-host-first-game/) · [3](https://www.aisc.org/globalassets/modern-steel/archives/2017/03/riseup.pdf) · [4](https://www.architecturalrecord.com/articles/13888-super-bowl-2019-mercedes-benz-stadium-architect-takes-us-inside-the-venue) · [5](https://www.archpaper.com/2019/02/super-bowl-liii-mercedes-benz-stadium-atlanta/) · [6](https://www.burohappold.com/projects/mercedes-benz-stadium/) · [7](https://www.stadiumsofprofootball.com/stadiums/mercedes-benz-stadium/) · [8](https://www.wftv.com/sports/super-bowl/fun-facts-mercedesbenz-stadium-by-the-numbers/912833501/) · [9](https://worldstadia.com/mercedes-benz-stadium.html)
+
+### Etihad Park (NYCFC)
+
+- **Location:** Willets Point, Queens, New York, USA · **Type:** stadium · **Sport:** MLS soccer
+- **Status:** under-construction _(checked)_ · Broke ground 4 Dec 2024; topped out 25 Mar 2026; opening planned for the 2027 MLS season
+- **Year:** 2027 (planned) _(checked)_
+- **Credits:** HOK architect; Turner Construction general contractor. Privately financed by NYCFC ($780 million). _(checked)_
+- **Capacity:** 25,000 _(checked)_ · Includes more than 3,400 safe-standing positions in the supporters' section
+- **Roof:** Transparent roof over the stands that lets daylight into the concourse and keeps crowd noise in the bowl; roof-mounted solar array _(checked)_
+- **Bowl:** Intimate bowl close to the pitch on a narrow, jagged site (the south-east corner is cut off by Willets Point Boulevard); suites, pitchside lounges and a Tunnel Club _(checked)_
+- "The Cube": a seven-storey glass and LED entry with over 11,000 ft² of displays
+- First fully electric MLS stadium
+- Brick and black structural steel
+- **Sources:** [1](https://www.hok.com/projects/view/new-york-city-football-clubs-etihad-park/) · [2](https://en.wikipedia.org/wiki/Etihad_Park_(New_York_City))
+
+### EverBank Stadium "Stadium of the Future"
+
+- **Location:** Jacksonville, Florida, USA · **Type:** stadium · **Sport:** NFL (Jacksonville Jaguars)
+- **Status:** under-construction _(checked)_ · HOK selected early 2023; work began Feb 2025; reduced capacity in 2026, Jaguars in Orlando for 2027; completion before the 2028 season
+- **Year:** 2028 (planned) _(checked)_
+- **Credits:** HOK architect (renovation of the existing stadium); AECOM Hunt–Barton Malow contractor. _(checked)_
+- **Capacity:** 63,000 _(checked)_ · Just over 63,000 after the renovation, down from just under 68,000; provision to expand to 70,000
+- **Roof:** A full roof over the seats and the field, largely translucent ETFE, meeting a facade of mirrored panels whose undulating lower edge leaves openings on the north and south sides for natural ventilation _(checked)_
+- **Bowl:** Existing bowl kept, including the large end-zone video boards; about two-thirds of seats stay general admission _(checked)_
+- **Sources:** [1](https://stadiumdb.com/designs/usa/stadium_of_the_future)
+
+### Hard Rock Stadium modernization
+
+- **Location:** Miami Gardens, Florida, USA · **Type:** stadium · **Sport:** NFL (Miami Dolphins), college football, F1 and tennis events
+- **Status:** renovation-completed _(checked)_ · $500 million modernization, January 2015 to the 2016 season
+- **Year:** 2015–2016 _(checked)_
+- **Credits:** HOK architect of the modernization; Thornton Tomasetti structural engineer. The original 1987 stadium is credited to HOK Sport (now Populous), not to the contemporary HOK. _(checked)_
+- **Capacity:** 64,767 _(checked)_ · From 75,000 before the modernization (Wikipedia infobox)
+- **Roof:** A 14-acre steel shade canopy over the seats with the field left open: four 350 ft corner masts on transfer trusses between eight concrete super columns, 450 ft sideline and 350 ft end-zone trusses, 64 locked-coil cables; four canopy-hung video boards _(checked)_
+- **Bowl:** Existing bowl reworked with additional suites and premium seating _(checked)_
+- **Sources:** [1](https://www.structuremag.org/article/hard-rock-stadium/) · [2](https://en.wikipedia.org/wiki/Hard_Rock_Stadium)
+
+### Lynn Family Stadium
+
+- **Location:** Louisville, Kentucky, USA · **Type:** stadium · **Sport:** USL soccer (Louisville City FC), NWSL
+- **Status:** completed _(checked)_ · Groundbreaking 28 Jun 2018; opened 12 Jul 2020
+- **Year:** 2020 _(checked)_
+- **Credits:** HOK architect (hired Jan 2017); Messer–Harmon JV contractor. _(checked)_
+- **Capacity:** 11,700 _(checked)_ · 15,304 with standing room; expandable to 20,000
+- **Roof:** Roof over the stands with a facade read as a "bourbon barrel"; roof-mounted floodlights _(checked)_
+- **Bowl:** Stands on three sides; the open west end looks to the Ohio River bridges, with a 40 × 72.5 ft video board. 18 suites and a 250-seat Premier Club _(checked)_
+- **Sources:** [1](https://en.wikipedia.org/wiki/Lynn_Family_Stadium)
+
+## ROSSETTI (part of HOK since April 2026)
+
+### Ford Field
+
+- **Location:** Detroit, Michigan, USA · **Type:** stadium · **Sport:** NFL (Detroit Lions), college football, events
+- **Status:** completed _(checked)_ · Groundbreaking 16 Nov 1999; opened 24 Aug 2002; $100 million renovation 2017
+- **Year:** 2002 _(checked)_
+- **Credits:** ROSSETTI (now part of HOK) with Hamilton Anderson Associates and Kaplan McLaughlin Diaz; Thornton Tomasetti structural engineer; SmithGroup services engineer. _(checked)_
+- **Capacity:** 65,000 _(checked)_ · About 65,000; expandable to about 70,000 for football
+- **Roof:** Fixed dome with large skylights and glazed open corners; frosted ceiling windows _(checked)_
+- **Bowl:** A 1920s Hudson's warehouse along the south sideline holds most suites and the club lounges; one suite level in the north upper deck; gaps in the upper bowl at the south-west and south-east corners; field 45 ft below street level _(checked)_
+- **Sources:** [1](https://en.wikipedia.org/wiki/Ford_Field) · [2](https://www.athleticbusiness.com/industry-press-room/press-release/15823574/hok-hok-and-rossetti-join-forces-to-create-expanded-global-sports-recreation-and-entertainment-design-practice)
+
+### Arthur Ashe Stadium reimagination / USTA Billie Jean King NTC
+
+- **Location:** Queens, New York, USA · **Type:** stadium · **Sport:** Tennis
+- **Status:** in-design _(checked)_ · "Ongoing reimagination" (Apr 2026)
+- **Credits:** ROSSETTI. _(checked)_
+- **Sources:** [1](https://www.athleticbusiness.com/industry-press-room/press-release/15823574/hok-hok-and-rossetti-join-forces-to-create-expanded-global-sports-recreation-and-entertainment-design-practice)
+
+### Daytona International Speedway — DAYTONA Rising
+
+- **Location:** Daytona Beach, Florida, USA · **Type:** stadium · **Sport:** Motorsport
+- **Status:** renovation-completed _(recall)_
+- **Year:** 2016 _(recall)_
+- **Credits:** ROSSETTI. _(recall)_
+
+## Populous (formerly HOK Sport, independent of HOK since 2008–09)
+
+### Sphere
+
+- **Location:** Paradise (Las Vegas), Nevada, USA · **Type:** arena · **Sport:** Concerts, immersive films, events
+- **Status:** completed _(checked)_ · Opened 29 Sep 2023
+- **Year:** 2023 _(checked)_
+- **Credits:** Populous architect; Severud Associates and Walter P Moore structural engineers; Arup acoustics. Owner Sphere Entertainment Co. _(checked)_
+- **Capacity:** 17,600 _(checked)_ · 20,000 with the standing floor
+- **Roof:** Steel-framed dome (32 radial trusses, compression ring, sprayed concrete) carrying a 160,000 ft² LED media plane on its inner face; Exosphere of 1.2 million LED pucks on an independent steel diagrid, 516 ft wide and 366 ft tall _(checked)_
+- **Bowl:** Amphitheatre facing the stage: four seating tiers (100–400 levels) and two suite levels with 23 suites; lowest tier partly retractable _(checked)_
+- Media plane apex 240 ft above the event floor
+- Main loudspeaker array of 14 clusters above the stage
+- 228 mechanised facets in the media plane for rigging
+- About 10,000 haptic seats
+- **Sources:** [1](https://en.wikipedia.org/wiki/Sphere_(venue)) · [2](https://populous.com/project/sphere) · [3](https://severud.com/?p=5436)
+
+### Tottenham Hotspur Stadium
+
+- **Location:** London, England · **Type:** stadium · **Sport:** Football, NFL
+- **Status:** completed _(checked)_
+- **Year:** 2019 _(recall)_
+- **Credits:** Populous. _(checked)_
+- **Capacity:** 62,850 _(recall)_
+- **Bowl:** Single-tier 17,500-seat South Stand; retractable grass pitch over an NFL synthetic field _(recall)_
+- **Sources:** [1](https://populous.com/?p=38112)
+
+### Wembley Stadium
+
+- **Location:** London, England · **Type:** stadium · **Sport:** Football, events
+- **Status:** completed _(recall)_
+- **Year:** 2007 _(recall)_
+- **Credits:** Foster + Partners with HOK Sport (now Populous). _(checked)_
+- **Capacity:** 90,000 _(recall)_
+- **Bowl:** Three tiers; partly retractable roof; 133 m arch _(recall)_
+
+### New Highmark Stadium
+
+- **Location:** Orchard Park, New York, USA · **Type:** stadium · **Sport:** NFL (Buffalo Bills)
+- **Status:** completed _(checked)_ · Groundbreaking 5 Jun 2023; ribbon-cutting 23 Jun 2026
+- **Year:** 2026 _(checked)_
+- **Credits:** Populous architect (design led by Scott Radecic); Walter P Moore structural engineer. Not an HOK project. _(checked)_
+- **Capacity:** 60,108 _(checked)_ · Smallest in the NFL; about 63,000 with standing room; up to 66,000 by event
+- **Roof:** 360° canopy following the bowl over roughly two-thirds of the seats (about 65% in promotional material), field open; the opening is deliberately off-centre to cover more sideline seats and light the grass; largest stadium snow-melt system in the world _(checked)_
+- **Bowl:** Relatively steep, stacked lower bowl and upper deck; the upper deck closer to the field than at any other NFL stadium; suites stacked on the west sideline, main club on the east; open concourses; "window to the world" opening in the north end-zone upper level _(checked)_
+- **Sources:** [1](https://en.wikipedia.org/wiki/Highmark_Stadium) · [2](https://www.athleticbusiness.com/facilities/stadium-arena/article/15832413/how-populous-designed-the-new-highmark-stadium-to-be-loud-and-comfortable-with-clear-visibility-of-the-field-at-all-times)
+
+### Yankee Stadium
+
+- **Location:** The Bronx, New York, USA · **Type:** ballpark · **Sport:** MLB
+- **Status:** completed _(recall)_
+- **Year:** 2009 _(recall)_
+- **Credits:** HOK Sport (Populous from 2009). Historic HOK Sport credit — not the contemporary HOK. _(recall)_
+- **Capacity:** 46,537 _(recall)_
+
 ## Portfolio listed in the brief
 
 ### Kansas City Chiefs Stadium
@@ -173,117 +320,6 @@ Proposals and competition entries are labelled as such and are never presented a
 - **Location:** Osaka, Japan · **Type:** arena · **Sport:** Multipurpose
 - **Status:** in-design _(recall)_
 - **Credits:** Listed in the brief's portfolio; status and role not verified in this round. _(recall)_
-
-## Populous
-
-### Sphere
-
-- **Location:** Paradise (Las Vegas), Nevada, USA · **Type:** arena · **Sport:** Concerts, immersive films, events
-- **Status:** completed _(checked)_ · Opened 29 Sep 2023
-- **Year:** 2023 _(checked)_
-- **Credits:** Populous architect; Severud Associates and Walter P Moore structural engineers; Arup acoustics. Owner Sphere Entertainment Co. _(checked)_
-- **Capacity:** 17,600 _(checked)_ · 20,000 with the standing floor
-- **Roof:** Steel-framed dome (32 radial trusses, compression ring, sprayed concrete) carrying a 160,000 ft² LED media plane on its inner face; Exosphere of 1.2 million LED pucks on an independent steel diagrid, 516 ft wide and 366 ft tall _(checked)_
-- **Bowl:** Amphitheatre facing the stage: four seating tiers (100–400 levels) and two suite levels with 23 suites; lowest tier partly retractable _(checked)_
-- Media plane apex 240 ft above the event floor
-- Main loudspeaker array of 14 clusters above the stage
-- 228 mechanised facets in the media plane for rigging
-- About 10,000 haptic seats
-- **Sources:** [1](https://en.wikipedia.org/wiki/Sphere_(venue)) · [2](https://populous.com/project/sphere) · [3](https://severud.com/?p=5436)
-
-### Tottenham Hotspur Stadium
-
-- **Location:** London, England · **Type:** stadium · **Sport:** Football, NFL
-- **Status:** completed _(checked)_
-- **Year:** 2019 _(recall)_
-- **Credits:** Populous. _(checked)_
-- **Capacity:** 62,850 _(recall)_
-- **Bowl:** Single-tier 17,500-seat South Stand; retractable grass pitch over an NFL synthetic field _(recall)_
-- **Sources:** [1](https://populous.com/?p=38112)
-
-### Wembley Stadium
-
-- **Location:** London, England · **Type:** stadium · **Sport:** Football, events
-- **Status:** completed _(recall)_
-- **Year:** 2007 _(recall)_
-- **Credits:** Foster + Partners with HOK Sport (now Populous). _(checked)_
-- **Capacity:** 90,000 _(recall)_
-- **Bowl:** Three tiers; partly retractable roof; 133 m arch _(recall)_
-
-### New Highmark Stadium
-
-- **Location:** Orchard Park, New York, USA · **Type:** stadium · **Sport:** NFL (Buffalo Bills)
-- **Status:** under-construction _(checked)_ · Nearing completion for 2026
-- **Credits:** Populous. _(checked)_
-- **Capacity:** 62,000 _(checked)_
-- **Bowl:** Open-air bowl with canopy over most seats; tight sideline proximity _(recall)_
-- **Sources:** [1](https://www.dezeen.com/?p=2283744)
-
-### Yankee Stadium
-
-- **Location:** The Bronx, New York, USA · **Type:** ballpark · **Sport:** MLB
-- **Status:** completed _(recall)_
-- **Year:** 2009 _(recall)_
-- **Credits:** HOK Sport (Populous from 2009). Historic HOK Sport credit — not the contemporary HOK. _(recall)_
-- **Capacity:** 46,537 _(recall)_
-
-## HOK
-
-### Mercedes-Benz Stadium
-
-- **Location:** Atlanta, Georgia, USA · **Type:** stadium · **Sport:** NFL, MLS
-- **Status:** completed _(recall)_
-- **Year:** 2017 _(recall)_
-- **Credits:** HOK (with associate architects). _(recall)_
-- **Capacity:** 71,000 _(recall)_
-- **Roof:** Eight-petal retractable ETFE roof; 360° halo video board _(recall)_
-
-### Hard Rock Stadium modernization
-
-- **Location:** Miami Gardens, Florida, USA · **Type:** stadium · **Sport:** NFL
-- **Status:** renovation-completed _(recall)_
-- **Year:** 2015–2016 _(recall)_
-- **Credits:** HOK. _(recall)_
-- **Roof:** New canopy shading the seating bowl _(recall)_
-
-### Etihad Park (NYCFC)
-
-- **Location:** Willets Point, Queens, New York, USA · **Type:** stadium · **Sport:** MLS soccer
-- **Status:** under-construction _(checked)_ · Broke ground Dec 2024; opening July 2027
-- **Credits:** HOK. _(checked)_
-- **Capacity:** 25,000 _(recall)_
-- **Sources:** [1](https://www.hok.com/projects/view/new-york-city-football-clubs-etihad-park/) · [2](https://www.khaleejtimes.com/uae/etihad-park-nyc-football-club-open-july-2027)
-
-### EverBank Stadium modernization ("Stadium of the Future")
-
-- **Location:** Jacksonville, Florida, USA · **Type:** stadium · **Sport:** NFL
-- **Status:** under-construction _(recall)_
-- **Credits:** HOK. _(recall)_
-
-## ROSSETTI
-
-### Ford Field
-
-- **Location:** Detroit, Michigan, USA · **Type:** stadium · **Sport:** NFL
-- **Status:** completed _(checked)_
-- **Year:** 2002 _(recall)_
-- **Credits:** ROSSETTI (now part of HOK). _(checked)_
-- **Capacity:** 65,000 _(recall)_
-- **Sources:** [1](https://www.athleticbusiness.com/industry-press-room/press-release/15823574/hok-hok-and-rossetti-join-forces-to-create-expanded-global-sports-recreation-and-entertainment-design-practice)
-
-### Arthur Ashe Stadium reimagination / USTA Billie Jean King NTC
-
-- **Location:** Queens, New York, USA · **Type:** stadium · **Sport:** Tennis
-- **Status:** in-design _(checked)_ · "Ongoing reimagination" (Apr 2026)
-- **Credits:** ROSSETTI. _(checked)_
-- **Sources:** [1](https://www.athleticbusiness.com/industry-press-room/press-release/15823574/hok-hok-and-rossetti-join-forces-to-create-expanded-global-sports-recreation-and-entertainment-design-practice)
-
-### Daytona International Speedway — DAYTONA Rising
-
-- **Location:** Daytona Beach, Florida, USA · **Type:** stadium · **Sport:** Motorsport
-- **Status:** renovation-completed _(recall)_
-- **Year:** 2016 _(recall)_
-- **Credits:** ROSSETTI. _(recall)_
 
 ## Other (listed in the brief)
 

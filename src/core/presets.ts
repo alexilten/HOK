@@ -19,6 +19,8 @@ export interface PresetMeta {
   name: string;
   short: string;
   category: 'generic' | 'precedent';
+  /** shown first in the library (HOK's own flagship work and projects the team has worked on) */
+  featured?: boolean;
   sport: SportId;
   /** precedent library id */
   precedent?: string;
@@ -73,6 +75,10 @@ const CITY: Record<string, { lat: number; lon: number; city: string }> = {
   chiefs: { lat: 39.1, lon: -94.5, city: 'Kansas City' }, nissan: { lat: 36.2, lon: -86.8, city: 'Nashville' },
   milano: { lat: 45.5, lon: 9.1, city: 'Milan' }, birmingham: { lat: 52.5, lon: -1.9, city: 'Birmingham' },
   sphere: { lat: 36.1, lon: -115.2, city: 'Las Vegas' },
+  'mercedes-benz': { lat: 33.8, lon: -84.4, city: 'Atlanta' }, highmark: { lat: 42.8, lon: -78.8, city: 'Orchard Park (Buffalo)' },
+  'etihad-park': { lat: 40.8, lon: -73.8, city: 'New York' }, everbank: { lat: 30.3, lon: -81.6, city: 'Jacksonville' },
+  'hard-rock': { lat: 26.0, lon: -80.2, city: 'Miami Gardens' }, 'lynn-family': { lat: 38.3, lon: -85.7, city: 'Louisville' },
+  'ford-field': { lat: 42.3, lon: -83.0, city: 'Detroit' },
 };
 
 const P = (meta: PresetMeta, make: () => Project): Preset => {
@@ -85,7 +91,156 @@ const P = (meta: PresetMeta, make: () => Project): Preset => {
   return { ...meta, assumed: [...meta.assumed, `Site at the latitude of ${c.city} (≈ ${c.lat}° ${c.lat >= 0 ? 'N' : 'S'}) for the sun study; the pitch orientation is the HOK default, not the real site's`], build: cached };
 };
 
-export const PRESETS: Preset[] = [
+/**
+ * HOK's portfolio leads the library: Mercedes-Benz Stadium first, the most researched preset, then the
+ * new Highmark Stadium (Populous, not HOK; featured because the team worked on it), then HOK's other
+ * stadiums. Every credit is in the precedent library with its sources.
+ */
+const HOK_PRESETS: Preset[] = [
+  P({ id: 'mercedes-benz', name: 'Aperture-roof NFL stadium — Mercedes-Benz Stadium', short: '71,000 · eight-petal iris roof, halo board, window to the city', category: 'precedent', featured: true, sport: 'nfl', precedent: 'mercedes-benz',
+      verified: [
+        'HOK (design principal Bill Johnson), with tvsdesign, Goode Van Slyke Architecture and Stanley Beaman & Sears; BuroHappold structure. Opened 26 Aug 2017, Atlanta',
+        'Capacity 71,000 for the NFL, expandable to 75,000 (about 83,000 for concerts); 190 suites (another source says 180); about 7,500 club seats; 21 in seats',
+        'Three levels: 100 lower, 200 mezzanine with the midfield club, 300 upper; the middle concourse and upper bowl are left out at the east end zone for the 16-storey "window to the city"',
+        'Retractable "oculus" roof: eight triangular ETFE petals on 16 straight rails that open from the centre like a camera aperture in about 8–12 minutes; four primary trusses spanning 723 ft at a typical depth of 70 ft',
+        'Halo video board ringing the oculus: 58 ft (17.7 m) tall and about 1,075–1,100 ft (328–335 m) round',
+        'Facade of eight wing-like ETFE, glass and metal panels rising about 305 ft (93 m); LEED Platinum',
+      ],
+      assumed: [
+        'The east end zone is the +X (E) end here: lower bowl only, with the mezzanine and upper bowl left out; the published window to the city is not modelled as glazing',
+        'Two suite levels on both sidelines under the mezzanine and the upper bowl; the suite count is what fits at 5.5 m per suite, not the published 190',
+        'First row 15 m from the sidelines and 10 m from the end lines; the retractable soccer seats are not modelled',
+        'The oculus is the roof edge 9 m inside the first-row line, so the halo ringing it comes out about as long as the published 1,075–1,100 ft; petal sizes and travel are HOK assumptions (shown half open)',
+        'Primary truss depth from the published 723 ft span / 70 ft depth; the fixed roof deck, petals and halo are conceptual massing',
+        'Row counts fitted to 71,000 with 533 mm (21 in) seats; tier heights and rakes are not published',
+      ], confidence: 'medium' },
+    () => {
+      const p = base('nfl', 'Aperture-roof NFL stadium (Mercedes-Benz Stadium)', 'mercedes-benz');
+      p.bowl = { sideDistance: 15000, endDistance: 10000, cornerRadius: 20000, targetCapacity: 71000, stands: {} };
+      p.seating.seatWidth = 533;
+      p.sightlines.maxRakeDeg = 35;
+      p.tiers = [
+        tier('T1', '100 lower level', { rows: 38, elevation: 1800 }),
+        tier('T2', '200 mezzanine (club)', { rows: 10, elevation: 5000, overhang: -4000, targetC: 60 }),
+        tier('T3', '300 upper level', { rows: 22, elevation: 4500, overhang: -6000, targetC: 60 }),
+      ];
+      p.premium = [suiteLevel('P1', 'T2', { name: 'Lower suite level', setback: 6000 }), suiteLevel('P2', 'T3', { name: 'Upper suite level', setback: 8000 })];
+      p.architecture.roof = { ...p.architecture.roof, type: 'aperture', material: 'etfe', petals: 8, open: 0.5, overhang: 9000, clearance: 12000, pitch: 0, depth: 8000 };
+      p.architecture.facade = { ...p.architecture.facade, type: 'glazed', material: 'glass', portals: 8 };
+      p.architecture.boh = { ...p.architecture.boh, depth: 19000 };
+      p.systems.boards = { ...p.systems.boards, type: 'halo', height: 17700 };
+      p.systems.lighting = { ...p.systems.lighting, mount: 'roof' };
+      fitted(p);
+      p.bowl.stands = { E: { rows: { T2: 0, T3: 0 } } };
+      return fitted(p);
+    }),
+  P({ id: 'highmark', name: 'Steep open-air NFL bowl — New Highmark Stadium (Populous)', short: '60,108 · canopy over two-thirds of the seats, stacked sidelines', category: 'precedent', featured: true, sport: 'nfl', precedent: 'highmark',
+      verified: [
+        'Populous (design led by Scott Radecic), not HOK; opened June 2026, Orchard Park, New York',
+        'Capacity 60,108, the smallest in the NFL (about 63,000 with standing room)',
+        'Open-air: a 360° canopy over roughly two-thirds of the seats, the field open; the opening is off-centre toward the ends to cover more sideline seats',
+        'Steep, stacked lower bowl and upper deck, the upper deck closer to the field than at any other NFL stadium; suites stacked on the west sideline, main club on the east',
+      ],
+      assumed: [
+        'The west sideline is the N stand here (HOK puts the sidelines on ±Y): two stacked suite levels there; the east-side club is a club tier on both sidelines',
+        'Three tiers with a 35° upper deck; first row 13 m from the sidelines',
+        'Perimeter canopy with its edge set to cover about two-thirds of the seats; the off-centre opening and the snow-melt system are not modelled',
+        'Row counts fitted to 60,108',
+      ], confidence: 'low' },
+    () => {
+      const p = base('nfl', 'Steep open-air NFL bowl (New Highmark Stadium)', 'highmark');
+      p.bowl = { sideDistance: 13000, endDistance: 10000, cornerRadius: 16000, targetCapacity: 60108, stands: {} };
+      p.sightlines.maxRakeDeg = 35;
+      p.tiers = [
+        tier('T1', 'Lower bowl', { rows: 30, elevation: 1800 }),
+        tier('T2', 'Club level', { rows: 8, elevation: 4800, overhang: -3500, targetC: 60 }),
+        tier('T3', 'Upper deck', { rows: 26, elevation: 4800, overhang: -5000, targetC: 60 }),
+      ];
+      p.premium = [suiteLevel('P1', 'T2', { name: 'Lower suite level', setback: 6000, stands: ['N'] }), suiteLevel('P2', 'T3', { name: 'Upper suite level', setback: 8000, stands: ['N'] })];
+      p.architecture.roof = { ...p.architecture.roof, type: 'perimeter', overhang: -20000, clearance: 13000, pitch: 6 };
+      p.architecture.boh = { ...p.architecture.boh, depth: 19000 };
+      return fitted(p);
+    }),
+  P({ id: 'etihad-park', name: 'Intimate city soccer stadium — Etihad Park (NYCFC)', short: '25,000 · transparent roof, safe standing, tight urban site', category: 'precedent', sport: 'soccer', precedent: 'etihad-park',
+      verified: ['HOK; Turner Construction. Under construction in Queens, opening for the 2027 MLS season', 'Capacity 25,000 including more than 3,400 safe-standing positions', 'Transparent roof over the stands that keeps crowd noise in the bowl; intimate bowl close to the pitch'],
+      assumed: ['Two tiers, first row 6.5 m from the touchlines and 7.5 m from the goal lines', 'Roof modelled as a translucent perimeter canopy', 'The supporters\' safe-standing section is counted as seats; the jagged site and cut south-east corner are not modelled', 'Row counts fitted to 25,000'], confidence: 'low' },
+    () => {
+      const p = base('soccer', 'Intimate city soccer stadium (Etihad Park)', 'etihad-park');
+      p.field.runoffSide = 5000; p.field.runoffEnd = 6000;
+      p.bowl = { sideDistance: 6500, endDistance: 7500, cornerRadius: 6000, targetCapacity: 25000, stands: {} };
+      p.tiers = [tier('T1', 'Lower bowl', { rows: 22, elevation: 1200 }), tier('T2', 'Upper bowl', { rows: 10, elevation: 4200, overhang: -6500, targetC: 60 })];
+      p.premium = [suiteLevel('P1', 'T2', { name: 'Suite level', setback: 5000, stands: ['S'] })];
+      p.architecture.roof = { ...p.architecture.roof, type: 'perimeter', material: 'etfe', clearance: 13000 };
+      return fitted(p);
+    }),
+  P({ id: 'everbank', name: 'Enclosed NFL renovation — EverBank Stadium of the Future', short: '63,000 · full translucent ETFE roof over an existing bowl', category: 'precedent', sport: 'nfl', precedent: 'everbank',
+      verified: ['HOK; renovation of the existing stadium, under construction for the 2028 season', 'Just over 63,000 seats after the renovation (from just under 68,000)', 'Full roof over the seats and the field, largely translucent ETFE; the existing bowl and its end-zone video boards are kept'],
+      assumed: ['Three tiers (lower, club, upper) and one suite level on both sidelines — the existing bowl\'s tier split is not modelled from drawings', 'ETFE roof drawn as a shallow dome on long-span trusses; the mirrored facade and its ventilation openings are not modelled', 'Row counts fitted to 63,000'], confidence: 'low' },
+    () => {
+      const p = base('nfl', 'Enclosed NFL renovation (EverBank Stadium of the Future)', 'everbank');
+      p.bowl = { sideDistance: 16000, endDistance: 11000, cornerRadius: 14000, targetCapacity: 63000, stands: {} };
+      p.sightlines.maxRakeDeg = 35;
+      p.tiers = [
+        tier('T1', 'Lower bowl', { rows: 32, elevation: 1800 }),
+        tier('T2', 'Club level', { rows: 8, elevation: 5000, overhang: -3000, targetC: 60 }),
+        tier('T3', 'Upper bowl', { rows: 24, elevation: 5000, overhang: -2500, targetC: 60 }),
+      ];
+      p.premium = [suiteLevel('P1', 'T3', { name: 'Suite level', setback: 8000 })];
+      p.architecture.roof = { ...p.architecture.roof, type: 'etfe', material: 'etfe' };
+      return fitted(p);
+    }),
+  P({ id: 'hard-rock', name: 'Shade canopy over an NFL bowl — Hard Rock Stadium modernization', short: '64,767 · 14-acre canopy on four corner masts, field open', category: 'precedent', sport: 'nfl', precedent: 'hard-rock',
+      verified: ['HOK modernization (2015–2016) with Thornton Tomasetti; the original 1987 stadium is HOK Sport\'s, now Populous', 'Capacity 64,767 after the modernization (75,000 before)', '14-acre shade canopy over the seats with the field open, carried by four 350 ft corner masts and 64 cables; four canopy-hung video boards'],
+      assumed: ['Three tiers (lower, club, upper) and one suite level on both sidelines', 'Canopy modelled as a perimeter roof on radial frames; the masts and cable net are not modelled', 'Row counts fitted to 64,767'], confidence: 'low' },
+    () => {
+      const p = base('nfl', 'Shade canopy over an NFL bowl (Hard Rock Stadium)', 'hard-rock');
+      p.bowl = { sideDistance: 15000, endDistance: 12000, cornerRadius: 22000, targetCapacity: 64767, stands: {} };
+      p.sightlines.maxRakeDeg = 35;
+      p.tiers = [
+        tier('T1', 'Lower bowl', { rows: 34, elevation: 1800 }),
+        tier('T2', 'Club level', { rows: 8, elevation: 5000, overhang: -3000, targetC: 60 }),
+        tier('T3', 'Upper bowl', { rows: 22, elevation: 5000, overhang: -2500, targetC: 60 }),
+      ];
+      p.premium = [suiteLevel('P1', 'T3', { name: 'Suite level', setback: 8000 })];
+      p.architecture.roof = { ...p.architecture.roof, type: 'perimeter', overhang: -2000, clearance: 10000 };
+      p.architecture.boh = { ...p.architecture.boh, depth: 19000 };
+      p.systems.lighting = { ...p.systems.lighting, mount: 'roof' };
+      return fitted(p);
+    }),
+  P({ id: 'lynn-family', name: 'Three-sided soccer ground — Lynn Family Stadium', short: '11,700 · open west end toward the river', category: 'precedent', sport: 'soccer', precedent: 'lynn-family',
+      verified: ['HOK; opened 12 Jul 2020, Louisville (Louisville City FC)', 'Capacity 11,700 (15,304 with standing room; expandable to 20,000)', 'Stands on three sides with the west end open toward the Ohio River bridges; roof over the stands with roof-mounted floodlights'],
+      assumed: ['West end open (a horseshoe); the corners next to it stay empty', 'One tier on three sides under canopies; the 18 suites and the 250-seat Premier Club are not modelled', 'Row counts fitted to 11,700'], confidence: 'low' },
+    () => {
+      const p = base('soccer', 'Three-sided soccer ground (Lynn Family Stadium)', 'lynn-family');
+      p.field.runoffSide = 5000; p.field.runoffEnd = 6000;
+      p.bowl = { sideDistance: 6000, endDistance: 7500, cornerRadius: 6000, targetCapacity: 11700, stands: { W: { open: true } } };
+      p.tiers = [tier('T1', 'Main tier', { rows: 22, elevation: 1200 })];
+      p.architecture.roof = { ...p.architecture.roof, type: 'canopy', stands: ['N', 'S', 'E'] };
+      p.systems.lighting = { ...p.systems.lighting, mount: 'roof' };
+      return fitted(p);
+    }),
+  P({ id: 'ford-field', name: 'Domed NFL stadium in a warehouse — Ford Field (ROSSETTI, now HOK)', short: '65,000 · fixed dome, suites in a 1920s warehouse', category: 'precedent', sport: 'nfl', precedent: 'ford-field',
+      verified: ['ROSSETTI (now part of HOK) with Hamilton Anderson Associates and Kaplan McLaughlin Diaz; opened 2002, Detroit', 'Capacity about 65,000 (about 70,000 expanded)', 'Fixed dome with skylights; most suites in the Hudson\'s warehouse on the south sideline; one suite level in the north upper deck; gaps in the upper bowl at the south-west and south-east corners'],
+      assumed: ['The south sideline is the S stand here: two suite levels there (the warehouse), one on the north', 'Three tiers; the upper bowl left out at the two south corners', 'Dome drawn as a fixed enclosed roof; the warehouse, skylights and sunken field are not modelled', 'Row counts fitted to 65,000'], confidence: 'low' },
+    () => {
+      const p = base('nfl', 'Domed NFL stadium in a warehouse (Ford Field)', 'ford-field');
+      p.bowl = { sideDistance: 15000, endDistance: 11000, cornerRadius: 14000, targetCapacity: 65000, stands: {} };
+      p.sightlines.maxRakeDeg = 35;
+      p.tiers = [
+        tier('T1', 'Lower bowl', { rows: 32, elevation: 1800 }),
+        tier('T2', 'Club level', { rows: 8, elevation: 5000, overhang: -3000, targetC: 60 }),
+        tier('T3', 'Upper bowl', { rows: 26, elevation: 5000, overhang: -2500, targetC: 60 }),
+      ];
+      p.premium = [suiteLevel('P1', 'T2', { name: 'Lower suite level', setback: 6000, stands: ['S'] }), suiteLevel('P2', 'T3', { name: 'Upper suite level', setback: 8000 })];
+      p.architecture.roof = { ...p.architecture.roof, type: 'enclosed', material: 'metal' };
+      p.architecture.boh = { ...p.architecture.boh, depth: 19000 };
+      fitted(p);
+      p.bowl.stands = { SW: { rows: { T3: 0 } }, SE: { rows: { T3: 0 } } };
+      return fitted(p);
+    }),
+];
+
+const OTHER_PRESETS: Preset[] = [
   P({ id: 'generic-soccer', name: 'Generic soccer bowl', short: 'Two-tier football bowl, 105 × 68 m pitch', category: 'generic', sport: 'soccer',
       verified: [], assumed: ['All dimensions are HOK planning defaults.'], confidence: 'generic' },
     () => {
@@ -286,6 +441,9 @@ export const PRESETS: Preset[] = [
     }),
 ];
 
+export const PRESETS: Preset[] = [...HOK_PRESETS, ...OTHER_PRESETS];
+
+/** New visitors open on HOK's flagship: Mercedes-Benz Stadium. */
 export const DEFAULT_PRESET = PRESETS[0];
 export const getPreset = (id: string) => PRESETS.find((p) => p.id === id) ?? DEFAULT_PRESET;
 export const precedentOf = (p: PresetMeta) => (p.precedent ? PRECEDENTS.find((x) => x.id === p.precedent) : undefined);

@@ -339,7 +339,7 @@ function useArch() {
   return { p, st, u: p.units, A: p.architecture, am: st.architecture.metrics, set };
 }
 
-const ROOF_TYPES: RoofType[] = ['open', 'canopy', 'perimeter', 'enclosed', 'etfe', 'truss', 'retractable', 'sphere'];
+const ROOF_TYPES: RoofType[] = ['open', 'canopy', 'perimeter', 'enclosed', 'etfe', 'truss', 'retractable', 'aperture', 'sphere'];
 
 /** Roof typology and its controls, coordinated with the bowl heights and sightlines. */
 function RoofControls() {
@@ -363,6 +363,10 @@ function RoofControls() {
         <LengthControl label="Structural depth" units={u} value={r.depth} min={1500} max={15000} step={250} hint="Primary frames at the column line, tapering to the edge" onChange={(v) => set('roof', (x) => { x.depth = v; }, 'depth')} />
         <NumberControl label="Primary frame every n grid lines" value={r.frameEvery} min={1} max={6} step={1} hint={`${am.roofFrames} primary frames`} onChange={(v) => set('roof', (x) => { x.frameEvery = v; }, 'every')} />
         {r.type === 'retractable' && <NumberControl label="Retractable panels open" value={Math.round(r.open * 100)} min={0} max={100} step={5} suffix="%" onChange={(v) => set('roof', (x) => { x.open = v / 100; }, 'open')} />}
+        {r.type === 'aperture' && <>
+          <NumberControl label="Petals" value={r.petals} min={3} max={16} step={1} hint="Triangular panels that slide out along their own edges, opening from the centre spot like a camera iris" onChange={(v) => set('roof', (x) => { x.petals = v; }, 'petals')} />
+          <NumberControl label="Aperture open" value={Math.round(r.open * 100)} min={0} max={100} step={5} suffix="%" onChange={(v) => set('roof', (x) => { x.open = v / 100; }, 'open')} />
+        </>}
         <LengthControl label="High-ball view wanted" units={u} value={r.skyView} min={5000} max={60000} step={1000} hint="HOK assumption: height over the centre spot the back row should see under the edge (enclosed: clear height)" onChange={(v) => set('roof', (x) => { x.skyView = v; }, 'sky')} />
         <div className="sub-label">Membrane / deck</div>
         <Finishes value={r.material} options={ROOF_FINISH} onChange={(v) => set('roof', (x) => { x.material = v; }, 'mat')} />
@@ -454,9 +458,9 @@ function BoardsControls() {
   const B = S.boards;
   return (
     <Section title="Boards & broadcast" summary={B.type === 'none' ? 'No video boards' : `${sm.boards.count} board${sm.boards.count === 1 ? '' : 's'} · ${fmtInt(sm.boards.area)} m²`} defaultOpen={false}>
-      <Segmented size="sm" value={B.type} onChange={(v: BoardType) => set('boards', (x) => { x.type = v; }, 'type')} options={[{ value: 'ends', label: 'End boards' }, { value: 'centre', label: 'Centre-hung' }, { value: 'none', label: 'None' }]} />
+      <Segmented size="sm" value={B.type} onChange={(v: BoardType) => set('boards', (x) => { x.type = v; }, 'type')} options={[{ value: 'ends', label: 'End boards' }, { value: 'centre', label: 'Centre-hung' }, { value: 'halo', label: 'Halo' }, { value: 'none', label: 'None' }]} />
       {B.type !== 'none' && <>
-        <LengthControl label="Board width" units={u} value={B.width} min={6000} max={100000} step={500} onChange={(v) => set('boards', (x) => { x.width = v; }, 'w')} />
+        {B.type !== 'halo' && <LengthControl label="Board width" units={u} value={B.width} min={6000} max={100000} step={500} onChange={(v) => set('boards', (x) => { x.width = v; }, 'w')} />}
         <LengthControl label="Board height" units={u} value={B.height} min={2000} max={30000} step={250} onChange={(v) => set('boards', (x) => { x.height = v; }, 'h')} />
         {B.type === 'centre' && <LengthControl label="Underside above the field" units={u} value={B.clear} min={10000} max={60000} step={500} onChange={(v) => set('boards', (x) => { x.clear = v; }, 'clear')} />}
       </>}
