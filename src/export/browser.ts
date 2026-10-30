@@ -5,7 +5,8 @@
 import wasmUrl from 'rhino3dm/rhino3dm.wasm?url';
 import type { Stadium } from '../core/engine/stadium';
 import { readProject, type Project } from '../core/schema';
-import { saveText } from '../ui/persist';
+import { APP_LABEL, saveText } from '../ui/persist';
+import { assumptionsJson, manifestCsv, scenarioJson, type ScenarioSlot } from '../core/venueExport';
 import type { RhinoModule } from './rhino';
 
 let rhinoPromise: Promise<RhinoModule> | null = null;
@@ -50,6 +51,10 @@ export const exportElements = (s: Stadium) => write(`${name(s)}_elements.csv`, '
 export const exportReport = (s: Stadium) => write(`${name(s)}_model-check.md`, 'text/markdown', (w) => w.report(s));
 export const exportStudies = (s: Stadium) => write(`${name(s)}_studies.md`, 'text/markdown', (w) => w.studies(s));
 export const exportJoinScript = async () => { const m = await import('./rhino/hok_join_tiers.py?raw'); download('hok_join_tiers.py', m.default, 'text/x-python'); };
+/** Round 09 phase 3: venue intelligence exports (small and pure, so not lazily loaded) */
+export const exportManifestCsv = (s: Stadium) => { const t = manifestCsv(s); download(`${name(s)}_seating-manifest.csv`, t, 'text/csv'); return t.length; };
+export const exportAssumptions = (s: Stadium) => { const t = assumptionsJson(s, APP_LABEL); download(`${name(s)}_venue-assumptions.json`, t, 'application/json'); return t.length; };
+export const exportScenarios = (a: ScenarioSlot, b: ScenarioSlot) => { const t = scenarioJson(a, b, APP_LABEL); download(`${slug(a.name)}_vs_${slug(b.name)}_scenarios.json`, t, 'application/json'); return t.length; };
 /** The model check, with an IFC read-back (the file is written in memory and not downloaded). */
 export const checkModel = async (s: Stadium) => (await loadWriters()).check(s);
 

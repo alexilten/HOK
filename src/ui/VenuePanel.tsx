@@ -4,7 +4,9 @@
  * venue figures, the revenue assumptions and a scenario A/B comparison. Every number comes from
  * core/venue.ts; this file only presents it.
  */
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
+import { exportAssumptions, exportManifestCsv, exportScenarios } from '../export/browser';
+import { readAssumptions } from '../core/venueExport';
 import { defaultStudies, SEATING_PRODUCTS, type ConvertibleProduct, type SeatingProduct } from '../core/schema';
 import { CONCEPT_LABEL, getPreset, precedentOf } from '../core/presets';
 import { changedSections, compareFigures, EVENT_LABEL, isPremium, PRODUCT_LABEL, projectModel, STANDING_EVENTS, venueModel, type ScenarioDelta, type VenueModel } from '../core/venue';
@@ -52,6 +54,7 @@ export function VenuePanel() {
         <Scenarios />
         <Assumptions />
         <Reference />
+        <Exports />
         {m.checks.length > 0 && <ul className="warnings venue-checks">{m.checks.map((x) => <li key={x} className="warn"><span>{x}</span></li>)}</ul>}
         <p className="muted small method">Illustrative gross ticket revenue from placeholder assumptions: not profit, net operating income or total venue revenue, and not data from any HOK project. Seat counts come from the model's geometry. A proof of concept, not connected to or endorsed by HOK's Scrum tool.</p>
       </div>
@@ -286,6 +289,32 @@ function Assumptions() {
           <button className="btn-sm" onClick={() => edit((q) => { q.studies.revenue = defaultStudies().revenue; })}>Reset financial assumptions</button>
         </>
       )}
+    </div>
+  );
+}
+
+/** Round 09 phase 3: the manifest, the assumptions (out and back in) and the A/B comparison as files */
+function Exports() {
+  const st = useStore((s) => s.stadium), ab = useStore((s) => s.ab);
+  const edit = useStore((s) => s.edit), toast = useStore((s) => s.showToast);
+  const file = useRef<HTMLInputElement>(null);
+  const load = async (f: File) => {
+    try {
+      const r = readAssumptions(await f.text());
+      edit((q) => { q.studies.revenue = r.revenue; });
+      toast(`Applied the financial assumptions from ${f.name}${r.repaired.length ? ` (${r.repaired.length} damaged values kept their defaults)` : ''}. The seating mix is unchanged.`);
+    } catch (e) { toast(e instanceof SyntaxError ? `${f.name} is not a readable assumptions file` : (e as Error).message); }
+  };
+  return (
+    <div className="venue-export">
+      <div className="sub-label">Export</div>
+      <div className="scenario-bar">
+        <button className="btn-sm" onClick={() => exportManifestCsv(st)} title="Every section, plus suite levels and the concert floor, for the event shown">Seating manifest .csv</button>
+        <button className="btn-sm" onClick={() => exportAssumptions(st)} title="The financial assumptions, with the seating mix for reference">Assumptions .json</button>
+        <button className="btn-sm" onClick={() => file.current?.click()} title="Apply the financial assumptions from a file exported here; the seating mix is not changed">Import assumptions…</button>
+        <button className="btn-sm" disabled={!ab.A || !ab.B} onClick={() => ab.A && ab.B && exportScenarios(ab.A, ab.B)} title={ab.A && ab.B ? 'Both scenarios with their own assumptions, the deltas and the sections sold differently' : 'Save scenarios A and B first'}>Scenario comparison .json</button>
+      </div>
+      <input ref={file} type="file" accept=".json,application/json" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) load(f); e.target.value = ''; }} />
     </div>
   );
 }

@@ -3,7 +3,7 @@ import { ATTRIBUTION_LABEL, type Attribution, type Precedent } from '../core/dat
 import { precedentOf, PRESETS, type Preset } from '../core/presets';
 import { encodeShare } from '../core/share';
 import { ARENA_SPORTS, type SportId } from '../core/sports';
-import { export3dm, exportDxfFile, exportElements, exportGlbFile, exportIfcFile, exportJoinScript, exportProject, exportQuantities, exportReport, exportSeatsCsv, exportStudies, loadRhino, loadWriters, openProjectFile } from '../export/browser';
+import { export3dm, exportAssumptions, exportDxfFile, exportManifestCsv, exportElements, exportGlbFile, exportIfcFile, exportJoinScript, exportProject, exportQuantities, exportReport, exportSeatsCsv, exportStudies, loadRhino, loadWriters, openProjectFile } from '../export/browser';
 import { Segmented } from './controls';
 import { Icon } from './icons';
 import { useStore, type CameraView, type Mode } from './store';
@@ -150,6 +150,10 @@ export function Toolbar() {
               <button className="menu-item" onClick={() => run('Model check report', () => exportReport(stadium))}>Model check report<span>.md</span></button>
               <button className="menu-item" onClick={() => run('Design studies report', () => exportStudies(stadium))}>Design studies report<span>.md</span></button>
               <button className="menu-item" onClick={() => { exportProject(project); setMenu(null); }}>Project<span>.json</span></button>
+              <div className="menu-sep" />
+              <div className="menu-title">Venue intelligence · illustrative</div>
+              <button className="menu-item" onClick={() => run('Seating manifest', () => exportManifestCsv(stadium))}>Seating manifest<span>.csv</span></button>
+              <button className="menu-item" onClick={() => run('Venue assumptions', () => exportAssumptions(stadium))}>Financial assumptions<span>.json</span></button>
             </div>
           )}
         </div>
