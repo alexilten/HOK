@@ -7,6 +7,13 @@ as `saved.by`. Earlier rounds are numbered here after the fact; they were not ta
 The project file has its own version (`hok.project` v1 to v7). A newer HOK opens every older
 file; an older HOK refuses a newer file instead of half-reading it.
 
+## Unreleased · Venue intelligence (Round 09, selling by event and the season)
+
+- **Selling by event.** A section can be sold differently at one event only (`eventMix`). Each event has a price index for its per-event prices.
+- **Season blend.** Set events a year by kind, and the annual figure adds each event at its own layout, mix and prices. Suite licences are counted once a year.
+- **One revenue model.** The Design studies revenue tab is now a view of the venue model, so it follows the mix, events and season. Its figures change slightly: accessible club positions now sell at the club price.
+- Project files stay at v7; older files open with no event mix, season or price indices.
+
 ## Unreleased · Venue intelligence (Round 09, phase 3)
 
 - **Venue exports.** Seating manifest `.csv` (adds up to the dashboard, suite levels and concert floor included), financial assumptions `.json` with import, and the scenario A/B comparison `.json`. Also in the Export menu. Model exports are unchanged.

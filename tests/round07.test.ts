@@ -11,6 +11,7 @@ import { egress } from '../src/studies/egress';
 import { applyVars, bounds, explore, paretoFront, scoreDesign } from '../src/studies/explore';
 import { headTurn, qualityOf, viewQuality } from '../src/studies/quality';
 import { revenue } from '../src/studies/revenue';
+import { venueModel } from '../src/core/venue';
 import { compareCsv, summarize } from '../src/studies/summary';
 import { dayOfYear, pitchSun, seatSun, shadeModel, sunPosition, sunVector } from '../src/studies/sun';
 import { clone, fresh } from './helpers';
@@ -138,10 +139,14 @@ describe('AS · materials and carbon', () => {
 });
 
 describe('AT · revenue', () => {
-  it('adds gate, club and suite income from the seat mix', () => {
-    const s = fresh(getPreset('generic-nfl').build()), r = revenue(s), R = s.project.studies.revenue, m = s.metrics;
-    const club = m.byClass.premium ?? 0;
-    const want = (m.net - club) * R.ticket * R.events * R.occupancy + club * R.club * R.events * R.occupancy + s.building.metrics.suites * R.suite;
+  it('is the venue model: gate, club and suite income from the seating mix (Round 09)', () => {
+    const s = fresh(getPreset('generic-nfl').build()), r = revenue(s), R = s.project.studies.revenue;
+    const v = venueModel(s).metrics;
+    expect(r.annual).toBeCloseTo(v.annual, 3);
+    expect(r.lines.reduce((a, l) => a + l.annual, 0)).toBeCloseTo(r.annual, 3);
+    // with no mix: general and club seats at their prices, accessible club positions sold at the club price, suites by licence
+    const sold = (x: 'general' | 'club') => v.byProduct[x].sellable * R.events * R.occupancy;
+    const want = sold('general') * R.ticket + sold('club') * R.club + s.building.metrics.suites * R.suite;
     expect(r.annual).toBeCloseTo(want, 3);
     expect(r.scenarios.map((x) => x.name)).toEqual(['Low', 'Base', 'High']);
     expect(r.scenarios[1].annual).toBeCloseTo(r.annual, 3);

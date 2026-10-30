@@ -16,7 +16,10 @@
  *                     standing where the event has no standing = 0
  *   revenue / event   seats             = sellable × sell-through × price
  *                     suites            = suites × annual licence ÷ events (sold whole, never per seat)
- *   annual            revenue / event × events
+ *   annual            revenue / event × events, or with a season set, Σ events of each kind × its revenue / event
+ *
+ * Per event, `project.eventMix` overrides the mix and `revenue.eventPrice` indexes every per-event price
+ * (suite licences are annual and never indexed).
  *
  * Events (core/events.ts): the model runs for one operating event. At an end-stage concert the sections
  * directly behind the stage are held back, and the open floor sells standing places at the assumed
@@ -35,7 +38,7 @@ import { sectionLabel } from './engine/seats';
 import type { Sector, SegmentId } from './engine/plan';
 import type { ConvertibleProduct, Project, SeatingProduct } from './schema';
 import { SEATING_PRODUCTS } from './schema';
-import { activeEvent, designEvent, EVENT_LABEL, eventFloor, isConcert, STANDING_EVENTS, type EventId } from './events';
+import { activeEvent, designEvent, EVENT_IDS, EVENT_LABEL, eventFloor, isConcert, STANDING_EVENTS, type EventId } from './events';
 
 export { EVENT_LABEL, STANDING_EVENTS };
 
@@ -56,6 +59,8 @@ export interface SectionInventory {
   product: SeatingProduct;
   /** set in the mix (false: follows its tier) */
   assigned: boolean;
+  /** set for this event only (`project.eventMix`) */
+  eventOnly: boolean;
   /** physical seats in use, from the geometry */
   seats: number;
   /** wheelchair and companion positions among them */
@@ -88,8 +93,15 @@ export interface VenueMetrics {
   /** gross per event ÷ places sold per event (suite seats count as sold) */
   avgTicket: number;
   perEvent: number;
+  /** a year: revenue / event × events, or the season blend */
   annual: number;
   byProduct: Record<SeatingProduct, ProductTotals>;
+  /** annual gross by product (the season blend when a season is set) */
+  byProductAnnual: Record<SeatingProduct, number>;
+  /** the season by event, when one is set */
+  season: SeasonRow[] | null;
+  /** price index of this event */
+  priceIndex: number;
   suites: { units: number; seats: number; perEvent: number; fromLevels: number; fromBowl: number };
   accessible: { positions: number; withheld: number; required: number };
   /** sections and seats held back by the event layout (behind an end stage) */
@@ -100,6 +112,8 @@ export interface VenueMetrics {
   orphans: string[];
   checks: string[];
 }
+
+export interface SeasonRow { event: EventId; count: number; supported: boolean; perEvent: number; annual: number }
 
 export interface VenueModel { sections: SectionInventory[]; metrics: VenueMetrics }
 
@@ -123,37 +137,74 @@ function scan(t: SeatTable): Map<string, Count> {
   return m;
 }
 
-/** the product a section sells as: its mix entry, or its tier's default */
-export function productOf(p: Project, tierIndex: number, label: string): SeatingProduct {
-  const t = p.tiers[tierIndex];
-  return p.mix[sectionKey(t.id, label)] ?? (t.kind === 'club' ? 'club' : 'general');
+/** the product a section sells as: its entry for this event, its mix entry, or its tier's default */
+export function productOf(p: Project, tierIndex: number, label: string, event?: EventId): SeatingProduct {
+  const t = p.tiers[tierIndex], key = sectionKey(t.id, label);
+  return (event && p.eventMix[event]?.[key]) || p.mix[key] || (t.kind === 'club' ? 'club' : 'general');
 }
 
-/** average price per place per event of a product (suites: the per-seat share of a licence) */
-export function unitPrice(p: Project, x: SeatingProduct): number {
-  const R = p.studies.revenue;
+/** the season: events a year by kind, or null when none is set */
+export function seasonOf(p: Project): { event: EventId; count: number }[] | null {
+  const S = p.studies.revenue.season;
+  const rows = EVENT_IDS.map((event) => ({ event, count: Math.max(0, Math.round(S[event] ?? 0)) })).filter((x) => x.count > 0);
+  return rows.length ? rows : null;
+}
+/** events a year: the season total when a season is set, else the events assumption */
+export function eventsPerYear(p: Project): number {
+  const s = seasonOf(p);
+  return Math.max(1, s ? s.reduce((a, x) => a + x.count, 0) : p.studies.revenue.events);
+}
+/** the price index of an event (1 when not set) */
+export const priceIndex = (p: Project, e: EventId) => Math.min(10, Math.max(0, p.studies.revenue.eventPrice[e] ?? 1));
+
+/** average price per place per event of a product, at an event's price index (suites: the per-seat share of a licence) */
+export function unitPrice(p: Project, x: SeatingProduct, event?: EventId): number {
+  const R = p.studies.revenue, k = event ? priceIndex(p, event) : 1;
   switch (x) {
-    case 'general': return R.ticket;
-    case 'club': return R.club;
-    case 'loge': return R.loge;
-    case 'vip': return R.vip;
-    case 'standing': return R.standing;
-    case 'suite': return R.suite / Math.max(1, R.events) / Math.max(1, R.suiteSeats);
+    case 'general': return R.ticket * k;
+    case 'club': return R.club * k;
+    case 'loge': return R.loge * k;
+    case 'vip': return R.vip * k;
+    case 'standing': return R.standing * k;
+    case 'suite': return R.suite / eventsPerYear(p) / Math.max(1, R.suiteSeats);
     default: return 0;
   }
 }
 
 const cache = new WeakMap<Stadium, Map<EventId, VenueModel>>();
+const bases = new WeakMap<Stadium, Map<EventId, VenueModel>>();
+const memo = (c: WeakMap<Stadium, Map<EventId, VenueModel>>, s: Stadium, e: EventId, make: () => VenueModel) => {
+  let m = c.get(s);
+  if (!m) c.set(s, (m = new Map()));
+  let v = m.get(e);
+  if (!v) m.set(e, (v = make()));
+  return v;
+};
 
-/** the venue model for an event (default: the project's event, or its design event) */
+/** the venue model for an event (default: the project's event, or its design event), with the year's figures */
 export function venueModel(s: Stadium, event: EventId = activeEvent(s.project)): VenueModel {
-  let byEvent = cache.get(s);
-  if (!byEvent) cache.set(s, (byEvent = new Map()));
-  const hit = byEvent.get(event);
-  if (hit) return hit;
-  const value = build(s, event);
-  byEvent.set(event, value);
-  return value;
+  return memo(cache, s, event, () => {
+    const base = memo(bases, s, event, () => build(s, event)), m = base.metrics, p = s.project;
+    const season = seasonOf(p);
+    if (!season) {
+      const events = eventsPerYear(p);
+      const byProductAnnual = Object.fromEntries(SEATING_PRODUCTS.map((x) => [x, m.byProduct[x].revenue * events])) as Record<SeatingProduct, number>;
+      return { ...base, metrics: { ...m, annual: m.perEvent * events, byProductAnnual, season: null } };
+    }
+    // the season blend: each kind of event at its own layout, mix and price index
+    const byProductAnnual = Object.fromEntries(SEATING_PRODUCTS.map((x) => [x, 0])) as Record<SeatingProduct, number>;
+    const rows: SeasonRow[] = season.map(({ event: e, count }) => {
+      const supported = eventFloor(s, e).supported;
+      if (!supported) return { event: e, count, supported, perEvent: 0, annual: 0 };
+      const b = memo(bases, s, e, () => build(s, e)).metrics;
+      for (const x of SEATING_PRODUCTS) byProductAnnual[x] += b.byProduct[x].revenue * count;
+      return { event: e, count, supported, perEvent: b.perEvent, annual: b.perEvent * count };
+    });
+    const checks = [...m.checks];
+    const off = rows.filter((r) => !r.supported);
+    if (off.length) checks.push(`The season counts ${off.map((r) => `${r.count} ${EVENT_LABEL[r.event].toLowerCase()}`).join(' and ')} that this bowl cannot hold; they earn nothing in the annual figure.`);
+    return { ...base, metrics: { ...m, annual: rows.reduce((a, r) => a + r.annual, 0), byProductAnnual, season: rows, checks } };
+  });
 }
 
 function build(s: Stadium, asked: EventId): VenueModel {
@@ -162,7 +213,7 @@ function build(s: Stadium, asked: EventId): VenueModel {
   const event = tried.supported ? asked : designEvent(p.sport);
   const floor = tried.supported ? tried : eventFloor(s, event);
   const endStage = event === 'concert-end' ? floor.stage : null;
-  const sell = Math.min(1, Math.max(0, R.occupancy)), events = Math.max(1, R.events);
+  const sell = Math.min(1, Math.max(0, R.occupancy)), events = eventsPerYear(p);
   const licenceEvent = R.suite / events;
   const counts = scan(s.seats.seats);
   const standingOk = STANDING_EVENTS.includes(event);
@@ -173,11 +224,11 @@ function build(s: Stadium, asked: EventId): VenueModel {
     const c = counts.get(`${info.tier}:${info.section}`) ?? { seats: 0, accessible: 0, wheelchair: 0, x: 0, y: 0 };
     // behind an end stage: the section's centre lies past the stage front, within the width of the bowl's floor
     const obstructed = !!endStage && c.seats > 0 && c.x / c.seats > endStage.minX && Math.abs(c.y / c.seats - s.ring.cy) < s.ring.hy;
-    const product = productOf(p, info.tier, label);
+    const product = productOf(p, info.tier, label, event);
     const conv = (x: ConvertibleProduct) => Math.min(2, Math.max(0, R.conversion[x] ?? 1));
     const base = c.seats - c.accessible;
     let sellable = 0, suites = 0, revenue = 0, note: string | undefined;
-    const price = unitPrice(p, product);
+    const price = unitPrice(p, product, event);
     if (obstructed) note = 'behind the end stage: held back for this event';
     else if (product === 'unavailable') note = c.accessible ? `held back, including ${c.accessible} accessible positions` : 'held back';
     else if (product === 'standing' && !standingOk) note = `standing is not offered for ${EVENT_LABEL[event].toLowerCase()}`;
@@ -194,7 +245,7 @@ function build(s: Stadium, asked: EventId): VenueModel {
     }
     return {
       key, tier: info.tier, tierId: t.id, tierName: t.name, section: info.section, label, segment: info.segment, sector: info.sector,
-      product, assigned: key in p.mix, seats: c.seats, accessible: c.accessible, wheelchair: c.wheelchair, sellable, suites, price, revenue, obstructed, note,
+      product, assigned: key in p.mix || !!p.eventMix[event]?.[key], eventOnly: !!p.eventMix[event]?.[key], seats: c.seats, accessible: c.accessible, wheelchair: c.wheelchair, sellable, suites, price, revenue, obstructed, note,
     };
   });
 
@@ -210,7 +261,7 @@ function build(s: Stadium, asked: EventId): VenueModel {
   // the open concert floor sells standing places at the assumed density
   const area = isConcert(event) ? floor.standingArea / 1e6 : 0;
   const places = Math.floor(area * Math.max(0, R.floorDensity));
-  const floorRevenue = places * sell * unitPrice(p, 'standing');
+  const floorRevenue = places * sell * unitPrice(p, 'standing', event);
   byProduct.standing.sellable += places; byProduct.standing.revenue += floorRevenue;
 
   const perEvent = SEATING_PRODUCTS.reduce((a, x) => a + byProduct[x].revenue, 0);
@@ -220,7 +271,7 @@ function build(s: Stadium, asked: EventId): VenueModel {
   const sold = (sellable - suiteSeatsSold) * sell + suiteSeatsSold;
 
   const keys = new Set(sections.map((x) => x.key));
-  const orphans = Object.keys(p.mix).filter((k) => !keys.has(k));
+  const orphans = [...new Set([...Object.keys(p.mix), ...Object.keys(p.eventMix[event] ?? {})])].filter((k) => !keys.has(k));
   const held = (x: SectionInventory) => x.product === 'unavailable' || x.obstructed;
   const obstructed = sections.filter((x) => x.obstructed);
   const obstructedSeats = obstructed.reduce((a, x) => a + x.seats, 0);
@@ -242,7 +293,7 @@ function build(s: Stadium, asked: EventId): VenueModel {
     sections,
     metrics: {
       event, capacity: s.metrics.total - obstructedSeats + places, sellable, premium, premiumShare: sellable ? premium / sellable : 0,
-      avgTicket: sold > 0 ? perEvent / sold : 0, perEvent, annual: perEvent * events, byProduct,
+      avgTicket: sold > 0 ? perEvent / sold : 0, perEvent, annual: perEvent * events, byProduct, byProductAnnual: Object.fromEntries(SEATING_PRODUCTS.map((x) => [x, 0])) as Record<SeatingProduct, number>, season: null, priceIndex: priceIndex(p, event),
       suites: { units: levelUnits + bowlUnits, seats: suiteSeatsSold, perEvent: (levelUnits + bowlUnits) * licenceEvent, fromLevels: levelUnits, fromBowl: bowlUnits },
       accessible: { positions, withheld, required }, obstructed: { sections: obstructed.length, seats: obstructedSeats },
       floor: { area, places, revenue: floorRevenue }, orphans, checks,

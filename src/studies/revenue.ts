@@ -1,15 +1,19 @@
 /**
- * Premium revenue scenarios (Round 07): annual gate and premium income from the seat mix.
+ * Premium revenue scenarios (Round 07): annual gross ticket and premium income. Since Round 09 this
+ * is a view of the venue model (core/venue.ts), so the study, the Venue intelligence panel and its
+ * exports always agree. It follows the seating mix, the event, the conversion ratios and the suite
+ * rules (suites sold whole by licence; accessible positions sold at their section's price).
  *
- *   general   general seats in use × average ticket × occupancy × events
- *   club      club seats in use × club price × occupancy × events
- *   suites    suites × annual suite licence
+ *   each product   sellable places × price × sell-through × events
+ *   suites         suites × annual suite licence
  *
- * Prices, events and occupancy are placeholders the user sets (standard hok.revenue); HOK has
- * no market data. The scenarios scale the prices to show sensitivity. Not a business case: no
+ * Prices, events and sell-through are placeholders the user sets (standard hok.revenue); HOK has
+ * no market data. The scenarios scale the premium prices to show sensitivity. Not a business case: no
  * concessions, media, naming rights, sponsorship, operating costs, taxes or financing.
  */
 import type { Stadium } from '../core/engine/stadium';
+import { SEATING_PRODUCTS } from '../core/schema';
+import { isPremium, PRODUCT_LABEL, unitPrice, venueModel } from '../core/venue';
 
 export interface RevenueLine { item: string; units: number; unit: string; price: number; annual: number }
 export interface RevenueResult {
@@ -17,7 +21,7 @@ export interface RevenueResult {
   lines: RevenueLine[];
   annual: number;
   premium: number;
-  /** premium share of annual revenue, and of capacity */
+  /** premium share of annual revenue, and premium places as a share of capacity */
   premiumShare: number; premiumSeats: number;
   perSeat: number;
   /** low, base and high price scenarios (premium prices ×0.75 / ×1 / ×1.25) */
@@ -27,22 +31,23 @@ export interface RevenueResult {
 export const PRICE_SCENARIOS = [{ name: 'Low', k: 0.75 }, { name: 'Base', k: 1 }, { name: 'High', k: 1.25 }];
 
 export function revenue(s: Stadium): RevenueResult {
-  const R = s.project.studies.revenue, m = s.metrics;
-  const club = m.byClass.premium ?? 0;
-  const general = m.net - club;
-  const suites = s.building.metrics.suites;
-  const perEvent = R.events * R.occupancy;
-  const lines: RevenueLine[] = [
-    { item: 'General admission', units: general, unit: 'seats', price: R.ticket, annual: general * R.ticket * perEvent },
-    { item: 'Club seats', units: club, unit: 'seats', price: R.club, annual: club * R.club * perEvent },
-    { item: 'Suites', units: suites, unit: 'suites', price: R.suite, annual: suites * R.suite },
-  ];
-  const premiumAt = (k: number) => (lines[1].annual + lines[2].annual) * k;
-  const annual = lines.reduce((a, l) => a + l.annual, 0), premium = premiumAt(1);
+  const p = s.project, R = p.studies.revenue, m = venueModel(s).metrics, A = m.byProductAnnual;
+  const lines: RevenueLine[] = [];
+  for (const x of SEATING_PRODUCTS) {
+    const b = m.byProduct[x];
+    if (!A[x] && !b.sellable) continue;
+    if (x === 'suite') {
+      lines.push({ item: PRODUCT_LABEL.suite, units: m.suites.units, unit: 'suites', price: R.suite, annual: A[x] });
+      continue;
+    }
+    lines.push({ item: PRODUCT_LABEL[x], units: b.sellable, unit: x === 'standing' ? 'places' : 'seats', price: unitPrice(p, x, m.event), annual: A[x] });
+  }
+  const premiumBase = SEATING_PRODUCTS.filter(isPremium).reduce((a, x) => a + A[x], 0);
+  const annual = m.annual, rest = annual - premiumBase;
   return {
-    currency: R.currency, lines, annual, premium,
-    premiumShare: annual ? premium / annual : 0, premiumSeats: (club + m.suiteSeats) / Math.max(1, m.total),
-    perSeat: annual / Math.max(1, m.total),
-    scenarios: PRICE_SCENARIOS.map((x) => ({ name: x.name, annual: lines[0].annual + premiumAt(x.k), premium: premiumAt(x.k) })),
+    currency: R.currency, lines, annual, premium: premiumBase,
+    premiumShare: annual ? premiumBase / annual : 0, premiumSeats: m.capacity ? m.premium / m.capacity : 0,
+    perSeat: annual / Math.max(1, m.capacity),
+    scenarios: PRICE_SCENARIOS.map((x) => ({ name: x.name, annual: rest + premiumBase * x.k, premium: premiumBase * x.k })),
   };
 }

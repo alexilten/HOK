@@ -22,7 +22,7 @@ Each study below lists its **method**, its **assumptions**, the **quality of its
 | Egress | `egress.stepRate`, `levelRate`, `targetMin`, `maxTravel` | `greenguide.egress`, `hok.egress`, `review.egress` |
 | Sun and shade | `sun.month`, `day`, `hour`, `latitude`; `site.latitude`, `site.northDeg` | `hok.sun` |
 | Materials and carbon | `carbon.*` (10 factors) | `hok.carbon`, `review.carbon` |
-| Revenue | `revenue.*` (prices, events, occupancy, currency) | `hok.revenue` |
+| Revenue | `revenue.*` (prices, events, sell-through, conversions, season, price indices, currency) | `hok.revenue` |
 | Explorer | none (seeded) | `hok.explore` |
 
 ## View quality (sightline heat map)
@@ -187,13 +187,14 @@ The figures are averages, not product EPDs. A whole-life carbon assessment by a 
 
 ## Premium revenue scenarios
 
-**Method.**
+**Method.** Since Round 09 this study is a view of the venue model ([VENUE.md](VENUE.md)), so it always agrees with the Venue intelligence panel and its exports. It follows the seating mix, the event, the conversion ratios and the season.
 
 ```
-annual = general seats × ticket × occupancy × events
-       + club seats × club price × occupancy × events
+annual = Σ products  sellable places × price × sell-through × events
        + suites × annual licence
 ```
+
+With a season set, each kind of event counts at its own layout, mix and prices. Accessible positions in a club tier now sell at the club price; before Round 09 they were counted as general admission.
 
 The low and high scenarios scale the premium prices by 0.75 and 1.25. The panel reports:
 
@@ -206,7 +207,7 @@ The low and high scenarios scale the premium prices by 0.75 and 1.25. The panel 
 - club seat: 250 per event;
 - suite licence: 150,000 a year;
 - events: 25 a year;
-- occupancy: 85 %;
+- sell-through: 85 %;
 - currency: USD.
 
 **Data quality.** Illustrative only. It leaves out:

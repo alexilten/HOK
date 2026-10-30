@@ -4,7 +4,7 @@
  * venue figures, the revenue assumptions and a scenario A/B comparison. Every number comes from
  * core/venue.ts; this file only presents it.
  */
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { exportAssumptions, exportManifestCsv, exportScenarios } from '../export/browser';
 import { readAssumptions } from '../core/venueExport';
 import { defaultStudies, SEATING_PRODUCTS, type ConvertibleProduct, type SeatingProduct } from '../core/schema';
@@ -71,7 +71,7 @@ function Figures({ v }: { v: VenueModel }) {
       <Fig label="Premium" value={n(m.premium)} sub={`${pct(m.premiumShare)} of sellable · ${m.suites.units} suites`} />
       <Fig label="Avg ticket" value={money(m.avgTicket, c)} sub="per place sold" />
       <Fig label="Gross / event" value={money(m.perEvent, c)} sub="ticket revenue" strong />
-      <Fig label="Annual gross" value={money(m.annual, c)} sub={`${n(events)} events a year`} strong />
+      <Fig label="Annual gross" value={money(m.annual, c)} sub={m.season ? `season of ${n(m.season.reduce((a, r) => a + r.count, 0))} events` : `${n(events)} × this event`} strong />
     </div>
   );
 }
@@ -161,18 +161,30 @@ function SectionCard({ v }: { v: VenueModel }) {
   const p = useStore((s) => s.project);
   const c = p.studies.revenue.currency;
   const x = v.sections.find((s) => s.key === key);
+  const event = v.metrics.event;
+  // Round 09: a change can apply at every event (the mix) or at the event shown only (its event mix)
+  const [onlyHere, setOnlyHere] = useState(false);
+  useEffect(() => { setOnlyHere(!!x?.eventOnly); }, [x?.key, x?.eventOnly]);
   const assign = (keys: string[], product: SeatingProduct | null) => edit((q) => {
     for (const k of keys) {
       const sec = v.sections.find((s) => s.key === k)!;
       const dflt: SeatingProduct = q.tiers[sec.tier].kind === 'club' ? 'club' : 'general';
-      if (product === null || product === dflt) delete q.mix[k]; else q.mix[k] = product;
+      if (onlyHere) {
+        const em = (q.eventMix[event] ??= {});
+        if (product === null || product === (q.mix[k] ?? dflt)) delete em[k]; else em[k] = product;
+        if (!Object.keys(em).length) delete q.eventMix[event];
+      } else {
+        if (product === null || product === dflt) delete q.mix[k]; else q.mix[k] = product;
+        if (q.eventMix[event]) { delete q.eventMix[event]![k]; if (!Object.keys(q.eventMix[event]!).length) delete q.eventMix[event]; }
+      }
     }
   });
+  const eventEntries = Object.values(p.eventMix).reduce((a, m) => a + Object.keys(m ?? {}).length, 0);
   if (!x) {
     return (
       <div className="venue-section empty">
         <p className="small muted">Click any seat in the 3D view to select its section, then sell it as a different product. The geometry never changes: a product only changes how the section's seats are sold.</p>
-        {Object.keys(p.mix).length > 0 && <button className="btn-sm" onClick={() => edit((q) => { q.mix = {}; })}>Reset the seating mix ({Object.keys(p.mix).length} sections)</button>}
+        {Object.keys(p.mix).length + eventEntries > 0 && <button className="btn-sm" onClick={() => edit((q) => { q.mix = {}; q.eventMix = {}; })}>Reset the seating mix ({Object.keys(p.mix).length + eventEntries} entries)</button>}
       </div>
     );
   }
@@ -186,6 +198,9 @@ function SectionCard({ v }: { v: VenueModel }) {
         <span className="muted small">{x.tierName} · {x.key}</span>
         <button className="icon-btn" onClick={() => select(null)} title="Clear section">×</button>
       </div>
+      <label className="only-here small" title="Off: the section sells this way at every event. On: only at the event shown, on top of the mix.">
+        <input type="checkbox" checked={onlyHere} onChange={(e) => setOnlyHere(e.target.checked)} /> Only at {EVENT_LABEL[event].toLowerCase()}
+      </label>
       <div className="product-chips">
         {SEATING_PRODUCTS.map((prod, k) => (
           <button key={prod} className={`product-chip ${x.product === prod ? 'on' : ''}`} onClick={() => assign([x.key], prod)} title={PRODUCT_LABEL[prod]}>
@@ -197,7 +212,7 @@ function SectionCard({ v }: { v: VenueModel }) {
         <span>Seats (geometry)</span><b>{n(x.seats)}</b>
         <span>Accessible positions</span><b>{n(x.accessible)}</b>
         <span>Active sellable</span><b className={x.sellable < x.seats ? 'warn' : ''}>{n(x.sellable)}{x.suites ? ` · ${x.suites} suites` : ''}</b>
-        <span>Category</span><b>{PRODUCT_LABEL[x.product]}{isPremium(x.product) ? ' · premium' : ''}{x.assigned ? '' : ' (tier default)'}</b>
+        <span>Category</span><b>{PRODUCT_LABEL[x.product]}{isPremium(x.product) ? ' · premium' : ''}{x.eventOnly ? ` (${EVENT_LABEL[event].toLowerCase()} only)` : x.assigned ? '' : ' (tier default)'}</b>
         <span>Assumed price</span><b>{money(x.price, c)}{x.product === 'suite' ? ' per seat-event' : ''}</b>
         <span>Gross / event</span><b>{money(x.revenue, c)}</b>
         <span>Share of venue</span><b>{pct(v.metrics.perEvent ? x.revenue / v.metrics.perEvent : 0)}</b>
@@ -277,11 +292,12 @@ function Assumptions() {
       <button className="sub-label as-button" onClick={() => setOpen(!open)}>{open ? '▾' : '▸'} Financial assumptions <span className="muted">· illustrative</span></button>
       {open && (
         <>
-          <NumberControl label="Events a year" value={R.events} min={1} max={250} step={1} onChange={(v) => set((r) => { r.events = v; }, 'events')} />
+          <NumberControl label="Events a year" value={R.events} min={1} max={250} step={1} onChange={(v) => set((r) => { r.events = v; }, 'events')} disabled={Object.values(R.season).some((x) => (x ?? 0) > 0)} hint={Object.values(R.season).some((x) => (x ?? 0) > 0) ? 'The season below sets the events a year' : undefined} />
           <NumberControl label="Sell-through" value={Math.round(R.occupancy * 100)} min={10} max={100} step={1} suffix=" %" onChange={(v) => set((r) => { r.occupancy = v / 100; }, 'occupancy')} />
           {PRICES.map((x) => <NumberControl key={x.key} label={`${x.label}, per event`} value={R[x.key]} min={0} max={x.max} step={x.step} format={(v) => `${R.currency} ${n(v)}`} onChange={(v) => set((r) => { r[x.key] = v; }, x.key)} />)}
           <NumberControl label="Suite licence, per year" value={R.suite} min={0} max={1_000_000} step={5000} format={(v) => money(v, R.currency)} onChange={(v) => set((r) => { r.suite = v; }, 'suite')} hint="Suites are sold whole: revenue per event is the licence ÷ events, never seats × a price" />
  <NumberControl label="Concert floor standing" value={R.floorDensity} min={0.5} max={4} step={0.1} suffix=" / m²" onChange={(v) => set((r) => { r.floorDensity = v; }, 'floorDensity')} hint="Standing places per m² of open floor at concerts, gross of barriers and the mix position; sold at the standing price" />
+          <Season />
           <NumberControl label="Seats per converted suite" value={R.suiteSeats} min={4} max={40} step={1} onChange={(v) => set((r) => { r.suiteSeats = v; }, 'suiteSeats')} />
           <div className="sub-label">Physical conversion ratios</div>
           <p className="small muted">Sellable places per bowl seat when a section is sold as that product. 100% only re-prices the seats; less models a real conversion (wider seats, loge tables, suite fronts). Accessible positions are never converted.</p>
@@ -290,6 +306,39 @@ function Assumptions() {
         </>
       )}
     </div>
+  );
+}
+
+/** Round 09: events a year by kind (the season) and a price index per event */
+function Season() {
+  const st = useStore((s) => s.stadium), edit = useStore((s) => s.edit);
+  const p = st.project, R = p.studies.revenue, c = R.currency;
+  const m = useMemo(() => venueModel(st).metrics, [st]);
+  const set = (key: 'season' | 'eventPrice', e: EventId, v: number) => edit((q) => {
+    const rec = q.studies.revenue[key];
+    if ((key === 'season' && v === 0) || (key === 'eventPrice' && v === 1)) delete rec[e]; else rec[e] = v;
+  }, `revenue.${key}.${e}`);
+  return (
+    <>
+      <div className="sub-label">Season and prices by event</div>
+      <p className="small muted">Events a year of each kind make the annual figure a blend of each event's own layout, mix and prices; leave them all at 0 to count every event as the one shown. A price index scales every per-event price at that event (suite licences are annual).</p>
+      <table className="ab-table season-table">
+        <thead><tr><th>Event</th><th>A year</th><th>Price</th><th>Gross / year</th></tr></thead>
+        <tbody>
+          {eventsFor(p).map((e) => {
+            const f = eventFloor(st, e), row = m.season?.find((r) => r.event === e);
+            return (
+              <tr key={e} className={f.supported ? '' : 'off'} title={f.supported ? '' : `Unsupported: ${f.reason}`}>
+                <td>{EVENT_LABEL[e]}</td>
+                <td><input className="num-input" type="number" min={0} max={250} step={1} value={R.season[e] ?? 0} onChange={(ev) => set('season', e, Math.max(0, Math.round(+ev.target.value || 0)))} /></td>
+                <td><input className="num-input" type="number" min={0} max={500} step={5} value={Math.round((R.eventPrice[e] ?? 1) * 100)} onChange={(ev) => set('eventPrice', e, Math.max(0, +ev.target.value || 0) / 100)} />%</td>
+                <td>{row ? (row.supported ? money(row.annual, c) : 'unsupported') : '–'}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </>
   );
 }
 
